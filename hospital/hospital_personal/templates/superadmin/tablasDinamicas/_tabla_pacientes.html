@@ -1,0 +1,56 @@
+<table class="tabla-global" id="tabla-lista-pacientes">
+    <thead>
+        {% if allPacientes %}
+        <tr>
+            <th>ID</th>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th class="columna-estado">Estado</th>
+            <th class="columna-tipoPaciente">Tipo de paciente</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="7 class="empty-message">No hay pacientes registrados.</td>
+            </tr>        
+        {% elif allPacientes.count == 0 %}
+            <tr>
+                <td colspan="7" class="empty-message">No hay pacientes que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for paciente in allPacientes %}
+                <tr class="fila" id="paciente-{{ paciente.persona.dni }}">
+                    <td data-label="ID:">{{paciente.id}}</td>
+                    <td data-label="DNI:">{{paciente.persona.dni}}</td>
+                    <td data-label="Nombre:">{{paciente.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{paciente.persona.last_name}}</td>
+                    <td data-label="Estado:" class="columna-estado">{% if paciente.persona.is_active %} Activo {% else %} Inactivo {% endif %}</td>
+                    <td data-label="Tipo de paciente:" class="columna-tipoPaciente">{% if paciente.responsable %} <div>Menor (a cargo de:<a class="back-link" href="#paciente-{{ paciente.responsable.adulto.persona.dni }}">{{ paciente.responsable.adulto.persona.dni }}</a>)</div> {% else %} Titular {% endif %}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <a class="btn-accion" href="{% url 'turnosPaciente' paciente.id %}">Sus turnos</a>
+                            <button class="btn-accion" onclick="abrirDetalle(this)"
+                                data-paciente="{{ paciente.persona.get_full_name}}"
+                                data-dni="{{paciente.persona.dni}}"
+                                data-fecha-nacimiento="{{ paciente.persona.fecha_nacimiento|date:'d/m/Y' }}"
+                                data-sexo="{{ paciente.persona.get_sexo_display }}"
+                                data-email="{% if paciente.persona.email %}{{paciente.persona.email}}{% else %} N/A {% endif%}"
+                                data-telefono="{% if paciente.persona.telefono %}{{paciente.persona.telefono}}{% else %} N/A {% endif%}"
+                                data-direccion="{% if paciente.direccion %}{{paciente.direccion}}{% else %} N/A {% endif%}"
+                                data-fecha-registro="{{paciente.persona.date_joined|date:'d/m/Y H:i A'}}"
+                                data-ultimo-acceso="{% if paciente.persona.last_login %}{{paciente.persona.last_login|date:'d/m/Y H:i A'}} {% else %} N/A {% endif%}"
+                                data-estado="{% if paciente.persona.is_active %} Activo {% else %} Inactivo {% endif %}"
+                                data-tipo-paciente="{% if paciente.responsable %} Menor (a cargo de: <a href='#paciente-{{ paciente.responsable.adulto.persona.dni }}'>{{ paciente.responsable.adulto.persona.dni }}</a>) {% else %} Titular {% endif %}">
+                                Mas detalles
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

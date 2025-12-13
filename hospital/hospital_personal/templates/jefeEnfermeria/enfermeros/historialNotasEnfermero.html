@@ -1,0 +1,85 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_jefeEnfermeria.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Notas del enfermero</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-jefe-enfermeria">
+        <h1>Notas del enfermero: {{enfermero.persona.get_full_name}} - N° Matricula: {{enfermero.numero_matricula}}</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-jefe-enfermeria" id="box-tabla-general">
+            {% include 'jefeEnfermeria/enfermeros/tablasDinamicas/_tabla_historial_notas_enfermero.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal {% if errorModal %} show errorModal{% endif %}">
+        <div class="modal-content modal-evaluacion-medica">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">{% if titleModal %}{{titleModal}}{% endif %}</h2>
+            <div class="seccionesDelForm" id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__paciente__persona__dni.label_tag}}
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__paciente__persona__dni}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__paciente__persona__first_name.label_tag}}
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__paciente__persona__first_name}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__paciente__persona__last_name.label_tag}}
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__paciente__persona__last_name}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__lugar.label_tag}}
+                        {{filtro.form.asignacion_enfermero__asignacion_habitacion__lugar}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_enfermero__jornada__turno.label_tag}}
+                        {{filtro.form.asignacion_enfermero__jornada__turno}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.fecha_y_horario.label_tag}}
+                        {{filtro.form.fecha_y_horario}}
+                    </div>
+                </form>
+            </div>
+            <div class="seccionesDelForm" id="seccion-detalles-nota">                    
+                <div class="campo-input">
+                    <a href="#" data-urlbase-ficha-paciente="{% url 'fichaPaciente' 0 %}" data-urlBase-ficha-hospitalizacion="{% url 'fichaHospitalizacion-jefe-enfermeria' 0 %}" id="btnFichaPaciente" class="btn-masDetalles">Ver ficha de paciente</a>
+                </div>
+                <div class="campo-input">
+                    {{form.observaciones.label_tag}}
+                    {{form.observaciones}}
+                </div>
+                <div class="campo-input">
+                    {{form.signos_vitales.label_tag}}
+                    {{form.signos_vitales}}
+                </div>
+                <div class="campo-input">
+                    {{form.procedimientos_realizados.label_tag}}
+                    {{form.procedimientos_realizados}}
+                </div>
+                <div class="campo-input">
+                    {{form.medicacion_administrada.label_tag}}
+                    {{form.medicacion_administrada}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/jefeEnfermeria.js' %}" ></script>
+{% endblock %}
+
+

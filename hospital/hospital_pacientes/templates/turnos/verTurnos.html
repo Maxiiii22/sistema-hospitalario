@@ -1,0 +1,316 @@
+{% extends 'layout/base-pacientes.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}    
+{% endblock %}
+
+{% block titulo %}
+    <title>Historial de Turnos</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-turnos">
+        <h3 class="title-turnos">{% if paciente == request.user.paciente %}Mis turnos{% else %}Turnos de {{paciente.persona.get_full_name}}{% endif %}</h3>        
+        <div class="section-turnos">
+            <div class="encabezado-turnos">
+                <h2 id="titulo">Turnos futuros para consultas médicas</h2>
+                <div class="container-btn-toggle">
+                    <button id="toggleBtn" class="btn-toggle" onclick="toggleTurnos()">Ver turnos anteriores</button>
+                </div>
+            </div>
+            <div id="turnos-futuros" class="toggle-section">
+                <table class="tabla-global" id="tabla-turnos-futuros">
+                    {% if turnos_futuros %}
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Especialidad</th>
+                            <th>Profesional</th>
+                            <th>Fecha turno</th>
+                            <th>Lugar</th>
+                            <th class="columna-estado">Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                    <tbody>
+                        {% for turno in turnos_futuros %}
+                            <tr class="fila">
+                                <td data-label="ID del turno:">{{ turno.id }}</td>
+                                <td data-label="Especialidad:">{{ turno.especialidad.nombre_especialidad }}</td>
+                                <td data-label="Profesional:">{{ turno.profesional.persona.get_full_name }} - N° Matricula {{ turno.profesional.numero_matricula }}</td>
+                                <td data-label="Fecha turno:">{{ turno.fecha_turno|date:"d-m-Y" }} - 
+                                    {% if turno.horario_turno == "dia" %} 7:00 a 15:00 hs 
+                                    {% elif turno.horario_turno == "tarde" %} 15:00 a 23:00 hs 
+                                    {% endif %}
+                                </td>
+                                <td data-label="Lugar">{{turno.lugar.nombre}} (Piso: {{turno.lugar.piso}} - N° sala: {{turno.lugar.sala}})</td>
+                                <td class="columna-estado" data-label="Estado:">{{ turno.get_estado_display }}</td>
+                                <td data-label="Accion:">
+                                    <div class="box-btns-td-acciones">
+                                        {% if turno.estado == "pendiente" %}
+                                            <button type="button" data-id-turno="{{turno.id}}" data-url-reprogramar="{% url 'reprogramarTurno-paciente' turno.id %}" onclick="modalReprogramarCita(this)" class="btn-modal btn-accion">Reprogramar</button>
+                                            <button type="button" data-id-turno="{{turno.id}}" data-url-cancelar-turno="{% url 'cancelarTurno-paciente' turno.id %}" onclick="modalCancelarCita(this)" class="btn-modal btn-accion">Cancelar</button>
+                                        {% elif turno.estado == "atendido" %}
+                                            {% for consulta in turno.consulta.all %}
+                                                {% if consulta.turno.id == turno.id %}
+                                                    <form method="POST" action="{% url 'consultaEspecifica' consulta.turno.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn-accion">Ver consulta</button>
+                                                    </form>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr class="fila">
+                                <td colspan="6" class="empty-message empty-message-noTurnos">No tienes turnos futuros reservados para especialidades médicas</td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="turnos-anteriores" class="toggle-section">
+                <table class="tabla-global" id="tabla-turnos-anteriores">
+                    {% if turnos_anteriores %}
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Especialidad</th>
+                            <th>Profesional</th>
+                            <th>Fecha turno</th>
+                            <th class="columna-estado">Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                    <tbody>
+                        {% for turno in turnos_anteriores %}
+                            <tr class="fila">
+                                <td data-label="ID del turno:">{{ turno.id }}</td>
+                                <td data-label="Especialidad:">{{ turno.especialidad.nombre_especialidad }}</td>
+                                <td data-label="Profesional:">{{ turno.profesional.persona.get_full_name }} - N° Matricula {{ turno.profesional.numero_matricula }}</td>
+                                <td data-label="Fecha turno:">{{ turno.fecha_turno|date:"d-m-Y" }} - 
+                                    {% if turno.horario_turno == "dia" %} 7:00 a 15:00 hs
+                                    {% elif turno.horario_turno == "tarde" %} 15:00 a 23:00 hs
+                                    {% endif %}
+                                </td>
+                                <td class="columna-estado" data-label="Estado:">{{ turno.get_estado_display }}</td>
+                                <td data-label="Accion:">
+                                    <div class="box-btns-td-acciones">
+                                        {% if turno.estado == "atendido" %}
+                                            {% for consulta in turno.consulta.all %}
+                                                {% if consulta.turno.id == turno.id %}
+                                                    <form method="GET" action="{% url 'consultaEspecifica' consulta.turno.id %}">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn-accion">Ver consulta</button>
+                                                    </form>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr class="fila">
+                                <td colspan="6" class="empty-message empty-message-noTurnos">No tienes turnos anteriores para especialidades médicas</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="section-turnosEstudios">
+            <div class="encabezado-turnos">
+                <h2 id="tituloEstudios">Turnos futuros para estudios</h2>
+                <div class="container-btn-toggle">
+                    <button id="toggleBtn2" class="btn-toggle" onclick="toggleTurnosEstudios()">Ver turnos anteriores</button>
+                </div>
+            </div>
+            <div id="turnosEstudios-futuros" class="toggle-section">
+                <table class="tabla-global" id="tabla-turnos-estudios-futuros">
+                    {% if turnosEstudios_futuros %}
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Estudio</th>
+                            <th>Lugar</th>
+                            <th>Fecha turno</th>
+                            <th class="columna-estado">Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                    <tbody>
+                        {% for turno in turnosEstudios_futuros %}
+                            <tr class="fila">
+                                <td data-label="ID del turno:">{{ turno.id }}</td>
+                                <td data-label="Estudio:">{{ turno.orden.tipo_estudio.nombre_estudio }}</td>
+                                <td data-label="Lugar:">{{ turno.lugar.nombre }} (Piso: {{ turno.lugar.piso }} - N° Sala:{{ turno.lugar.sala }})</td>
+                                <td data-label="Fecha turno:">{{ turno.fecha_turno|date:"d-m-Y" }} -{% if turno.horario_turno == "dia" %} 7:00 a 15:00 hs {% endif %}</td>
+                                <td class="columna-estado" data-label="Estado:">{{ turno.get_estado_display }}</td>
+                                <td data-label="Accion:">
+                                    <div class="box-btns-td-acciones">
+                                        {% if turno.estado == "pendiente" %}
+                                            <button type="button" data-id-turno-estudio="{{turno.id}}" data-url-reprogramar-estudio="{% url 'reprogramarTurnoEstudio-paciente' turno.id %}" onclick="modalReprogramarCitaEstudio(this)" class="btn-modal btn-accion">Reprogramar</button>
+                                            <button type="button" data-id-turno-estudio="{{turno.id}}" data-url-cancelar-turno-estudio="{% url 'cancelarTurnoEstudio-paciente' turno.id %}" onclick="modalCancelarCitaEstudio(this)" class="btn-modal btn-accion">Cancelar</button>                                    
+                                        {% elif turno.estado == "realizado" %}
+                                            {% if turno.resultado %}
+                                                <form method="POST" action="{% url 'resultadoEstudioEspecifico' turno.id %}">  
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn-global">Ver resultado</button>
+                                                </form>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr class="fila">
+                                <td colspan="6" class="empty-message empty-message-noTurnos">No tienes turnos futuros reservados para estudios</td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="turnosEstudios-anteriores" class="toggle-section">
+                <table class="tabla-global" id="tabla-turnos-estudios-anteriores">
+                    {% if turnosEstudios_anteriores %}
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Estudio</th>
+                            <th>Lugar</th>
+                            <th>Fecha turno</th>
+                            <th class="columna-estado">Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    {% endif %}
+                    <tbody>
+                        {% for turno in turnosEstudios_anteriores %}
+                            <tr class="fila">
+                                <td data-label="ID del turno:">{{ turno.id }}</td>
+                                <td data-label="Estudio:">{{ turno.orden.tipo_estudio.nombre_estudio }}</td>
+                                <td data-label="Lugar:">{{ turno.lugar.nombre }} (Piso: {{ turno.lugar.piso }} - N° Sala:{{ turno.lugar.sala }})</td>
+                                <td data-label="Fecha turno:">{{ turno.fecha_turno|date:"d-m-Y" }} -{% if turno.horario_turno == "dia" %} 7:00 a 15:00 hs{% endif %}</td>
+                                <td class="columna-estado" data-label="Estado:">{{ turno.get_estado_display }}</td>
+                                    {% if turno.estado == "realizado" %}
+                                    <div class="box-btns-td-acciones">
+                                        <td data-label="Acciones:">
+                                            {% if turno.resultado %}
+                                                <form method="POST" action="{% url 'resultadoEstudioEspecifico' turno.id %}">  
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn-accion">Ver resultado</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </div>
+                                    {% endif %}
+                            </tr>
+                        {% empty %}
+                            <tr class="fila">
+                                <td colspan="6" class="empty-message empty-message-noTurnos">No tienes turnos anteriores para estudios</td>
+                            </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-reprogramar-turno">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Reprogramar turno</h2>
+            <div class="seccionesDelForm" id="seccion-reprogramar-turnoMedico">
+                <p id="profesional"></p>
+                <p id="matricula"></p>
+                <p id="sexo"></p>
+                <p id="horario"></p>    
+                <p id="lugar"></p>  
+                <p id="fecha_turno"></p>  
+                <form id="formReprogramarCitaMedica" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo-form" value="form-reprogramar-turnoMedico">
+                    <input type="hidden" name="fecha_seleccionada" id="fecha_seleccionada" value="">
+                    <h3>Días disponibles:</h3>
+                    <div class="nav-buttons">
+                        <button type="button" id="prevMonth" class="prevMonth">Mes Anterior</button>
+                        <button type="button" id="nextMonth" class="nextMonth">Mes Siguiente</button>
+                    </div>
+                    <div class="calendar" id="calendar"></div>
+                    <button type="submit" disabled class="btn-global btn-form-reprogramar" >Reprogramar</button>
+                </form>                
+            </div>
+            <div class="seccionesDelForm" id="seccion-form-cancelar-cita-medica">                    
+                <form id="formCancelarCitaMedica" method="POST" action="">
+                    {% csrf_token %}
+                    <p class="p-cancelar-cita">¿Estás seguro/a de cancelar la cita? No se podrá revertir la acción.</p>
+                    <button type="submit"  class="btn-global">Confirmar</button>
+                </form>
+            </div>            
+            <div class="seccionesDelForm" id="seccion-reprogramar-turnoEstudio">
+                <p id="orden"></p>
+                <p id="estudio"></p>
+                <p id="p-servicio"></p>    
+                <p id="p-lugar"></p>  
+                <p id="p-fecha_turno"></p>  
+                <p id="horario"></p>  
+                <form id="formReprogramarCitaEstudio" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo-form" value="form-reprogramar-turnoEstudio">
+                    <input type="hidden" name="fecha_seleccionadaEstudio" id="fecha_seleccionadaEstudio" value="">
+                    <input type="hidden" name="lugar" id="id_lugar" value="">
+                    <h3>Días disponibles:</h3>
+                    <div class="nav-buttons">
+                        <button type="button" id="prevMonth2" class="prevMonth">Mes Anterior</button>
+                        <button type="button" id="nextMonth2" class="nextMonth">Mes Siguiente</button>
+                    </div>
+                    <div class="calendar" id="calendar2"></div>
+                    <button type="submit" disabled class="btn-global btn-form-reprogramarEstudio">Reprogramar</button>
+                </form>  
+            </div>
+            <div class="seccionesDelForm" id="seccion-form-cancelar-cita-estudio">                    
+                <form id="formCancelarCitaEstudio" method="POST" action="">
+                    {% csrf_token %}
+                    <p class="p-cancelar-cita">¿Estás seguro/a de cancelar el turno? No se podrá revertir la acción.</p>
+                    <button type="submit"  class="btn-global">Confirmar</button>
+                </form>
+            </div>              
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/pacientes.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}    
+{% endblock %}
+

@@ -1,0 +1,16 @@
+{% extends 'layout/base-pacientes.html' %}
+
+{% block css %}  {% endblock %}
+
+{% block titulo %}
+    <title>Paciente</title>
+{% endblock %}
+
+{% block contenido %}
+    <h1 style="text-align: center;">Bienvenido {% if user.is_authenticated %} {{user.get_full_name}} - DNI: {{user.dni}} {% endif%} </h1>
+
+{% endblock %}
+
+{% block scripts_js %}  {% endblock %}
+
+

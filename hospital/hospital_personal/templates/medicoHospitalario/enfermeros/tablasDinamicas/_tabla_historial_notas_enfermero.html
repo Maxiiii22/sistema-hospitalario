@@ -1,0 +1,42 @@
+<table class="tabla-global" id="tabla-historial-notas-enfermero">
+    <thead>
+        {% if observacionesEnfermeros %}
+        <tr>
+            <th>Nombre Paciente</th>
+            <th>Apellido Paciente</th>
+            <th>Dni Paciente</th>
+            <th>Ubicacion</th>
+            <th>Turno</th>
+            <th>Subida</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay notas registradas de este enfermero.</td>
+            </tr>        
+        {% elif observacionesEnfermeros.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay notas que coincidan con el filtro .</td>
+            </tr>
+        {% else %}
+            {% for observacion in observacionesEnfermeros %}
+                <tr class="fila">
+                    <td data-label="Nombre:">{{observacion.asignacion_enfermero.asignacion_habitacion.paciente.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{observacion.asignacion_enfermero.asignacion_habitacion.paciente.persona.last_name}}</td>
+                    <td data-label="N° Matricula:">{{observacion.asignacion_enfermero.asignacion_habitacion.paciente.persona.dni}}</td>
+                    <td data-label="Ubicacion:">{{observacion.asignacion_enfermero.asignacion_habitacion.lugar}}</td>
+                    <td data-label="Turno:">{{observacion.asignacion_enfermero.jornada.get_turno_display_personalizado}}</td>
+                    <td data-label="Subida:" class="columna-subida">{{observacion.fecha_y_horario|date:"d-m-Y H:i A"}}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <button type="button" class="btn-masDetalles" onclick="abrirModalDetalleObservacion(this)" data-id-observacion-enfermero="{{observacion.id}}" data-id-asignacion-habitacion="{{observacion.asignacion_enfermero.asignacion_habitacion.id}}">Ver detalles</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

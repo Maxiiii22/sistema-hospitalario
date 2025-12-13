@@ -1,0 +1,28 @@
+{% extends 'base_index.html' %}
+{% load static %}
+
+    {% block title %}
+    <title>Especialidades</title>
+    {% endblock %}
+
+    {% block content_main %}
+    <div class="container">
+        <h1>Especialidades Médicas</h1>
+        <p class="intro">
+            Nuestro hospital cuenta con un equipo interdisciplinario de profesionales altamente capacitados,
+            dedicados a brindar una atención integral y personalizada. A continuación podrá conocer todas
+            nuestras especialidades, diseñadas para acompañarlo en cada etapa de su salud.
+        </p>
+        {% for especialidad in allEspecialidades%}
+            <section class="especialidad">
+                <h2 class="nombreEspecialidad"><i class="hgi hgi-stroke hgi-stethoscope icon-especialidad" ></i> {{especialidad.nombre_especialidad}}</h2>
+                <p>{{especialidad.descripcion}}</p>
+            </section>
+        {% endfor %}
+
+    </div>    
+    {% endblock %}
+
+
+
+

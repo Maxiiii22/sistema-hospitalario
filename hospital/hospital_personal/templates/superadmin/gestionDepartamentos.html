@@ -1,0 +1,93 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Gestion de departamentos</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-superadmin">
+        <h1>Gestionar Departamentos</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="newDepartamento"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nuevo Departamento</button>
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-superadmin" id="box-tabla-general">
+            {% include 'superadmin/tablasDinamicas/_tabla_departamentos.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal {% if abrir_modal_por_error %}show errorModal{% endif %}">
+        <div class="modal-content">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Editar departamento</h2>
+
+            <div id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.nombre_departamento.label_tag}}
+                        {{filtro.form.nombre_departamento}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.tipo.label_tag}}
+                        {{filtro.form.tipo}}
+                    </div>
+                </form>
+            </div>
+
+            <div id="seccion-edit">
+                <form id="editForm" method="POST" >
+                    {% csrf_token %}
+                    <input type="hidden" name="id_departamento" id="id_departamento" />
+                    <div class="campo-input">
+                        {{ form.nombre_departamento.label_tag }}
+                        {{ form.nombre_departamento }}
+                        {% if form.nombre_departamento.errors %}
+                            <div id="error_nombre_departamento" class="error-message">
+                                {% for error in form.nombre_departamento.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="campo-input">
+                        {{ form.tipo.label_tag }}
+                        {{ form.tipo }}
+                        {% if form.tipo.errors %}
+                            <div id="error_tipo" class="error-message">
+                                {% for error in form.tipo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                
+                    </div>
+                    <div class="campo-input">
+                        {{ form.descripcion.label_tag }}
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <div id="error_descripcion" class="error-message">
+                                {% for error in form.descripcion.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                
+                    </div>
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/superadmin.js' %}"></script>
+{% endblock %}
+
+

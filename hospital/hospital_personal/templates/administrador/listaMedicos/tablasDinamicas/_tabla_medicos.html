@@ -1,0 +1,40 @@
+<table class="tabla-global" id="tabla-lista-medicos">
+    <thead>
+        {% if allMedicos %}
+        <tr>
+            <th>ID</th>
+            <th>N° Matricula</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th class="columna-estado">Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay médicos registrados.</td>
+            </tr>        
+        {% elif allMedicos.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay médicos que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for medico in allMedicos %}
+                <tr class="fila">
+                    <td data-label="ID:">{{medico.id}}</td>
+                    <td data-label="N° Matricula:">{{medico.numero_matricula}}</td>
+                    <td data-label="Nombre:">{{medico.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{medico.persona.last_name}}</td>
+                    <td data-label="Estado:" class="columna-estado">{% if medico.persona.is_active %} Activo {% else %} Inactivo {% endif %}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <a href="{% url 'administrador-productividad-medica' medico.id %}" class="btn-masDetalles" >Ver Productividad</a>
+                        </div>   
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

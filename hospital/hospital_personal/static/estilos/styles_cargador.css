@@ -1,0 +1,421 @@
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-terciario: #DCDDEB;
+    --color-hover: #34A;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+body{
+    background-color: #ccc;
+}
+
+/* ## Clase globales ### */
+
+.seccionesDelForm{
+    display: none;
+}
+
+.fila{
+    background-color: #f4f4f1;
+    border-radius: 5px;
+}
+
+.fila:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+}
+
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.error-message p{
+    margin: 0;
+}
+
+.error-message-main{
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+#back-link-solo{
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color .3s ease;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+
+}
+
+#back-link-solo:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-masDetalles{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: clamp(0.8rem, 3vw, .9rem);
+    font-weight: normal;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color .5s ease;
+}
+
+.btn-masDetalles:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-accion {
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0 3px;
+    min-height: 30px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin-bottom: 2px;
+    transition: background-color .5s ease;
+}
+
+.btn-accion:hover {
+    background-color: var(--color-hover);
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+.box-btns-td-acciones{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.box-btns-td-acciones form button{
+    width: 100%;
+}
+
+/* Fin clases globales */
+
+
+/* Tabla global */
+
+.tabla-global{
+    width: 100%;
+    border-radius: 5px;
+}
+
+.tabla-global thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.tabla-global th{
+    padding: 12px 0;
+    text-align: center;
+}
+
+.tabla-global td{
+    padding: 5px;
+    text-align: center;
+    height: 45px;
+    font-size: clamp(.8rem, 3vw, 1rem);
+}
+
+.box-btn-add{
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+.container-global-enfermero{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Fin tabla global */
+
+
+
+
+/* Seccion estudios realizados */
+
+.container-lista-estudios{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#tabla-estudios-realizados .td-fecha{
+    text-wrap: nowrap;
+}
+
+
+@media (width >= 700px ) and (width <= 800px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-estudios-realizados,
+        #tabla-estudios-realizados thead,
+        #tabla-estudios-realizados tbody,
+        #tabla-estudios-realizados tr,
+        #tabla-estudios-realizados th,
+        #tabla-estudios-realizados td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 500px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-estudios-realizados,
+        #tabla-estudios-realizados thead,
+        #tabla-estudios-realizados tbody,
+        #tabla-estudios-realizados tr,
+        #tabla-estudios-realizados th,
+        #tabla-estudios-realizados td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-estudios-realizados .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/* Fin Seccion estudios realizados */
+
+
+/* Seccion "Cargar resultados" */
+
+.body-cargaResultado {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6e6e6;
+    padding: 10px;
+    font-size: clamp(.9rem, 3dvw, 1rem);    
+}
+
+.container-carga-resultado {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 50px;
+    width: 100%;
+    align-items: center;
+}
+
+.container-carga-resultado h2 {
+    color: #2c3e50;
+    margin: 0;
+}
+
+.container-carga-resultado .title-pri{
+    text-align: center;
+    margin: 10px 0;
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.title-sec{
+    padding: 5px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    color: #fff;
+    width: fit-content ;
+    font-size: 1.5rem;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.container-form-resultado {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    max-width: 900px;
+    width: 100%;
+}
+
+.seccion-datos {
+    margin-top: 15px;
+}
+
+#form-cargar-resultados{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.box-inputs label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.box-inputs input,
+.box-inputs textarea{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 70px;
+    font-size: 14px;
+}
+
+.box-inputs input{
+    min-height: 40px;
+}
+
+
+@media (max-width: 480px) {
+    .container-form-resultado {
+        padding: 15px 10px;
+    }
+
+}
+
+/* Fin Seccion "Cargar resultados" */

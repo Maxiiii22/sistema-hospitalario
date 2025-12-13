@@ -1,0 +1,44 @@
+<table class="tabla-global" id="tabla-gestion-agenda-medicos">
+    <thead>
+        {% if allMedicos %}
+        <tr>
+            <th>ID</th>
+            <th class="columna-matricula">N° Matricula</th>
+            <th class="columna-nombre">Nombre</th>
+            <th class="columna-apellido">Apellido</th>
+            <th class="columna-especialidad">Especialidad</th>
+            <th class="columna-estado">Estado</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="7" class="empty-message">No hay médicos registrados.</td>
+            </tr>        
+        {% elif allMedicos.count == 0 %}
+            <tr>
+                <td colspan="7" class="empty-message">No hay médicos con citas para hoy.</td>
+            </tr>        
+        {% else %}
+            {% for medico in allMedicos %}
+            <tr class="fila">
+                <td data-label="ID:">{{medico.id}}</td>
+                <td data-label="N° Matricula:" class="columna-matricula">{% if medico.numero_matricula %}{{medico.numero_matricula}}{% else %}No aplica{% endif %}</td>
+                <td data-label="Nombre:" class="columna-nombre">{{medico.persona.first_name}}</td>
+                <td data-label="Apellido:" class="columna-apellido">{{medico.persona.last_name}}</td>
+                <td data-label="Especialidad:" class="columna-especialidad">{% if medico.get_asignacionActual.asignacionActual %} {{medico.get_asignacionActual.asignacionActual}} {% else %}No tiene asignación laboral en este día.{% endif %}</td>
+                <td data-label="Estado:" class="columna-estado">{% if medico.persona.is_active %} Activo {% else %} Inactivo {% endif %}</td>
+                <td data-label="Acciones:">
+                    {% if medico.get_asignacionActual.asignacionActual %}
+                        <div class="box-btns-td-acciones">
+                            <a href="{% url 'administrador-agenda-medico' medico.id %}" class="btn-masDetalles" >Mas detalles</a>
+                        </div>                        
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

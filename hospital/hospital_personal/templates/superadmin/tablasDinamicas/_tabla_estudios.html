@@ -1,0 +1,38 @@
+<table class="tabla-global" id="tabla-gestion-estudios-diagnostico">
+    <thead>
+        <tr>
+            {% if allEstudios %}
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Tipo de resultado</th>
+            <th>Realizado por </th>
+            <th></th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="5" class="empty-message">No hay estudios registrados.</td>
+            </tr>       
+        {% elif allEstudios.count == 0 %}
+            <tr>
+                <td colspan="5" class="empty-message">No hay estudios que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}        
+            {% for estudios in allEstudios %}
+            <tr class="fila">
+                <td data-label="ID:">{{estudios.id}}</td>
+                <td data-label="Nombre:">{{estudios.nombre_estudio}}</td>
+                <td data-label="Tipo de resultado:">{{estudios.get_tipo_resultado_display}}</td>
+                <td data-label="Realizado por:">{{estudios.servicio_diagnostico.nombre_servicio}}</td>
+                <td data-label="Acciones:">
+                    <div class="box-btns-td-acciones">
+                        <button class="btn-masDetalles" data-id-estudio="{{ estudios.id }}">Mas detalles</button>
+                    </div>                
+                </td>  
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

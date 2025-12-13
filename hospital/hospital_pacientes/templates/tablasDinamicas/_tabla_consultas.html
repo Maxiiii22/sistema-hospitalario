@@ -1,0 +1,45 @@
+<h2 class="encabezado-tabla">Consultas medicas</h2>
+<table class="tabla-global" id="tabla-historial-consultas">
+    {% if allConsultas %}
+        <thead>
+            <tr>
+                <th>ID Consulta</th>
+                <th>Especialidad</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay consultas registradas.</td>
+            </tr>        
+        {% elif allConsultas.count == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay consultas que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for consulta in allConsultas %}
+                <tr class="fila">
+                    <td data-label="ID Consulta:">{{consulta.id}}</td>
+                    <td data-label="Especialidad:">{{consulta.turno.especialidad.nombre_especialidad}}</td>
+                    <td data-label="Fecha de la consulta:">{{consulta.fecha|date:"d-m-Y"}}</td>
+                    <td data-label="Acciones:" class="td-acciones">
+                        <button class="btn-global" onclick="abrirDetalle(this)" id="idConsulta_{{consulta.id}}"
+                            data-profesional="{{ consulta.turno.profesional.persona.get_full_name}} - N° Legajo: {{ consulta.turno.profesional.persona.login_id}}"
+                            data-paciente="{{ consulta.turno.paciente.persona.get_full_name}} - DNI: {{consulta.turno.paciente.persona.dni}}"
+                            data-fecha="{{ consulta.fecha|date:'d/m/Y' }}"
+                            data-diagnostico="{{ consulta.diagnostico|default:'-'|escapejs }}"
+                            data-observaciones="{{ consulta.observaciones|default:'-'|escapejs }}"
+                            data-tratamiento="{% if consulta.tratamiento %}{{ consulta.tratamiento|default:'-'|escapejs }}{% else %}Ninguno{% endif %}"
+                            data-estudios="{% for e in consulta.estudios.all %}<p>• {{ e.tipo_estudio.nombre_estudio }} <button onClick='DetalleEstudio(this)' class='btn-global' type='button' data-id-orden='{{e.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}"
+                            data-medicaciones="{% for m in consulta.medicaciones.all %}<p>• {{ m.medicamento }} <button onClick='DetalleMedicamento(this)' class='btn-global' type='button' data-id-medicamento='{{m.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}">
+                            Mas detalles
+                        </button>
+                    </td>   
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>       

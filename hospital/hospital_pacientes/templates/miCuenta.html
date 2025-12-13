@@ -1,0 +1,149 @@
+{% extends 'layout/base-pacientes.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Mi cuenta</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="main-form-paciente">
+        <div class="container-form-paciente">    
+            <h2 class="title-ficha">Mis datos personales</h2>
+
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div class="secciones">
+                    <div class="datos-paciente">
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label for="id_login_id">Email:</label>
+                                {{ form.login_id }}
+                                {% if form.login_id.errors %}
+                                    <div id="error_login_id" class="error-message">
+                                        {% for error in form.login_id.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="campo-input">
+                                <label for="id_login_id">Contraseña:</label>
+                                {{ form.password }}
+                                {% if form.password.errors %}
+                                    <div id="error_password" class="error-message">
+                                        {% for error in form.password.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+    
+                            <div class="campo-input">
+                                {{ form.dni.label_tag }}
+                                {{ form.dni }}
+                                {% if form.dni.errors %}
+                                    <div id="error_dni" class="error-message">
+                                        {% for error in form.dni.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_first_name">Nombre:</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div id="error_first_name" class="error-message">
+                                        {% for error in form.first_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_last_name">Apellido:</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div id="error_last_name" class="error-message">
+                                        {% for error in form.last_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ form.direccion.label_tag }}
+                                {{ form.direccion }}
+                                {% if form.direccion.errors %}
+                                    <div id="error_direccion" class="error-message">
+                                        {% for error in form.direccion.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ form.telefono.label_tag }}
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+                                    <div id="error_telefono" class="error-message">
+                                        {% for error in form.telefono.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                                
+                            <div class="campo-input">
+                                {{ form.sexo.label_tag }}
+                                {{ form.sexo }}
+                                {% if form.sexo.errors %}
+                                    <div id="error_sexo" class="error-message">
+                                        {% for error in form.sexo.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ form.fecha_nacimiento.label_tag }}
+                                {{ form.fecha_nacimiento }}
+                                {% if form.fecha_nacimiento.errors %}
+                                    <div id="error_fecha_nacimiento" class="error-message">
+                                        {% for error in form.fecha_nacimiento.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-global">Guardar</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %}  {% endblock %}
+
+
+
+
+
+
+
+
+

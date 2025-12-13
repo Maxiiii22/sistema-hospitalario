@@ -1,0 +1,977 @@
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-hover: #34A;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+.fila{
+    background-color: #f4f4f1;
+    border-radius: 5px;
+}
+
+.fila:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+}
+
+
+/* Clases globales */ 
+.seccionesDelForm{
+    display: none;
+}
+
+.p-cancelar-cita{
+    text-align: center;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.error-message p{
+    margin: 0;
+}
+
+
+#back-link-solo{
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color .3s ease;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+    text-align: center;
+
+}
+
+#back-link-solo:hover{
+    background-color: var(--color-hover);
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.btn-global{
+    background-color: var(--color-primario);
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+.btn-global:hover{
+    background-color: var(--color-hover);
+}
+
+
+.btn-masDetalles{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: clamp(0.8rem, 3vw, .9rem);
+    font-weight: normal;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+
+.btn-masDetalles:hover{
+    background-color: var(--color-hover);
+}
+
+
+.btn-accion {
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0 3px;
+    min-height: 30px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin-bottom: 2px;
+    transition: background-color .5s ease;
+}
+
+.btn-accion:hover {
+    background-color: var(--color-hover);
+}
+
+.box-btns-td-acciones{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.box-btns-td-acciones form button{
+    width: 100%;
+}
+
+button:disabled {
+    opacity: 0.6;            
+    pointer-events: none;     
+    cursor: not-allowed;      
+}
+
+.campo-input label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+}
+
+.campo-input input{
+    padding: 0 15px;
+    outline: none;
+    border: 1px solid #000;
+    border-radius: 5px;
+    height: 42px;
+    margin: 8px 0;
+}
+
+.seccion-form-filter #filtro-form{
+    flex-direction: column;
+}
+
+#filtro-form .campo-input{ 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Fin Clases globales */ 
+
+
+/* Modal global */
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center; 
+}
+
+.modal.show {
+    display: flex; 
+    
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 10px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#modal-title {
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+.btn-guardar {
+    padding: 0.7rem 1.5rem;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color .5s ease;
+}
+
+.btn-guardar:hover{
+    background-color: var(--color-hover);
+}
+
+.form-error-modal {
+    background-color: red;
+    padding: 8px;
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    display: none;
+}
+
+#inputFeedback {
+    color: red;
+    text-align: center;
+}
+
+#seccion-asignaciones,#seccion-lugarTrabajo{
+    display: none;
+}
+
+/* Fin modal global */
+
+/* Tabla global */
+
+.tabla-global{
+    width: 100%;
+    border-radius: 5px;
+}
+
+.tabla-global thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.tabla-global th{
+    padding: 12px 0;
+    text-align: center;
+}
+
+.tabla-global td{
+    padding: 5px;
+    text-align: center;
+    height: 45px;
+    font-size: clamp(.8rem, 3vw, 1rem);
+}
+
+.box-btn-add{
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+/* Fin tabla global */
+
+
+
+/* Parte del los turnos programados */ 
+
+.title-especialidad{
+    padding: 5px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    color: #fff;
+    width: fit-content ;
+    font-size: 1.5rem;
+    margin: 5px 0;
+}
+
+.container-tabla-medico-global{
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.container-tabla-medico-global h1{
+    font-size: clamp( 1.5rem,3dvw,2rem);
+}
+
+.turnos-section {
+    margin-top: 20px;
+    outline: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 5px
+}
+
+.turnos-section h2 {
+    font-size: 20px;
+    padding: 5px;
+    background-color: var(--color-primario);
+    color: white;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.turnos-section table{
+    width: 100%;
+}
+
+.turnos-section thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.turnos-section th{
+    padding: 12px 0;
+    text-align: center;
+}
+.turnos-section td{
+    padding: 5px;
+    text-align: center;
+    height: 60px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+}
+
+
+.fila-turnos.estado-atendido {
+    background-color: #d1f7d1; 
+}
+
+.fila-turnos.estado-pendiente {
+    background-color: #f4f4f1; 
+}
+
+.fila-turnos.estado-cancelado {
+    background-color: #f8d7da; 
+}
+
+.fila-turnos.estado-reprogramado {
+    background-color: #d1ecf1; 
+}
+
+.fila-turnos.estado-noAsistio {
+    background-color: #e2e3e5; 
+}
+
+.fila-turnos{
+    min-height: 60px;
+}
+
+.fila-turnos:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+
+.modal-reprogramar-turno{
+    background-color: #fff;
+    border: 1px solid #aaa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: clamp(300px, 90%, 350px);
+    transition: border-color 0.2s ease;
+}
+
+.modal-reprogramar-turno #closeEditModal{
+    align-self: flex-end;
+}
+
+.modal-reprogramar-turno h2{
+    margin-bottom: 5px;
+}
+
+
+.modal-reprogramar-turno .btn-global{
+    padding: 10px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    max-width: 300px;
+    margin: 10px auto;
+}
+
+.calendar button {
+    padding: 9.4px;
+    text-align: center;
+    cursor: pointer;
+    background-color: white;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: color,border-color,background-color .3s;
+}
+
+.calendar button:disabled {
+    background-color: #ddd;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.calendar button.valid {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.calendar button:hover:not([disabled]) {
+    background-color: #f0f0f0;
+    color: #000;
+    border-color: #000;
+}
+
+.calendar button.seleccionado {
+    background-color: #000;
+    color: white;
+    font-weight: bold;
+    border-color: #000;
+}
+
+.header {
+    grid-column: span 7;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-reprogramar-turno .nav-buttons button{
+    padding: 5px 15px;
+    margin: 3px 10px 0;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+.modal-reprogramar-turno .nav-buttons button:hover{
+    background-color: var(--color-hover);
+}
+
+
+
+@media (width <= 400px){
+    .turnos-section,
+    .turnos-section thead,
+    .turnos-section tbody,
+    .turnos-section tr,
+    .turnos-section th,
+    .turnos-section td {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    .turnos-section tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    .turnos-section td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .turnos-section td:last-child{
+        border-bottom: 0;
+    }
+
+    .turnos-section td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    .turnos-section thead {
+        display: none;
+    }   
+
+    .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .turnos-section .empty-message{
+        justify-content: center;
+    }
+
+}
+/*  Fin Parte del los turnos programados */ 
+
+
+/* Parte de Registro de consulta */
+
+.body-consultasMedico {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ccc;
+    padding: 10px;
+}
+
+.container-consulta-medico {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    row-gap: 50px;
+    width: 100%;
+    align-items: center;
+}
+
+.container-consulta-medico .title-consulta{
+    text-align: center;
+    margin: 10px 0;
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.container-consulta-medico h2 {
+    color: var(--color-primario);
+    margin: 0;
+}
+
+.container-form-consulta {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 20px;
+    max-width: 900px;
+    width: 100%;
+}
+
+.seccion-nota-clinica {
+    outline: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.box-inputs-registro-consulta label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.box-inputs-registro-consulta textarea,
+.tabla-registro-consultas td textarea,
+.tabla-registro-consultas td select,
+.tabla-registro-consultas td input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 70px;
+    font-size: 14px;
+}
+
+.tabla-registro-consultas {
+    width: 100%;
+    margin-top: 5px;
+    font-family: Arial, sans-serif;
+    overflow-x: auto;
+    outline: 2px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.tabla-registro-consultas th {
+    background-color: var(--color-primario);
+    color: white;
+    text-align: center;
+    font-size: 14px;
+    font-size: clamp(.3rem, 3dvw, .9rem);
+    padding: 10px;
+}
+
+.tabla-registro-consultas td {
+    font-size: 14px;
+    padding: 10px;
+    text-align: left;
+    font-size: clamp(.7rem, 3dvw, .9rem);
+    background-color: #f4f4f1;
+}
+
+.box-check-cancelar {
+    display: flex;
+    justify-content: center;
+}
+
+.box-check-cancelar input[type="checkbox"] {
+    transform: scale(1.5);
+    margin: 5px;
+    cursor: pointer;
+}
+
+.btn-agregar,.btn {
+    padding: 10px 20px;
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color .5s ease;
+}
+
+.btn-agregar:hover,.btn:hover {
+    background-color: var(--color-hover);
+}
+
+.box-header-tabla-registro-consultas {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+.containerUltimasConsultas {
+    padding: 15px;
+    width: clamp(300px, 100%, 1300px);
+    background-color: #fff;
+    overflow-x: auto;
+    border-radius: 6px;
+}
+
+.containerUltimasConsultas #tablaHistorialConsultas {
+    width: 100%;
+    outline: 2px solid #ccc;
+    padding: 5px;
+    border-radius: 10px;    
+}
+
+.containerUltimasConsultas #tablaHistorialConsultas thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.containerUltimasConsultas #tablaHistorialConsultas th{
+    padding: 10px;
+}
+
+
+.containerUltimasConsultas #tablaHistorialConsultas :is(
+    .td-fecha,.td-acciones
+){
+    text-align: center;
+    padding: 10px;
+    background-color: #f4f4f1;
+}
+
+.modal-detalles-consulta-item pre, .div-p {
+    background-color: #f4f4f4;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    max-height: 115px;
+    overflow-y: auto;
+}
+
+.div-p{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.div-p p{
+    padding: 5px;    
+    display: flex;
+    min-height: 40px;
+    background-color: #ccc;
+    border-radius: 5px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+@media (max-width: 768px) {
+    .tabla-registro-consultas{
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .btn-agregar,.btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .box-header-tabla-registro-consultas {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+@media (width <= 725px){
+    .th-medicaciones,.td-medicaciones{
+        display: none;
+    }
+}
+@media (width <= 600px){
+    .th-estudio,.td-estudio{
+        display: none;
+    }
+
+    .tabla-registro-consultas td textarea,
+    .tabla-registro-consultas td select,
+    .tabla-registro-consultas td input[type="text"] {
+        min-height: 40px;
+    }
+
+    .tabla-registro-consultas,
+    .tabla-registro-consultas thead,
+    .tabla-registro-consultas tbody,
+    .tabla-registro-consultas tr,
+    .tabla-registro-consultas th,
+    .tabla-registro-consultas td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabla-registro-consultas tr {
+        margin-bottom: 15px;
+        outline: 2px solid #222;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    
+    }
+
+    .tabla-registro-consultas td {
+        padding: 5px 0;
+    }
+
+    .tabla-registro-consultas td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #2c3e50;
+    }
+
+    .tabla-registro-consultas thead {
+        display: none;
+    }    
+}
+@media (max-width: 480px) {
+    .container-form-consulta {
+        padding: 15px 10px;
+    }
+
+    .btn-agregar,.btn {
+        font-size: 13px;
+        padding: 8px;
+    }
+
+}
+@media (width <= 472px){
+    .th-diagnostico,.td-diagnostico{
+        display: none;
+    }
+    .td-fecha{
+        text-align: center;
+    }
+}
+
+
+.btn-volver-consulta{
+    align-self: flex-start;
+}
+
+.modal-content.modal-detalles-consulta #closeEditModal{
+    align-self: flex-end;
+}
+
+.modal-content.modal-detalles-consulta{
+    width: clamp(310px, 95%, 1100px);
+    font-size: clamp(.9rem, 3dvw, 1rem);   
+    display: flex;
+    flex-direction: column;
+    gap: 5px;     
+} 
+
+.modal-detalles-consulta-item {
+    margin-bottom: 10px;
+}
+
+.modal-detalles-consulta-item pre {
+    background-color: #f4f4f4;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    max-height: 115px;
+    overflow-y: auto;
+}
+
+#modalEstudios{
+    line-height:20px
+}
+
+.btn-verEstudio{
+    background-color: #48e;
+    color: white;
+    border: none;
+    padding: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* Fin Parte de registro de consulta */
+
+
+/* Parte de Lista de consultas */
+
+.td-fecha-consulta{
+    text-wrap: nowrap;
+}
+
+@media (width <= 500px){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consultas-medico,
+        #tabla-consultas-medicos thead,
+        #tabla-consultas-medico tbody,
+        #tabla-consultas-medico tr,
+        #tabla-consultas-medico th,
+        #tabla-consultas-medico td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consultas-medico tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consultas-medico td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consultas-medico td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consultas-medico td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consultas-medico thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consultas-medico .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/* Fin parte Lista de consultas */
+
+
+
+/* ### Seccion "Detalles de consulta" ### */
+
+.tabla-registro-consultas .campo-center{
+    text-align: center;
+}
+
+.tabla-detalles-consulta td{
+    font-size: clamp(.9rem, 3dvw, .9rem);
+}
+
+@media (max-width: 768px) {
+    .tabla-detalles-consulta {
+        display: inline-table;
+
+    }
+}
+
+
+
+/* ### Seccion "Detalles de consulta" ### */
+
+

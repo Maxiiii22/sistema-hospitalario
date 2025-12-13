@@ -1,0 +1,344 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    {{formAsignarMedicoTratante.media}}  {# requerido por DAL , contiene JS y CSS necesarios) #}
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}
+    <link rel="stylesheet" href="{% static 'estilos/styles_jefeEnfermeria.css' %}">
+    <title>Ficha de paciente</title>
+</head>
+<body>
+    <main class="container-detalles-usuario">
+        <div class="box-form-detalles-usuario">
+            <a id="back-link-solo" href="{% url 'pacientes-jefe-enfermeria' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+            <h2 class="title-ficha">Ficha del paciente {{paciente.persona.get_full_name}} - DNI: {{paciente.persona.dni}}. {% if paciente.responsable %} Responsable a cargo: {{paciente.responsable.adulto.persona.get_full_name}} (DNI: {{paciente.responsable.adulto.persona.dni}}). Parentesco con el menor: {{paciente.responsable.get_parentesco_display}} {% endif %}</h2>  
+            <div class="box-datos">
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <span class="titulo">Datos personales</span>
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label>DNI:</label>
+                                <input type="text" value="{{paciente.persona.dni}}" readonly>
+                            </div>
+                                
+                            <div class="campo-input">
+                                <label>Nombre:</label>
+                                <input type="text" value="{{paciente.persona.first_name}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Apellido:</label>
+                                <input type="text" value="{{paciente.persona.last_name}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Sexo:</label>
+                                <input type="text" value="{{paciente.persona.get_sexo_display}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Telefono{% if paciente.responsable %} del responsable{% endif%}:</label>
+                                <input type="text" value="{% if paciente.responsable %}{{paciente.responsable.adulto.persona.telefono}}{% else %}{{paciente.persona.telefono}}{% endif%}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Email{% if paciente.responsable %} del responsable{% endif%}:</label>
+                                <input type="text" value="{% if paciente.responsable %}{{paciente.responsable.adulto.persona.email}}{% else %}{{paciente.persona.email}}{% endif%}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Fecha nacimiento:</label>
+                                <input type="text" value="{{paciente.persona.fecha_nacimiento|date:'d-m-Y'}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Direccion{% if paciente.responsable %} del responsable{% endif %}:</label>
+                                <input type="text" value="{% if paciente.responsable %}{{paciente.responsable.adulto.direccion}}{% else %}{{paciente.direccion}}{% endif%}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Fecha de registro:</label>
+                                <input type="text" readonly value="{{paciente.persona.date_joined|date:'d-m-Y H:i A'}}">
+                            </div>
+                            {% if not paciente.responsable %}
+                                <div class="campo-input">
+                                    <label>Ultimo inicio de sesion:</label>
+                                    <input type="text" readonly value="{% if paciente.persona.last_login %}{{paciente.persona.last_login|date:'d-m-Y H:i A'}}{% else %}Nunca accedió{% endif %}">
+                                </div>
+                            {% endif %}                                
+                        </div>
+                    </div>
+                </div>
+
+                {% if hospitalizacionesAnteriores %}
+                <div class="secciones">
+                    <div class="datos-personales">                         
+                        <div class="box-asignacion">
+                            <div class="asignacion-header">
+                                <div class="asignacion-item">
+                                    <span><strong>Hospitalizaciones Anteriores</strong></span>
+                                    <a href="{% url 'hospitalizacionesPaciente-jefe-enfermeria' paciente.id %}" class="btn-masDetalles">Ver historial</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}            
+
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <div class="box-header-datos">
+                            <span class="titulo">Paciente alojado en:</span>   
+                            {% if habitacionAsignada %}
+                                {% if not medicoTratante %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="tipo_form" value="formCancelarAsignacionHabitacion">                                    
+                                        {{formCancelarAsignacionHabitacion.asignacionHabitacion_id}}                                    
+                                        <button type="submit" class="btn-masDetalles" id=""><i class="hgi hgi-stroke hgi-cancel-circle-half-dot"></i> Cancelar Asignacion</button>
+                                    </form>
+                                {% endif %}                        
+                                {% if hasAltaMedica %}
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="tipo_form" value="formAltaAdministrativa">                                    
+                                        {{formAltaAdministrativa.paciente_id}}
+                                        {{formAltaAdministrativa.asignacionHabitacion_id}}                                    
+                                        <button type="submit" class="btn-masDetalles" id=""><i class="hgi hgi-stroke hgi-heart-check"></i> Confirmar Alta Administrativa</button>
+                                    </form>
+                                {% endif %}
+                            {% else %}
+                                <button  type="button" class="btn-masDetalles" id="btnAsignarHabitacionPaciente"><i class="hgi hgi-stroke hgi-plus-sign"></i> Asignar habitacion</button>
+                            {% endif %}
+                        </div>                           
+                        {% if habitacionAsignada %}
+                            <div class="box-asignacion">
+                                <div class="asignacion-header">
+                                    <div class="asignacion-item">
+                                        <span><strong>{{habitacionAsignada.lugar.nombre}} - Piso: {{habitacionAsignada.lugar.piso}} - N° Sala: {{habitacionAsignada.lugar.sala}}</strong></span>
+                                        <button  type="button" class="btn-masDetalles" id="btnCambiarHabitacionPaciente" data-id-asignacion-habitacion="{{habitacionAsignada.id}}"><i class="hgi hgi-stroke hgi-exchange-01"></i> Cambiar de habitacion</button>
+                                    </div>
+                                    <div class="asignacion-item">
+                                        {% if medicoTratante %}
+                                            <span><strong>Médico hospitalario asignado: {{medicoTratante.medico.persona.get_full_name}} - Matricula: {{medicoTratante.medico.numero_matricula}}</strong></span>
+                                            <button  type="button" class="btn-masDetalles" id="btnCambiarMedicoTratante" data-id-asignacion-medico="{{medicoTratante.id}}"><i class="hgi hgi-stroke hgi-exchange-01"></i> Modificar médico</button>
+                                        {% else %}
+                                            <span><strong>No hay médico hospitalario asignado todavia</strong></span>
+                                            <button  type="button" class="btn-masDetalles" id="btnAsignarMedicoTratante"><i class="hgi hgi-stroke hgi-plus-sign"></i> Asignar médico</button>
+                                        {% endif %}
+                                    </div>
+                                    <div class="asignacion-enfermeros">
+                                        {% if medicoTratante %}
+                                            <span>Enfermeros asignados:</span>
+                                            {% for dia, turnos in enfermeros_por_dia.items %}
+                                                <div class="asignacion-enfermero-dias">
+                                                    <div class="asignacion-enfermero-dia-header">
+                                                        <span>
+                                                            <strong>{{dia|capfirst}}:</strong>
+                                                            {% for diaa, cantidad in conteo_por_dia.items %}
+                                                                {% if diaa == dia %}
+                                                                    <span class="estado-dia">Turnos cubiertos ({{cantidad}}/3)</span>
+                                                                {% endif %}
+                                                            {% endfor %}                                                        
+                                                        </span>
+                                                        <i class="hgi hgi-stroke hgi-arrow-down-01" id="icon-arrow-{{dia}}" onclick="toggleDia('{{dia}}')"></i>
+                                                    </div>
+                                                
+                                                    <div class="asignacion-enfermero-turnos hidden-linea" id="item-dia-{{dia}}">
+                                                        {% for nombre_turno, info in turnos.items %}
+                                                            <div class="asignacion-enfermero-turnos-item">
+                                                                <span>
+                                                                    <strong>Turno {% if nombre_turno == "dia" %}Diurno{% elif nombre_turno == "tarde" %}Vesperino{% else %}Nocturno{% endif %} ({{info.horario}}):</strong>
+                                                                    {% if info.enfermeros %}
+                                                                        {% for enfermero in info.enfermeros %}
+                                                                            {{enfermero.enfermero.persona.get_full_name}} - Matricula: {{enfermero.enfermero.numero_matricula}}
+                                                                        {% endfor %}
+                                                                    {% else %}
+                                                                        Sin enfermero
+                                                                    {% endif %}
+                                                                </span>
+                                                                {% if info.enfermeros %}
+                                                                    {% for enfermero in info.enfermeros %}
+                                                                        <button type="button" class="btn-masDetalles btn-enfermero" onclick="abrirModalCambiarEnfermero(this)" data-id-asignacion-enfermero="{{enfermero.id}}" data-id-jornada-laboral="{{enfermero.jornada.id}}"><i class="hgi hgi-stroke hgi-exchange-01"></i> Cambiar enfermero</button>                                                                
+                                                                    {% endfor %}
+                                                                {% else %}
+                                                                    <button type="button" class="btn-masDetalles btn-enfermero"
+                                                                        onclick="abrirModalAsignarEnfermero(this)"
+                                                                        data-id-jornada-laboral="{{info.id_jornada}}"
+                                                                        data-dia-jornada-laboral="{{dia|capfirst}}"
+                                                                        data-horario-jornada-laboral="{{info.horario}}">
+                                                                        Asignar enfermero
+                                                                    </button>
+                                                                {% endif %}
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span><strong>Para habilitar la asignación de enfermeros, es necesario asignar un médico en primer lugar.</strong></span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="container-noHospitalizacion">
+                                <p class="item-noHospitalizacion"><strong>El paciente no esta alojado en ninguna habitacion</strong></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="editModal" class="modal {% if errorModal %}show errorModal{% endif %}">
+        <div class="modal-content modal-detalles-usuario">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">{% if titleModal %}{{titleModal}}{% endif %}</h2>
+            <div id="seccion-asignarHab" class="seccionesDelForm" {% if errorFormAsignarHab %}style="display:block"{% endif %}>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="formAsignarHab">
+                    <input type="hidden" name="id_instanceAsignacionHabitacion" id="id_instanceAsignacionHabitacion" value="">
+                    {% if formAsignarHab.non_field_errors %}
+                        <ul class="error-message-main">
+                            {% for error in formAsignarHab.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{ formAsignarHab.paciente }}                      
+                    <div class="campo-input scroll-wrapper-multipleCheck">
+                        {{ formAsignarHab.lugar.label_tag }}
+                        {{ formAsignarHab.lugar }}
+                        <div class="fade-bottom"></div>                     
+                    </div>
+                    {% if formAsignarHab.lugar.errors %}
+                        <div class="error-message">
+                            {% for error in formAsignarHab.lugar.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn-guardar">Asignar</button>
+                </form>
+            </div>
+            <div id="seccion-asignarMedicoTratante" class="seccionesDelForm" {% if errorFormAsignarMedicoTratante %}style="display:block"{% endif %}>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="formAsignarMedicoTratante">
+                    <input type="hidden" name="id_instanceMedicoTratante" id="id_instanceMedicoTratante" value="">
+                    {% if formAsignarMedicoTratante.non_field_errors %}
+                        <ul class="error-message-main">
+                            {% for error in formAsignarMedicoTratante.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{ formAsignarMedicoTratante.asignacion_habitacion }}                      
+                    <div class="campo-input">
+                        {{ formAsignarMedicoTratante.medico.label_tag }}
+                        {{ formAsignarMedicoTratante.medico }}
+                        {% if formAsignarMedicoTratante.medico.errors %}
+                            <div class="error-message">
+                                {% for error in formAsignarMedicoTratante.medico.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <button type="submit" class="btn-guardar">Asignar</button>
+                </form>
+            </div>
+            <div id="seccion-asignarEnfermero" class="seccionesDelForm" {% if errorFormAsignarEnfermero %}style="display:block"{% endif %}>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="formAsignarEnfermero">
+                    <input type="hidden" name="id_instanceAsignacionEnfermero" id="id_instanceAsignacionEnfermero" value="">
+                    {% if formAsignarEnfermero.non_field_errors %}
+                        <ul class="error-message-main">
+                            {% for error in formAsignarEnfermero.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{ formAsignarEnfermero.asignacion_habitacion }}                      
+                    {{ formAsignarEnfermero.jornada }}                      
+                    <div class="campo-input">
+                        {{ formAsignarEnfermero.enfermero.label_tag }}
+                        {{ formAsignarEnfermero.enfermero }}
+                        {% if formAsignarEnfermero.enfermero.errors %}
+                            <div class="error-message">
+                                {% for error in formAsignarEnfermero.enfermero.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>                    
+
+                    <button type="submit" class="btn-guardar">Asignar</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{% static 'js/jefeEnfermeria.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+
+</body>
+</html>

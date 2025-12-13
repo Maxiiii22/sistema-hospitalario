@@ -1,0 +1,133 @@
+{% extends 'layout/base-pacientes.html' %}
+{% load static %}
+
+{% block css %}  
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Menores a mi cargo</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-gestion-menores">
+        <h1 class="title-turnos">Menores a mi cargo</h1>
+        <a href="{% url 'registrarMenor' %}" class="registro-link"><i class="hgi hgi-stroke hgi-plus-sign"></i> Registrar nuevo menor a cargo</a>
+        <div class="card-container">
+            {% for paciente in menores_relaciones %}
+                <div class="card">
+                    <div class="card-datos-menor">
+                        <h3>{{ paciente.menor.persona.first_name }} {{ paciente.menor.persona.last_name }}</h3>
+                        <p><strong>Parentesco:</strong> {{ paciente.get_parentesco_display }}</p>
+                        <p><strong>DNI:</strong> {{ paciente.menor.persona.dni }}</p>
+                        <p><strong>Fecha de nacimiento:</strong> {{ paciente.menor.persona.fecha_nacimiento|date:"d/m/Y" }}</p>
+                        <p><strong>Sexo:</strong> {{ paciente.menor.persona.get_sexo_display }}</p>
+                        <p><strong>Estado:</strong>
+                            {% if paciente.menor.persona.is_active %}
+                                <span class="estado-activo">Activo</span>
+                            {% else %}
+                                <span class="estado-inactivo">Inactivo</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="card-buttons">
+                        <a href="{% url 'susTurnos' paciente.menor.id %}" class="btn-ver-turno">Sus turnos</a>
+                        <a href="{% url 'suHistorial' paciente.menor.id %}" class="btn-ver-consultas">Historial clinico</a>
+                        <a href="{% url 'seleccionarTurno' paciente.menor.id %}" class="btn-turno">Sacar turno</a>
+                        <button class="btn-modal" data-id-menor="{{paciente.menor.id}}">Editar datos del menor</button>
+                        <a href="#" class="btn-cancelar">Cancelar pago</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div id="editModal" class="modal {% if error %}show errorModal{% endif %}">
+        <div class="modal-content modal-gestion-menores">
+        <span id="closeEditModal" class="close">&times;</span>
+        <h2 id="modal-title">Editar datos del menor</h2>
+        <form id="editForm" method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" id="id_menor" name="id_menor" value="{% if error %}{{id_paciente}}{% endif %}">
+            <div class="campo-input">
+                {{ form.dni.label_tag }}
+                {{ form.dni }}
+                {% if form.dni.errors %}
+                    <div id="error_dni" class="error-message">
+                        {% for error in form.dni.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="campo-input">
+                <label for="id_first_name">Nombre:</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div id="error_first_name" class="error-message">
+                        {% for error in form.first_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="campo-input">
+                <label for="id_last_name">Apellido:</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div id="error_last_name" class="error-message">
+                        {% for error in form.last_name.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+                
+            <div class="campo-input">
+                {{ form.sexo.label_tag }}
+                {{ form.sexo }}
+                {% if form.sexo.errors %}
+                    <div id="error_sexo" class="error-message">
+                        {% for error in form.sexo.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="campo-input">
+                {{ form.fecha_nacimiento.label_tag }}
+                {{ form.fecha_nacimiento }}
+                {% if form.fecha_nacimiento.errors %}
+                    <div id="error_fecha_nacimiento" class="error-message">
+                        {% for error in form.fecha_nacimiento.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="campo-input">
+                {{ form.parentesco.label_tag }}
+                {{ form.parentesco }}
+                {% if form.parentesco.errors %}
+                    <div id="error_parentesco" class="error-message">
+                        {% for error in form.parentesco.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>           
+            <button type="submit" class="btn-accion">Guardar</button>
+        </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_js %}
+    <script src="{% static 'js/pacientes.js' %}"></script>
+{% endblock %}
+

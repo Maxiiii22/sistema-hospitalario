@@ -1,0 +1,36 @@
+<table class="tabla-global" id="tabla-gestion-especialidades">
+    <thead>
+        {% if allEspecialidades %}
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th class="columna-ubicacion">Ubicado en el departamento de</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay especialidades registradas.</td>
+            </tr>        
+        {% elif allEspecialidades.count == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay especialidades que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for especialidad in allEspecialidades %}
+            <tr class="fila">
+                <td data-label="ID:">{{especialidad.id}}</td>
+                <td data-label="Nombre:">{{especialidad.nombre_especialidad}}</td>
+                <td data-label="Ubicado en el departamento de:" class="columna-ubicacion">{{especialidad.departamento.nombre_departamento}}</td>
+                <td data-label="Acciones:">
+                    <div class="box-btns-td-acciones">
+                        <button class="btn-masDetalles" data-id-especialidad="{{ especialidad.id }}">Mas detalles</button>
+                    </div>
+                </td>  
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

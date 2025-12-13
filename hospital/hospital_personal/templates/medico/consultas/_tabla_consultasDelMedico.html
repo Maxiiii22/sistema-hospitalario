@@ -1,0 +1,34 @@
+<table class="tabla-global" id="tabla-consultas-medico">
+    {% if consultas %}
+    <thead>
+        <tr>
+            <th>ID consulta</th>
+            <th>Fecha de la consulta</th>
+            <th class="td-paciente">Paciente</th>
+            <th>Accion</th>
+        </tr>
+    </thead>
+    {% endif %}
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No se realizaron consultas hasta el momento.</td>
+            </tr>        
+        {% elif consultas.count == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay consultas que coincidancon el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for consulta in consultas %}
+            <tr class="fila">
+                <td data-label="ID Consulta:">{{consulta.id}}</td>
+                <td class="td-fecha-consulta" data-label="Fecha de la consulta:">{{consulta.fecha|date:"d-m-Y"}}</td>
+                <td data-label="Paciente">{{consulta.turno.paciente.persona.get_full_name}} - DNI: {{consulta.turno.paciente.persona.dni}}</td>
+                <td data-label="Acciones" class="td-acciones">
+                    <a href="{% url 'detallesConsulta' consulta.id %}" class="btn-accion">Mas detalles</a>
+                </td>   
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

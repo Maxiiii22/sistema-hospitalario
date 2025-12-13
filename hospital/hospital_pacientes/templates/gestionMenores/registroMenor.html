@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+    <title>Registrar menor de edad</title>
+</head>
+<body class="body-detallesPaciente">
+    <div class="container-form-paciente">
+        <a id="back-link-solo" {% if haveMenores %} href="{% url 'gestionMenores' %}" {% else %} href="#" onclick="history.back(); return false;"{% endif %}class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>
+        <h2 class="title-ficha">Registrar un menor a tu cargo</h2>
+        
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="secciones">
+                <div class="datos-paciente">
+                    <span class="titulo">Datos personales</span>
+                    <div class="campos">
+                        <div class="campo-input">
+                            {{ form.dni.label_tag }}
+                            {{ form.dni }}
+                            {% if form.dni.errors %}
+                                <div id="error_dni" class="error-message">
+                                    {% for error in form.dni.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="campo-input">
+                            <label for="id_first_name">Nombre:</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div id="error_first_name" class="error-message">
+                                    {% for error in form.first_name.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="campo-input">
+                            <label for="id_last_name">Apellido:</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div id="error_last_name" class="error-message">
+                                    {% for error in form.last_name.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                            
+                        <div class="campo-input">
+                            {{ form.sexo.label_tag }}
+                            {{ form.sexo }}
+                            {% if form.sexo.errors %}
+                                <div id="error_sexo" class="error-message">
+                                    {% for error in form.sexo.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="campo-input">
+                            {{ form.fecha_nacimiento.label_tag }}
+                            {{ form.fecha_nacimiento }}
+                            {% if form.fecha_nacimiento.errors %}
+                                <div id="error_fecha_nacimiento" class="error-message">
+                                    {% for error in form.fecha_nacimiento.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="campo-input">
+                            {{ form.parentesco.label_tag }}
+                            {{ form.parentesco }}
+                            {% if form.parentesco.errors %}
+                                <div id="error_parentesco" class="error-message">
+                                    {% for error in form.parentesco.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn-global">Registrar menor</button>
+        </form>
+    </div>
+
+</body>
+</html>
+
+

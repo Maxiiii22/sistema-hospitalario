@@ -1,0 +1,55 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_enfermero.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Lista de Mis pacientes</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-enfermero">
+        <h1>Lista de Mis Pacientes</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-enfermero" id="box-tabla-general">
+            {% include 'enfermero/tablasDinamicas/_tabla_pacientes.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-nota-enfermero">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Detalles del paciente</h2>
+            <form id="filtro-form" method="get">
+                <div class="campo-input">
+                    {{filtro.form.asignacion_habitacion__paciente__persona__dni.label_tag}}
+                    {{filtro.form.asignacion_habitacion__paciente__persona__dni}}
+                </div>
+                <div class="campo-input">
+                    {{filtro.form.asignacion_habitacion__paciente__persona__first_name.label_tag}}
+                    {{filtro.form.asignacion_habitacion__paciente__persona__first_name}}
+                </div>
+                <div class="campo-input">
+                    {{filtro.form.asignacion_habitacion__paciente__persona__last_name.label_tag}}
+                    {{filtro.form.asignacion_habitacion__paciente__persona__last_name}}
+                </div>
+                <div class="campo-input">
+                    {{filtro.form.asignacion_habitacion__lugar.label_tag}}
+                    {{filtro.form.asignacion_habitacion__lugar}}
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/enfermeros.js' %}" ></script>
+{% endblock %}
+
+

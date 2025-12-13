@@ -1,0 +1,36 @@
+<table class="tabla-global" id="tabla-gestion-rolesProfesionales">
+    <thead>
+        {% if allRolesProfesionales %}
+        <tr>
+            <th>ID</th>
+            <th>Nombre rol</th>
+            <th>Tipo de usuario</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay roles profesionales registrados.</td>
+            </tr>        
+        {% elif allRolesProfesionales.count == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay roles profesionales que coincidan con el filtro.</td>
+            </tr>
+        {% else %}
+            {% for rol in allRolesProfesionales %}
+                <tr class="fila">
+                    <td data-label="ID Rol Profesional">{{rol.id}}</td>
+                    <td data-label="Nombre">{{rol.nombre_rol_profesional}}</td>
+                    <td data-label="Tipo de usuario">{{rol.tipoUsuario.nombre_tipoUsuario}}</td>
+                    <td data-label="Acciones">
+                        <div class="box-btns-td-acciones">
+                            <button class="btn-masDetalles" data-id-rol-profesional="{{ rol.id }}">Mas detalles</button>
+                        </div>
+                    </td>  
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

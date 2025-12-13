@@ -1,0 +1,209 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Gestion de lugares del hospital</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-superadmin">
+        <h1>Gestionar Lugares del hospital</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="newLugar"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nuevo lugar</button>
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+
+        
+        <div class="box-tablas-superadmin" id="box-tabla-general">
+            {% include 'superadmin/tablasDinamicas/_tabla_lugares.html' %}
+        </div>
+    </div>
+
+
+    <div id="editModal" class="modal {% if abrir_modal_por_error %}show errorModal{% endif %}">
+        <div class="modal-content modal-lugares">
+        <span id="closeEditModal" class="close">&times;</span>
+        <h2 id="modal-title">Editar lugar</h2>            
+            <div id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.nombre.label_tag}}
+                        {{filtro.form.nombre}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.tipo.label_tag}}
+                        {{filtro.form.tipo}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.piso.label_tag}}
+                        {{filtro.form.piso}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.sala.label_tag}}
+                        {{filtro.form.sala}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.es_critico.label_tag}}
+                        {{filtro.form.es_critico}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.activo.label_tag}}
+                        {{filtro.form.activo}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.departamento.label_tag}}
+                        {{filtro.form.departamento}}
+                    </div>
+                </form>
+            </div>
+            <div id="seccion-edit" {% if abrir_modal_por_error %}style="display:block"{% endif %} >
+                <form id="editForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_lugar" name="id_lugar">
+                    
+                    <div class="campo-input">
+                        {{ form.nombre.label_tag }}
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <div id="error_nombre" class="error-message">
+                                {% for error in form.nombre.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.tipo.label_tag }}
+                        {{ form.tipo }}
+                        {% if form.tipo.errors %}
+                            <div id="error_tipo" class="error-message">
+                                {% for error in form.tipo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.piso.label_tag }}
+                        {{ form.piso }}
+                        {% if form.piso.errors %}
+                            <div id="error_piso" class="error-message">
+                                {% for error in form.piso.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.sala.label_tag }}
+                        {{ form.sala }}
+                        {% if form.sala.errors %}
+                            <div class="error-message">
+                                {% for error in form.sala.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.abreviacion.label_tag }}
+                        {{ form.abreviacion }}
+                        {% if form.abreviacion.errors %}
+                            <div class="error-message">
+                                {% for error in form.abreviacion.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.capacidad.label_tag }}
+                        {{ form.capacidad }}
+                        {% if form.capacidad.errors %}
+                            <div id="error_capacidad" class="error-message">
+                                {% for error in form.capacidad.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.unidad.label_tag }}
+                        {{ form.unidad }}
+                        {% if form.unidad.errors %}
+                            <div class="error-message">
+                                {% for error in form.unidad.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="campo-input">
+                        {{ form.departamento.label_tag }}
+                        {{ form.departamento }}
+                        {% if form.departamento.errors %}
+                            <div class="error-message">
+                                {% for error in form.departamento.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input campo-textarea">
+                        {{ form.descripcion.label_tag }}
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <div id="error_descripcion" class="error-message">
+                                {% for error in form.descripcion.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        <label for="id_es_critico">Marque la casilla si el lugar es "Critico"</label>
+                        {{ form.es_critico }}
+                        {% if form.es_critico.errors %}
+                            <div id="error_es_critico" class="error-message">
+                                {% for error in form.es_critico.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        <label for="id_es_critico">Marque la casilla si el lugar esta "Activo"</label>
+                        {{ form.activo }}
+                        {% if form.activo.errors %}
+                            <div id="error_activo" class="error-message">
+                                {% for error in form.activo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/superadmin.js' %}"></script>
+{% endblock %}

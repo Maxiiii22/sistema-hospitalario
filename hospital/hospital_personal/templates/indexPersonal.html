@@ -1,0 +1,16 @@
+{% extends 'layout/base-personal.html' %}
+
+{% block css %}  {% endblock %}
+
+{% block titulo %}
+    <title>Personal</title>
+{% endblock %}
+
+{% block contenido %}
+    <h1>Bienvenido {% if user.is_authenticated %} {{user.usuario.tipoUsuario.nombre_tipoUsuario}} {{user.get_full_name}} - N° Legajo: {{user.login_id}} {% endif%} </h1>
+
+{% endblock %}
+
+{% block scripts_js %}  {% endblock %}
+
+

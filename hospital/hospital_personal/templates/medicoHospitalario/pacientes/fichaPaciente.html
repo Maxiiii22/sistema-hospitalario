@@ -1,0 +1,336 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}
+    <link rel="stylesheet" href="{% static 'estilos/styles_medicoHospitalario.css' %}">
+    <title>Ficha de paciente</title>
+</head>
+<body>
+    <main class="container-detalles-usuario">
+        <div class="box-form-detalles-usuario">
+            <h2 class="title-ficha">Ficha del paciente {{habitacionAsignada.paciente.persona.get_full_name}} - DNI: {{habitacionAsignada.paciente.persona.dni}} {% if habitacionAsignada.paciente.responsable %} a cargo de {{habitacionAsignada.paciente.responsable.adulto.persona.get_full_name}} con el DNI: {{habitacionAsignada.paciente.responsable.adulto.persona.dni}} - Parentesco con el menor: {{habitacionAsignada.paciente.responsable.get_parentesco_display}} {% endif %}</h2>  
+            <div class="box-datos">
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <span class="titulo">Datos personales</span>
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label>DNI:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.dni}}" readonly>
+                            </div>
+                                
+                            <div class="campo-input">
+                                <label>Nombre:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.first_name}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Apellido:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.last_name}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Sexo:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.get_sexo_display}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Telefono{% if habitacionAsignada.paciente.responsable %} del responsable{% endif%}:</label>
+                                <input type="text" value="{% if habitacionAsignada.paciente.responsable %}{{habitacionAsignada.paciente.responsable.adulto.persona.telefono}}{% else %}{{habitacionAsignada.paciente.persona.telefono}}{% endif%}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Fecha nacimiento:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.fecha_nacimiento|date:'d-m-Y'}}" readonly>
+                            </div>
+                                
+                    </div>
+                </div>
+            </div>
+    
+            <div class="secciones">
+                <div class="datos-personales">
+                    <div class="box-header-datos">
+                        <span class="titulo">Información de la asignacion del paciente:</span> 
+                        {% if not alta %}  
+                            <button  type="button" class="btn-masDetalles" id="btnAltaMedica"><i class="hgi hgi-stroke hgi-heart-check"></i> Indicar alta médica</button>
+                        {% endif %}
+                    </div>                           
+                        <div class="box-asignacion">
+                            <div class="asignacion-header">
+                                <div class="asignacion-item">
+                                    <span><strong>{% if not alta %}Ubicado en:{% else %}Durante su estancia, ocupó:{% endif %} {{habitacionAsignada.lugar.nombre}} - Piso: {{habitacionAsignada.lugar.piso}} - N° Sala: {{habitacionAsignada.lugar.sala}}</strong></span>
+                                </div>
+                                <div class="asignacion-item">
+                                    <span><strong>Fecha de Ingreso: </strong>{{habitacionAsignada.fecha_ingreso|date:"d-m-Y"}}</span>
+                                </div>
+                                {% if alta %}                                                                        
+                                    <div class="asignacion-item box-evaluacion-clinica">
+                                        <div class="asignacion-evaluacion-clinica">
+                                            <span><strong>Alta Médica:</strong></span>
+                                        </div>
+                                        <div class="form-evaluaciones-clinicas form-alta-medica">
+                                            <div class="campo-evaluaciones-clinicas"> 
+                                                <label>Fecha de Alta Médica:</label>
+                                                <textarea id="textarea_fechayhorario" readonly>{{alta.fecha_alta}}</textarea>                                                                                                                                             
+                                            </div>
+                                            <div class="campo-evaluaciones-clinicas">                                               
+                                                <label>Diagnostico Principal:</label>   
+                                                <textarea readonly>{{alta.diagnostico_principal}}</textarea>                                                                                                                                             
+                                            </div>
+                                            <div class="campo-evaluaciones-clinicas">                                               
+                                                <label>Diagnostico Secundario:</label>   
+                                                <textarea readonly>{{alta.diagnosticos_secundarios}}</textarea>                                                                                                                                             
+                                            </div>
+                                            <div class="campo-evaluaciones-clinicas">                                               
+                                                <label>Tratamiento Realizado:</label>   
+                                                <textarea readonly>{{alta.tratamiento_realizado}}</textarea>                                                                                                                                             
+                                            </div>
+                                            <div class="campo-evaluaciones-clinicas">                                               
+                                                <label>Indicaciones Post Alta:</label>   
+                                                <textarea readonly>{{alta.indicaciones_post_alta}}</textarea>                                                                                                                                             
+                                            </div>
+                                        </div>                                     
+                                    </div>
+                                {% endif %}
+                                <div class="asignacion-item">
+                                    <span><strong>Historial de Notas de Enfermería:</strong></span>
+                                    <a href="{% url 'notasEnfermeria-medico-hospitalario' habitacionAsignada.id %} "class="btn-masDetalles" id=""><i class="hgi hgi-stroke hgi-file-view"></i> Ver Notas de Enfermería</a>
+                                </div>
+                                <div class="asignacion-item box-evaluacion-clinica">
+                                    <div class="asignacion-evaluacion-clinica">
+                                        <span><strong>Evaluación Médica:</strong></span>
+                                        {% if not alta %}  
+                                            <button  type="button" class="btn-masDetalles" id="btnEvaluacionMedica" {% if ultima_observacion %} data-id-observacion-medico="{{ultima_observacion.pk}}"{% endif %}><i class="hgi hgi-stroke hgi-file-add"></i> Nueva Evaluación Médica</button>                                        
+                                        {% endif %}
+                                    </div>
+                                    {% if formularios_evaluacion %}
+                                        {% for formReadOnly in formularios_evaluacion %}
+                                            <div class="form-evaluaciones-clinicas evaluacion-item" data-index="{{forloop.counter0}}" {% if forloop.counter0 != 0 %} style="display:none;"{% endif %}>
+                                                <div class="campo-evaluaciones-clinicas"> 
+                                                    {% if ultima_observacion.pk == formReadOnly.instance.pk %}
+                                                        <label>Última actualización:</label>
+                                                    {% else %}
+                                                        <label>Subido el:</label>
+                                                    {% endif %}
+                                                    <textarea id="textarea_fechayhorario" readonly>{{formReadOnly.instance.fecha_y_horario}}</textarea>                                                                                                                                             
+                                                </div>
+                                                <div class="campo-evaluaciones-clinicas">                                               
+                                                    {{formReadOnly.motivo.label_tag}}   
+                                                    {{formReadOnly.motivo}}   
+                                                </div>
+                                                <div class="campo-evaluaciones-clinicas">
+                                                    {{formReadOnly.diagnostico.label_tag}}   
+                                                    {{formReadOnly.diagnostico}}   
+                                                </div>
+                                                <div class="campo-evaluaciones-clinicas">
+                                                    {{formReadOnly.evolucion_clinica.label_tag}}   
+                                                    {{formReadOnly.evolucion_clinica}}   
+                                                </div>
+                                                <div class="campo-evaluaciones-clinicas">
+                                                    {{formReadOnly.indicaciones.label_tag}}   
+                                                    {{formReadOnly.indicaciones}}   
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                        {% if formularios_evaluacion|length > 1 %}
+                                            <button id="btnVerAnterior" class="btn-masDetalles">Ver evaluación anterior</button>
+                                            <button id="btnOcultarUna" class="btn-masDetalles" style="display:none;">Ocultar evaluación</button>
+                                        {% endif %}                                        
+                                    {% endif %}
+                                </div>
+
+                                
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="editModal" class="modal {% if errorModal %}show errorModal{% endif %}">
+        <div class="modal-content modal-evaluacion-medica">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">{% if titleModal %}{{titleModal}}{% endif %}</h2>
+            <div id="seccion-evaluacionMedica" class="seccionesDelForm" {% if errorFormEvaluacionMedica %}style="display:block"{% endif %}>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="form_evaluacionMedica">
+                    {% if form.non_field_errors %}
+                        <ul class="error-message-main">
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{form.asignacion_medico}}
+                    <div class="campo-input">
+                        {{ form.motivo.label_tag }}
+                        {{ form.motivo }}
+                        {% if form.motivo.errors %}
+                            <div class="error-message">
+                                {% for error in form.motivo.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <div class="campo-input">
+                        {{ form.diagnostico.label_tag }}
+                        {{ form.diagnostico }}
+                        {% if form.diagnostico.errors %}
+                            <div class="error-message">
+                                {% for error in form.diagnostico.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <div class="campo-input">
+                        {{ form.evolucion_clinica.label_tag }}
+                        {{ form.evolucion_clinica }}
+                        {% if form.evolucion_clinica.errors %}
+                            <div class="error-message">
+                                {% for error in form.evolucion_clinica.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <div class="campo-input">
+                        {{ form.indicaciones.label_tag }}
+                        {{ form.indicaciones }}
+                        {% if form.indicaciones.errors %}
+                            <div class="error-message">
+                                {% for error in form.indicaciones.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+    
+                    <button type="submit" class="btn-guardar">Confirma</button>
+                </form>
+            </div>
+            <div id="seccion-altaMedica" class="seccionesDelForm" {% if errorFormAltaMedica %}style="display:block"{% endif %}>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="form_altaMedica">
+                    {% if formAltaMedica.non_field_errors %}
+                        <ul class="error-message-main">
+                            {% for error in formAltaMedica.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {{formAltaMedica.asignacion_medico}}
+                    <div class="campo-input">
+                        {{ formAltaMedica.diagnostico_principal.label_tag }}
+                        {{ formAltaMedica.diagnostico_principal }}
+                        {% if formAltaMedica.diagnostico_principal.errors %}
+                            <div class="error-message">
+                                {% for error in formAltaMedica.diagnostico_principal.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <div class="campo-input">
+                        {{ formAltaMedica.diagnosticos_secundarios.label_tag }}
+                        {{ formAltaMedica.diagnosticos_secundarios }}
+                        {% if formAltaMedica.diagnosticos_secundarios.errors %}
+                            <div class="error-message">
+                                {% for error in formAltaMedica.diagnosticos_secundarios.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <div class="campo-input">
+                        {{ formAltaMedica.tratamiento_realizado.label_tag }}
+                        {{ formAltaMedica.tratamiento_realizado }}
+                        {% if formAltaMedica.tratamiento_realizado.errors %}
+                            <div class="error-message">
+                                {% for error in formAltaMedica.tratamiento_realizado.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    <div class="campo-input">
+                        {{ formAltaMedica.indicaciones_post_alta.label_tag }}
+                        {{ formAltaMedica.indicaciones_post_alta }}
+                        {% if formAltaMedica.indicaciones_post_alta.errors %}
+                            <div class="error-message">
+                                {% for error in formAltaMedica.indicaciones_post_alta.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}                     
+                    </div>
+                    
+    
+                    <button type="submit" class="btn-guardar">Confirma</button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="{% static 'js/medicosHospitalarios.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+
+</body>
+</html>

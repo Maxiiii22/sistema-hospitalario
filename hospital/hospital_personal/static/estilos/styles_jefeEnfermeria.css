@@ -1,0 +1,1515 @@
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-terciario: #DCDDEB;
+    --color-hover: #34A;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+/* ### Clases globales ### */
+
+.resaltar {
+    animation: flash 1s ease-in-out 3;
+}
+
+@keyframes flash {
+    0%   { background-color: #ffffcc; }
+    50%  { background-color: #fff5a5; }
+    100% { background-color: #ffffcc; }
+}
+
+.seccionesDelForm{
+    display: none;
+}
+
+.fade-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    margin-bottom: 5px;
+}
+
+.fila{
+    background-color: #f4f4f1;
+    border-radius: 5px;
+}
+
+.fila:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.error-message p{
+    margin: 0;
+}
+
+.error-message-main{
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+#back-link-solo{
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color .3s ease;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+
+}
+
+#back-link-solo:hover{
+    background-color: var(--color-hover);
+}
+
+.box-btn-add{
+    margin: 10px 0;
+}
+
+.btn-masDetalles{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: clamp(0.8rem, 3vw, .9rem);
+    font-weight: normal;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color .5s ease;
+}
+
+.btn-masDetalles:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-accion {
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0 3px;
+    min-height: 30px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin-bottom: 2px;
+    transition: background-color .5s ease;
+
+}
+
+.btn-accion:hover {
+    background-color: var(--color-hover);
+}
+
+.container-global-jefe-enfermeria{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+/* ### Fin Clases globales ### */
+
+
+
+/* Modal global */
+
+#btnFichaPaciente{
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center; 
+}
+
+.modal.show {
+    display: flex; 
+    
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 10px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#modal-title {
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+.btn-guardar {
+    padding: 0.7rem 1.5rem;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color .5s ease;
+}
+
+.btn-guardar:hover{
+    background-color: var(--color-hover);
+}
+
+.form-error-modal {
+    background-color: red;
+    padding: 8px;
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    display: none;
+}
+
+#inputFeedback {
+    color: red;
+    text-align: center;
+}
+
+
+.campo-input label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+}
+
+.campo-input input,.campo-input select,.campo-input textarea{
+    padding: 0 15px;
+    outline: none;
+    border: 1px solid #000;
+    border-radius: 5px;
+    height: 42px;
+    margin: 8px 0;
+}
+
+.campo-input textarea{
+    resize: vertical;
+    height: 150px;
+}
+
+.campo-input input:is(:focus, :valid),.campo-input select:is(:focus, :valid),.campo-input textarea:is(:focus, :valid){
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
+}
+
+
+#filtro-form .campo-input{ 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Fin modal global*/
+
+
+
+/* Tabla global */
+
+.tabla-global{
+    width: 100%;
+    border-radius: 5px;
+}
+
+.tabla-global thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.tabla-global th{
+    padding: 12px 0;
+    text-align: center;
+}
+
+.tabla-global td{
+    padding: 5px;
+    text-align: center;
+    height: 45px;
+    font-size: clamp(.8rem, 3vw, 1rem);
+}
+
+.box-btn-add{
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+.container-global-enfermero{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Fin tabla global */
+
+/* ### Seccion "Lista de pacientes" ### */
+
+@media (width >= 700px ) and (width <= 960px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-lista-pacientes,
+        #tabla-lista-pacientes thead, 
+        #tabla-lista-pacientes tbody,
+        #tabla-lista-pacientes tr,
+        #tabla-lista-pacientes th,
+        #tabla-lista-pacientes td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-pacientes tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-pacientes td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-pacientes td:last-child{
+        border-bottom: 0;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-pacientes td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-pacientes thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-pacientes .empty-message{
+        justify-content: center;
+    }
+
+}
+
+
+@media(width <= 850px ){
+    #tabla-lista-pacientes,
+    #tabla-lista-pacientes thead, 
+    #tabla-lista-pacientes tbody,
+    #tabla-lista-pacientes tr,
+    #tabla-lista-pacientes th,
+    #tabla-lista-pacientes td
+    {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    #tabla-lista-pacientes tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    #tabla-lista-pacientes td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #tabla-lista-pacientes td:last-child{
+        border-bottom: 0;
+    }
+
+    #tabla-lista-pacientes td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    #tabla-lista-pacientes thead {
+        display: none;
+    }   
+
+    .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    #tabla-lista-pacientes .empty-message{
+        justify-content: center;
+    }
+
+}
+
+/* ### Fin Seccion "Lista de pacientes" ### */
+
+
+
+
+.modal-detalles-paciente{
+    width: clamp(315px, 98%, 500px);
+} 
+
+.modal-detalles-paciente-item {
+    margin-bottom: 10px;
+}
+
+
+
+
+/* ### Seccion "Ficha paciente" ###  */
+
+#id_input-mostrar-dato{
+    display: none;
+}
+
+.campos-modal{ /* Inputs del modal */
+    width: 100%;
+}
+
+.container-detalles-usuario{
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6e6e6;
+}
+
+.box-form-detalles-usuario{
+    position: relative;
+    width: clamp(314px,98%,900px);
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 10px; 
+    margin: 10px 0;
+}
+
+.box-form-detalles-usuario h2{
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.box-form-detalles-usuario .title-ficha{
+    text-align: center;
+    margin: 10px 0;
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.box-datos{
+    position: relative;
+    margin-top: 15px;
+}
+
+.box-form-detalles-usuario .box-datos .secciones{
+    margin-top: 20px;
+}
+
+.box-form-detalles-usuario .box-datos .titulo{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+
+.box-form-detalles-usuario .box-datos .campos{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.box-datos .campos .campo-input{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% / 3 - 15px);
+    margin: 4px 0;
+}
+
+.datos-personales{
+    outline: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.box-asignacion {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    transition: background-color 0.5s ease;
+    background-color: #fff;
+}
+
+.box-header-datos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    padding: 5px 0;
+}
+
+.asignacion-header {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hgi.hgi-stroke.hgi-arrow-down-01{
+    cursor: pointer;
+}
+
+.asignacion-item{
+    border-bottom: 1px dotted black;
+    border-right: 1px dotted black;
+    border-radius: 2px;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--color-terciario);
+    min-height: 43px;
+}
+
+.asignacion-enfermeros{
+    padding: 5px;
+    border-bottom: 1px dotted black;
+    border-right: 1px dotted black;
+    border-radius: 2px;
+    background-color: var(--color-terciario);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-height: 43px;
+    justify-content: center;
+}
+
+.asignacion-enfermero-dias{
+    padding: 5px;
+    background-color: var(--color-terciario);
+    border-radius: 2px;
+    outline: 1px dotted #000;
+}
+
+.asignacion-enfermero-dia-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+}
+
+.asignacion-enfermero-turnos{
+    outline: 1px solid #000;
+    border-radius: 3px;
+    background-color: var(--color-terciario);
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity .8s ease;
+    interpolate-size: allow-keywords;   /* Esto permite que se pueda hacer la transition de un height fijo a un auto/max-content/fit-content,etc.  */
+}
+
+.asignacion-enfermero-turnos-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dotted #000;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.hidden-linea{
+    max-height: 0;
+    opacity: 0;
+}
+
+.asignacion-item.box-evaluacion-clinica{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.asignacion-evaluacion-clinica{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.form-evaluaciones-clinicas{
+    width: 100%;
+    padding: 5px;
+    outline: 1px solid #000;
+    border-radius: 3px;
+}
+
+.campo-evaluaciones-clinicas label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.campo-evaluaciones-clinicas textarea{
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 150px;
+    font-size: 14px;
+}
+
+
+.item-noHospitalizacion{
+    margin: 0;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    outline: 1px solid grey;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    text-wrap: wrap;
+    /* width: clamp(253px, 100%, 810px); */
+    background-color: var(--color-terciario);
+}
+
+.item-noHospitalizacion form{
+    display: initial;
+} 
+
+.select2-container {
+    width: 100% !important;
+    margin-bottom: 5px;
+}
+
+.select2-selection {
+    border: 2px solid #007bff !important;
+    border-radius: 8px !important;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.select2-selection__rendered {
+    color: #333;
+    font-weight: 500;
+}
+
+.select2-results__option {
+    padding: 8px 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 42px !important; 
+}
+
+.select2-results__option--highlighted {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+.select2-container .select2-selection--single{
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    height: 42px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field {
+    height: 42px !important;
+}
+
+.select2-selection{
+    border-radius: 5px !important;
+    border: 1px solid #000 !important;
+}  
+
+.select2-container .select2-selection--single{
+    height: 42px !important;
+}
+
+.visible-linea .item-lugar:hover{
+    background-color: #fff;
+}
+
+
+.darVuelta{
+    transform: rotate(180deg);
+}
+
+.hidden {
+    display: none !important; 
+}
+
+
+.visible-box { 
+    background-color: #dddddd;
+}
+
+.visible-linea { 
+    max-height: fit-content; 
+    opacity: 1;
+    transition: max-height 0.6s ease, opacity .8s ease;
+}
+
+.visible{
+    display: block;
+}
+
+.roles-profesionales{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.roles-profesionales ul{
+    width: 100%;
+}
+
+.item-noRol{
+    margin: 0;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    outline: 1px solid grey;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    text-wrap: wrap;
+    /* width: clamp(253px, 100%, 810px); */
+    transition: background-color .3s ease;
+}
+
+.item-noRol form{
+    display: initial;
+}    
+
+.rol-profesional-item{
+    display: flex;
+    justify-content: space-between;
+    transition: background-color .3s ease;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.rol-profesional-item:hover{
+    background-color: #aaa;
+}
+
+.box-p-rol-profesional{
+    width: clamp(175px,75%,750px);
+}
+
+.box-p-rol-profesional p{
+    word-wrap: break-word;       
+    overflow-wrap: break-word;  
+    white-space: normal;         
+}
+
+.rol-profesional-btns-acciones{
+    display: flex;
+}
+
+.rol-profesional-btns-acciones button{
+    display: flex;
+    align-content: center;
+}
+
+.rol-profesional-btns-acciones form{
+    position: initial;
+    margin: 0;
+}
+
+
+.box-form-detalles-usuario form .btn-global{
+    padding: 10px;
+}
+
+.modal-content.modal-detalles-usuario{
+    width: clamp(300px,90%,720px);
+}
+
+.modal-content.modal-detalles-usuario input[type="checkbox"] {
+    height: auto;
+}
+
+.scroll-wrapper-multipleCheck {
+    position: relative;
+}
+
+.scroll-wrapper-multipleCheck input[type="radio"]{
+    height: auto;
+    cursor: pointer;
+    margin: 0;
+}
+
+.box-radio{
+    height: 200px;
+    overflow: auto;
+    outline: 1px solid #ccc;
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
+
+.box-radio div{
+    padding: 5px 0;
+    border-bottom: 1px dotted;
+}
+
+.box-radio div label{
+    cursor: pointer;
+}
+
+
+@media (width <=750px) {
+    form .campos .campo-input{
+        width: calc(100% / 2 - 15px);
+    }
+}
+
+
+/* ### Fin Seccion "Ficha paciente" ###  */
+
+
+/* ### Seccion "Lista hospitalizaciones del paciente" ###  */
+
+
+@media (width <= 500px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-hospitalizaciones,
+        #tabla-hospitalizaciones thead,
+        #tabla-hospitalizaciones tbody,
+        #tabla-hospitalizaciones tr,
+        #tabla-hospitalizaciones th,
+        #tabla-hospitalizaciones td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-hospitalizaciones tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-hospitalizaciones td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-hospitalizaciones td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-hospitalizaciones td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-hospitalizaciones thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-hospitalizaciones .empty-message{
+        justify-content: center;
+    }
+}
+
+/* ### Fin Seccion "Lista hospitalizaciones del paciente" ###  */
+
+/* ### Seccion "Ficha hospitalizacion" ### */
+
+.form-alta-medica{
+    padding: 5px;
+    padding-top: 1px;
+    outline: none;
+}
+
+.campo-evaluaciones-clinicas #textarea_fechayhorario{
+    min-height: auto;
+    height: auto;
+    resize: none;
+}
+
+.evaluacion-item{
+    margin-bottom: 10px;
+    background-color: #DCE1E5;
+}
+
+.evaluacion-item:last-of-type{
+    margin-bottom: 0;
+}
+
+
+/* ### Fin Seccion "Ficha hospitalizacion" ### */
+
+
+/* ### Seccion "Notas de enfermeros"  ### */
+
+.modal-evaluacion-medica{
+    width: clamp(300px, 90%, 600px);
+} 
+
+.modal-evaluacion-medica-item {
+    margin-bottom: 10px;
+}
+    
+.modal-evaluacion-medica .campo-input{
+    display: flex;
+    flex-direction: column;
+} 
+    
+.modal-evaluacion-medica .campo-input textarea{
+    height: fit-content;
+    min-height: 150px;
+} 
+
+
+#tabla-notas-enfermeria .columna-subida{
+    text-wrap: nowrap;
+}
+
+@media (width >= 700px ) and (width <= 860px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-notas-enfermeria,
+        #tabla-notas-enfermeria thead,
+        #tabla-notas-enfermeria tbody,
+        #tabla-notas-enfermeria tr,
+        #tabla-notas-enfermeria th,
+        #tabla-notas-enfermeria td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 570px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-notas-enfermeria,
+        #tabla-notas-enfermeria thead,
+        #tabla-notas-enfermeria tbody,
+        #tabla-notas-enfermeria tr,
+        #tabla-notas-enfermeria th,
+        #tabla-notas-enfermeria td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-notas-enfermeria .empty-message{
+        justify-content: center;
+    }
+}
+
+
+
+/* ### Fin Seccion "Notas de enfermeros"  ### */
+
+
+
+/* ### Seccion "Enfermeros de la unidad" ### */
+
+@media (width >= 700px ) and (width <= 810px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-enfermeros,
+        #tabla-enfermeros thead,
+        #tabla-enfermeros tbody,
+        #tabla-enfermeros tr,
+        #tabla-enfermeros th,
+        #tabla-enfermeros td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 500px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-enfermeros,
+        #tabla-enfermeros thead,
+        #tabla-enfermeros tbody,
+        #tabla-enfermeros tr,
+        #tabla-enfermeros th,
+        #tabla-enfermeros td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-enfermeros .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/* ### Fin Seccion "Enfermeros de la unidad" ### */
+
+
+/* ### Seccion "Historial de notas del enfermero" ### */
+
+#tabla-historial-notas-enfermero .columna-subida{
+    text-wrap: nowrap;
+}
+
+
+@media (width <= 1000px ){
+    #tabla-historial-notas-enfermero,
+    #tabla-historial-notas-enfermero thead,
+    #tabla-historial-notas-enfermero tbody,
+    #tabla-historial-notas-enfermero tr,
+    #tabla-historial-notas-enfermero th,
+    #tabla-historial-notas-enfermero td
+    {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    #tabla-historial-notas-enfermero tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    #tabla-historial-notas-enfermero td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #tabla-historial-notas-enfermero td:last-child{
+        border-bottom: 0;
+    }
+
+    #tabla-historial-notas-enfermero td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    #tabla-historial-notas-enfermero thead {
+        display: none;
+    }   
+
+    .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    #tabla-historial-notas-enfermero .empty-message{
+        justify-content: center;
+    }
+}
+
+
+
+/* ### Fin Seccion "Historial de notas del enfermero" ### */
+
+
+/* ### Seccion "Medicos de la unidad" ### */
+
+@media (width >= 700px ) and (width <= 810px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-lista-medicos,
+        #tabla-lista-medicos thead,
+        #tabla-lista-medicos tbody,
+        #tabla-lista-medicos tr,
+        #tabla-lista-medicos th,
+        #tabla-lista-medicos td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 500px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-lista-medicos,
+        #tabla-lista-medicos thead,
+        #tabla-lista-medicos tbody,
+        #tabla-lista-medicos tr,
+        #tabla-lista-medicos th,
+        #tabla-lista-medicos td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/* ### Fin Seccion "Medicos de la unidad" ### */
+
+
+/* ### Seccion "Historial de evaluaciones del medico" ### */
+
+#tabla-historial-evaluaciones-medico .columna-subida{
+    text-wrap: nowrap;
+}
+
+@media (width <= 1000px ){
+    #tabla-historial-evaluaciones-medico,
+    #tabla-historial-evaluaciones-medico thead,
+    #tabla-historial-evaluaciones-medico tbody,
+    #tabla-historial-evaluaciones-medico tr,
+    #tabla-historial-evaluaciones-medico th,
+    #tabla-historial-evaluaciones-medico td
+    {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    #tabla-historial-evaluaciones-medico tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    #tabla-historial-evaluaciones-medico td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #tabla-historial-evaluaciones-medico td:last-child{
+        border-bottom: 0;
+    }
+
+    #tabla-historial-evaluaciones-medico td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    #tabla-historial-evaluaciones-medico thead {
+        display: none;
+    }   
+
+    .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    #tabla-historial-evaluaciones-medico .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/* ### Fin Seccion "Historial de evaluaciones del medico" ### */
+
+

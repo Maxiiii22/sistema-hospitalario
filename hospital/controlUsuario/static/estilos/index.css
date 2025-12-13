@@ -1,0 +1,232 @@
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-hover: #34A;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+hr{
+    border: 0;
+    height: 4px;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
+    margin: 30px 0;
+    
+}
+
+header{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--color-primario);
+    color: #fff;
+}
+
+nav{
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+nav ul{
+    display: flex;
+    gap: 10px;
+    list-style: none;
+}
+
+nav li{
+    padding: 5px;
+    border-bottom: 1px solid #fff;
+    background-color: var(--color-secundario);
+    border-radius: 5px;
+    width: clamp(100px, 10dvw, 170px);
+    text-align: center;  
+    display: flex;  
+    justify-content: center;
+    align-items: center;
+    transition: background-color .5s ease;
+}
+
+nav li:hover{
+    background-color: var(--color-hover);
+}
+
+nav li a{
+    color: #fff;
+    text-decoration: none;
+    width: 100%;
+}
+
+
+main{
+    display: flex;
+    justify-content: center;
+    background: #ccc;    
+}
+
+
+.imagenes-index img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+    background-color: #fff;
+    width: clamp(300px, 90%, 1500px);
+    align-items: center;
+    flex-direction: column;
+    padding: 20px 10px;
+    margin: 30px;
+    border-radius: 10px;
+    gap: 30px;
+}
+
+.container section{
+    width: 100%;
+    outline: 2px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#quienes-somos{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.seccion-sec{
+    padding: 0 5px;
+    margin-top: 4px;
+}
+
+.seccion-ul{
+    padding-left: 20px;
+}
+
+footer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;    
+    background: var(--color-primario);
+    color: #fff;
+    gap: 10px;
+}
+
+.secciones-footer{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+    gap: 5px;
+}
+
+.secciones-footer-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--color-secundario);    
+    justify-content: center;
+    width: clamp(150px, 20dvw, 350px);
+    text-align: center;
+    font-size: clamp(.5rem,2dvw,.8rem);
+}
+
+.secciones-footer-item a{
+    color: #fff;
+    text-decoration: none;
+}
+
+.secciones-footer-item a:hover{
+    text-decoration: underline;
+}
+
+#icon-arrow{
+    margin-top: 5px;
+    display: none;
+    font-size: x-large;
+}
+
+.darVuelta{
+    transform: rotate(180deg);
+}
+
+.visible-box { 
+    max-height: fit-content; 
+    opacity: 1;
+    transition: max-height 1s ease, opacity 1s ease;
+}
+
+@media (width <= 565px) {
+    .hidden-linea{
+        max-height: 0;
+        opacity: 0;
+        z-index: -1000;
+    }    
+    #icon-arrow{
+        display: block;
+    }    
+
+    nav{
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;        
+        transition: max-height 1s ease, opacity .8s ease;
+        interpolate-size: allow-keywords;   /* Esto permite que se pueda hacer la transition de un height fijo a un auto/max-content/fit-content,etc.  */
+    }
+
+    nav ul{
+        width: 60%;
+        flex-direction: column;
+    }
+
+    nav li{
+        width: auto;
+    }
+
+}
+
+@media (width <= 450px) {
+    .secciones-footer{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .secciones-footer-item{
+        width: 100%;
+    }
+}
+
+
+/* ### Especialidad ### */
+
+.icon-especialidad{
+    font-size: x-large;
+}
+
+.especialidad{
+    background: var(--color-primario);
+    color: #fff;
+    padding: 10px !important;
+}
+
+.nombreEspecialidad{
+    gap: 5px;
+    display: flex;
+    align-items: center;
+}
+
+/* ### Fin Especialidad ### */

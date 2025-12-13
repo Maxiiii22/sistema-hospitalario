@@ -1,0 +1,46 @@
+<table class="tabla-global" id="tabla-historial-evaluaciones-medico">
+    <thead>
+        {% if evaluacionesMedico %}
+        <tr>
+            <th>Nombre Paciente</th>
+            <th>Apellido Paciente</th>
+            <th>Dni Paciente</th>
+            <th>Ubicacion</th>
+            <th>Subida</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay evaluaciones registradas.</td>
+            </tr>        
+        {% elif evaluacionesMedico.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay evaluaciones que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for evaluacion in evaluacionesMedico %}
+                <tr class="fila">
+                    <td data-label="Nombre:">{{evaluacion.asignacion_medico.asignacion_habitacion.paciente.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{evaluacion.asignacion_medico.asignacion_habitacion.paciente.persona.last_name}}</td>
+                    <td data-label="DNI:">{{evaluacion.asignacion_medico.asignacion_habitacion.paciente.persona.dni}}</td>
+                    <td data-label="Ubicacion:">{{evaluacion.asignacion_medico.asignacion_habitacion.lugar}}</td>
+                    <td data-label="Subida:" class="columna-subida">{{evaluacion.fecha_y_horario|date:"d-m-Y H:i A"}}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <button type="button" class="btn-masDetalles" onclick="abrirModalDetalleEvaluacion(this)" data-id-observacion-medico="{{evaluacion.id}}"
+                            {% if evaluacion.asignacion_medico.asignacion_habitacion.altaAdministrativa %}
+                                data-id-asignacion-habitacion="{{evaluacion.asignacion_medico.asignacion_habitacion.id}}"
+                            {% else %}
+                                data-id-paciente="{{evaluacion.asignacion_medico.asignacion_habitacion.paciente.id}"
+                            {% endif %}
+                            >Ver detalles</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

@@ -1,0 +1,102 @@
+{% load static %} <!-- Cargamos la carpeta static que contiene el script.js y el css-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/global_styles.css' %}">
+
+    {% block css %}  {% endblock %}
+
+    {% block titulo %} {% endblock %}
+</head>
+<body>
+    <div class="menu-btn sidebar-btn" id="sidebar-btn">
+        <i class="hgi hgi-stroke hgi-menu-01"></i>
+        <i class="hgi hgi-stroke hgi-multiplication-sign"></i>
+    </div>
+    <div class="sidebar minimizado" id="sidebar">
+        <div class="header">
+            <div class="menu-btn" id="menu-btn">
+                <i class="hgi hgi-stroke hgi-arrow-right-double"></i>
+            </div>
+            <div class="logo">
+                <img src="/media/logo-hospital.png" alt="Logo">
+                <span>Hospital</span>
+            </div>
+        </div>
+
+        <div class="menu-container">
+            <ul class="menu">
+                <li class="menu-item menu-item-estatico">
+                    <a href="{% url 'indexPaciente' %}" class="menu-link">
+                        <i class="hgi hgi-stroke hgi-home-03"></i>
+                        <span class="span-main">Inicio</span>
+                    </a>
+                </li>
+                <li class="menu-item menu-item-desplegable">
+                    <div class="menu-link">
+                        <i class="hgi hgi-stroke hgi-hospital-02"></i>
+                        <span class="span-main">Turnos</span>
+                        <i class="hgi hgi-stroke hgi-arrow-down-01 arrowDesplegable"></i>
+                    </div>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="{% url 'misTurnos' %}" class="sub-menu-link">
+                                <i class="hgi hgi-stroke hgi-calendar-01"></i>
+                                <span>Mis turnos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'seleccionarTurno' user.paciente.id %}" class="sub-menu-link">
+                                <i class="hgi hgi-stroke hgi-calendar-add-02"></i>
+                                <span>Sacar turno</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item menu-item-estatico"> <a href="{% url 'miHistorial' %}" class="menu-link">
+                    <i class="hgi hgi-stroke hgi-transaction-history"></i>
+                    <span class="span-main">Historial clinico</span>
+                    </a> 
+                </li>
+                <li class="menu-item menu-item-estatico"> <a href="{{ enlace_url }}" class="menu-link">
+                    <i class="hgi hgi-stroke hgi-sharp hgi-user-group"></i>
+                    <span class="span-main">{{ enlace_texto }}</span>
+                    </a> 
+                </li>
+            </ul>
+        </div>
+
+        <div class="menu-footer">           
+            <ul class="menu">
+                {% if user.paciente %}
+                <li class="menu-item menu-item-estatico">
+                    <a href="{% url 'miCuenta' %}" class="menu-link">
+                        <i class="hgi hgi-stroke hgi-user-status"></i>
+                        <span class="span-main">Mi cuenta</span>
+                    </a>
+                </li>
+            {% endif %} 
+                <li class="menu-item menu-item-estatico">
+                    <a href="{% url 'logout' %}" class="menu-link">
+                        <i class="hgi hgi-stroke hgi-login-02"></i>
+                        <span class="span-main">Cerrar sesion</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main>
+        {% block contenido %}
+
+        {% endblock %}
+    </main>
+
+
+    <script src="{% static 'js/scripts_main.js' %}"></script>
+    {% block scripts_js %}  {% endblock %}
+</body>
+</html>

@@ -1,0 +1,81 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_jefeEnfermeria.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Evaluaciones medicas del médico</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-jefe-enfermeria">
+        <h1>Evaluaciones del médico: {{medico.persona.get_full_name}} - N° Matricula: {{medico.numero_matricula}}</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-jefe-enfermeria" id="box-tabla-general">
+            {% include 'jefeEnfermeria/medicos/tablasDinamicas/_tabla_historial_evaluaciones_medicas.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal {% if errorModal %} show errorModal{% endif %}">
+        <div class="modal-content modal-evaluacion-medica">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">{% if titleModal %}{{titleModal}}{% endif %}</h2>
+            <div class="seccionesDelForm" id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__paciente__persona__dni.label_tag}}
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__paciente__persona__dni}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__paciente__persona__first_name.label_tag}}
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__paciente__persona__first_name}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__paciente__persona__last_name.label_tag}}
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__paciente__persona__last_name}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__lugar.label_tag}}
+                        {{filtro.form.asignacion_medico__asignacion_habitacion__lugar}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.fecha_y_horario.label_tag}}
+                        {{filtro.form.fecha_y_horario}}
+                    </div>
+                </form>
+            </div>
+            <div class="seccionesDelForm" id="seccion-evaluacion-medica">                    
+                <div class="campo-input">
+                    <a href="#" data-urlbase-ficha-paciente="{% url 'fichaPaciente' 0 %}" data-urlbase-ficha-hospitalizacion="{% url 'fichaHospitalizacion-jefe-enfermeria' 0 %}" id="btnFichaPaciente" class="btn-masDetalles">Ver ficha de paciente</a>
+                </div>
+                <div class="campo-input">
+                    {{form.motivo.label_tag}}
+                    {{form.motivo}}
+                </div>
+                <div class="campo-input">
+                    {{form.diagnostico.label_tag}}
+                    {{form.diagnostico}}
+                </div>
+                <div class="campo-input">
+                    {{form.evolucion_clinica.label_tag}}
+                    {{form.evolucion_clinica}}
+                </div>
+                <div class="campo-input">
+                    {{form.indicaciones.label_tag}}
+                    {{form.indicaciones}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/jefeEnfermeria.js' %}" ></script>
+{% endblock %}
+
+

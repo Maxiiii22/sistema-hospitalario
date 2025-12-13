@@ -1,0 +1,312 @@
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-hover: #34A;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+body{
+    background-color: #ccc;
+}
+
+.hgi-stroke {
+    position: static;
+}
+
+/* Algunas clases globales */
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+
+/* Fin de clases globales */
+
+.sidebar{
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    width: 15rem;
+    height: 100%;
+    padding: 1.4rem 1rem 0 1rem;
+    background-color: #fff;
+    box-shadow: 1px 0px 10px #000;
+    transition: width .5s ease;
+}
+
+.sidebar.minimizado{
+    width: 4.96rem;
+}
+
+.header{
+    width: 100%;
+}
+
+.menu-btn{
+    position: absolute;
+    top: 0.5%;
+    right: -0.87rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: #fff;
+    color: #000;
+    cursor: pointer;
+    transition: right .3s ease;
+}
+
+.menu-btn i{
+    font-size: 1.5rem;
+}
+
+.sidebar.minimizado .menu-btn{
+    right: -2.2rem;
+}
+
+.sidebar.minimizado .menu-btn i{
+    transform: rotate(180deg);
+}
+
+.logo{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    margin-bottom: 1.8rem;
+    overflow: hidden;
+}
+
+.logo img{
+    width: 3rem;
+}
+
+.logo span{
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000;
+}
+
+.menu-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.menu{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu .menu-item{
+    position: relative;
+    list-style: none;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.menu .menu-link{
+    display: flex;
+    padding: .55rem 0;
+    color: #003;
+    text-decoration: none;
+    border-radius: .3rem;
+    transition: background-color .5s ease;
+}
+
+.menu-item:hover .menu-link, .sub-menu .sub-menu-link:hover, .menu-item.active .menu-link{
+    color: white;
+    background-color: var(--color-primario);
+}
+
+.menu-link i{
+    font-size: 1.35rem;
+    padding: 0 .8rem;
+
+}
+
+.menu-link i:last-child{
+    margin-left:  auto;
+    transition:  transform 0.3s ease;
+}
+
+.menu-item.sub-menu-toggle .menu-link i:last-child{
+    transform:  rotate(180deg);
+}
+
+.menu-link span{
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.sidebar.minimizado .menu-link span{
+    position: absolute;
+    right: -329px;
+}
+
+.sidebar.minimizado .menu-item:hover{
+    overflow: visible;
+}
+
+.sidebar.minimizado .menu-item:hover .span-main{
+    position: absolute;
+    left: 4.2rem;
+    padding: .5rem;
+    background-color: var(--color-primario);
+    border-radius: .4rem;
+    color: #fff;
+    transition: all .3s ease;
+    width: max-content;
+}
+
+.sub-menu{
+    height: 0;
+    transition: all .3s ease;
+}
+
+.sidebar.minimizado .sub-menu, .sidebar.minimizado .arrowDesplegable {
+    display: none;
+}
+
+.sub-menu .sub-menu-link{
+    display: flex;
+    margin-left: 2.5rem;
+    padding: .55rem .5rem;
+    font-size: .9rem;
+    font-weight: 500;
+    color: #000;
+    text-decoration: none;
+    border-radius: .3rem;
+    column-gap: 3px;
+    transition: background-color .3s ease, color .3s ease;
+}
+
+
+.sub-menu::before{
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: .07rem;
+    margin-left: 2rem;
+    background-color: black;
+}
+
+.menu-footer{
+    width: 100%;
+    padding: 1rem 0;
+    box-shadow: 0 -.2rem 0 0 black;
+}
+
+.sidebar-btn{
+    display: none;
+}
+
+.especialidadActual{
+    cursor: default;
+    text-align: center;
+}
+
+.especialidadActual h3{
+    font-size: xx-large;
+}
+
+.sidebar.minimizado .especialidadActual{
+    display: none;
+}
+
+main{
+    height: 100dvh;
+    padding: 2rem 3rem 3rem 17rem;
+    transition: padding .5s ease;
+}
+
+.sidebar.minimizado + main{
+    padding-left: 7.96rem;
+}
+
+@media (height <= 683px){
+    .menu-container{
+        overflow-y: auto;
+    }
+
+    main{
+        padding: 3rem 1rem;
+    }
+}
+
+@media (width < 700px) or (height <= 683px){
+    .container-global-superadmin h1{  /* Para el superadmin */
+        text-align: center;
+        font-size: clamp(1.5rem,3vw,2rem);
+    }
+
+    #title-centrado{ /* Para el superadmin */
+        text-align: center;
+        font-size: clamp(1.5rem,3vw,2rem);
+    }
+
+    #menu-btn{
+        display: none;
+    }
+
+    .sidebar{
+        transform: translateX(-100%);
+        transition:  transform 0.3s ease;
+    }
+
+    .sidebar-btn{
+        display: flex;
+        right: 1rem;
+        padding: 1.2rem;
+    }
+
+    .sidebar-btn i:last-child{
+        display: none;
+    }
+
+    body.sidebar-hidden .sidebar{
+        transform: translate(0);
+    }
+    body.sidebar-hidden .sidebar-btn i:last-child{
+        display: flex;
+        position: fixed;
+    }
+    body.sidebar-hidden .sidebar-btn i:first-child{
+        display: none;
+    }
+
+    main{
+        padding: 3rem 1rem;
+    }
+}

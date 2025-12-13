@@ -1,0 +1,138 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_medico.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Turnos programados</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-tabla-medico-global">
+        <h1 class="title-especialidad">Turnos Programados {% if especialidad_actual_nombre %}para {{especialidad_actual_nombre}}{% endif %}</h1>
+
+        <div class="turnos-section">
+            <h2>Turnos del Día de Hoy</h2>
+            <table>
+            {% if turnos_hoy %}
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Paciente</th>
+                        <th>Asistió</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+            {% endif%}
+                <tbody>
+                    {% for turno in turnos_hoy %}
+                        <tr class="fila-turnos estado-{{ turno.estado }}">
+                            <td data-label="ID:">{{ turno.id }}</td>
+                            <td data-label="Paciente:">{{ turno.paciente.persona.get_full_name }} (DNI: {{ turno.paciente.persona.dni }})</td>
+                            <td data-label="Asistió:">{% if turno.asistio %} Si {% else %} No {% endif %}</td>
+                            <td data-label="Estado:">{{ turno.get_estado_display }}</td>
+                            <td data-label="Acciones:" class="td-acciones">
+                                <div class="box-btns-td-acciones">
+                                    {% if turno.estado == "atendido" %}
+                                        {% for consulta in turno.consulta.all %}
+                                            {% if consulta.turno.id == turno.id %}
+                                                <a href="{% url 'editarConsulta' consulta.id %}" class="btn-accion">Editar</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% elif turno.estado == "pendiente" %}
+                                        <a href="{% url 'registrarConsulta' turno.id %}" class="btn-accion">Comenzar consulta</a>
+                                        <button type="button" data-id-turno="{{ turno.id }}" data-url-reprogramar-cita="{% url 'reprogramarTurno-medico' turno.id %}" onclick="modalReprogramarCita(this)" class="btn-modal btn-accion">Reprogramar</button>
+                                        <button type="button" data-id-turno="{{ turno.id }}" data-url-cancelar-cita="{% url 'cancelarTurno-medico' turno.id %}" onclick="modalCancelarCita(this)" class="btn-modal btn-accion">Cancelar</button>                                                                               
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-message">No hay turnos para hoy.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="turnos-section">
+            <h2>Turnos futuros</h2>
+            <table>
+            {% if turnos_otros_dias %}
+                <thead>
+                    <tr>
+                        <th>Fecha turno</th>
+                        <th>Paciente</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+            {% endif%}
+                <tbody>
+                    {% for turno in turnos_otros_dias %}
+                        <tr class="fila-turnos estado-{{ turno.estado }}">
+                            <td data-label="Fecha del turno:">{{ turno.fecha_turno|date:"d/m/Y"}}</td>
+                            <td data-label="Paciente:">{{ turno.paciente.persona.get_full_name }} (DNI: {{ turno.paciente.persona.dni }})</td>
+                            <td data-label="Estado:">{{ turno.get_estado_display }}</td>
+                            <td data-label="Acciones:">
+                                <div class="box-btns-td-acciones">                                    
+                                    {% if turno.estado == "pendiente" %}
+                                        <button type="button" data-id-turno="{{ turno.id }}" data-url-reprogramar-cita="{% url 'reprogramarTurno-medico' turno.id %}" onclick="modalReprogramarCita(this)" class="btn-modal btn-accion">Reprogramar</button>
+                                        <button type="button" data-id-turno="{{ turno.id }}" data-url-cancelar-cita="{% url 'cancelarTurno-medico' turno.id %}" onclick="modalCancelarCita(this)" class="btn-modal btn-accion">Cancelar</button>    
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-message">No hay otros turnos.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-reprogramar-turno">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Reprogramar cita</h2>
+            <div class="seccionesDelForm" id="seccion-form-reprogramar-cita">                    
+                <form id="editForm" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="formReprogramarCita">
+                    <input type="hidden" name="fecha_seleccionada" id="fecha_seleccionada" value="">
+                    <input type="hidden" name="id_turno" id="campo-turno">
+                    <h3>Días disponibles:</h3>
+                    <div class="nav-buttons">
+                        <button type="button" id="prevMonth" class="prevMonth">Mes Anterior</button>
+                        <button type="button" id="nextMonth" class="nextMonth">Mes Siguiente</button>
+                    </div>
+                    <div class="calendar" id="calendar"></div>
+                    <button type="submit" disabled  class="btn-global btn-form-reprogramar">Reprogramar</button>
+                </form>
+            </div>
+            <div class="seccionesDelForm" id="seccion-form-cancelar-cita">                    
+                <form id="formCancelarCita" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_form" value="formCancelarCita">
+                    <input type="hidden" name="id_turno" id="campo-turno-cancelar">
+                    <p class="p-cancelar-cita">¿Estás seguro/a de cancelar la cita? No se podrá revertir la acción.</p>
+                    <button type="submit"  class="btn-global">Confirmar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_js %}
+    <script src="{% static 'js/medicos.js' %}"></script>
+{% endblock %}
+
+
+

@@ -1,0 +1,108 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Gestion de estudios de diagnostico</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-superadmin">
+        <h1>Gestionar Estudios de Diagnostico</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="newEstudio"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nuevo estudio de diagnostico</button>
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-superadmin" id="box-tabla-general">
+            {% include 'superadmin/tablasDinamicas/_tabla_estudios.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal {% if abrir_modal_por_error %}show errorModal{% endif %}">
+        <div class="modal-content modal-estudios-diagnosticos">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Editar estudio de diagnostico</h2>
+            <div id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.nombre_estudio.label_tag}}
+                        {{filtro.form.nombre_estudio}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.tipo_resultado.label_tag}}
+                        {{filtro.form.tipo_resultado}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.servicio_diagnostico.label_tag}}
+                        {{filtro.form.servicio_diagnostico}}
+                    </div>
+                </form>
+            </div>
+            <div id="seccion-edit">
+                <form id="editForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_estudio" name="id_estudio">
+                    
+                    <div class="campo-input">
+                        {{ form.nombre_estudio.label_tag }}
+                        {{ form.nombre_estudio }}
+                        {% if form.nombre_estudio.errors %}
+                            <div id="error_nombre_estudio" class="error-message">
+                                {% for error in form.nombre_estudio.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.tipo_resultado.label_tag }}
+                        {{ form.tipo_resultado }}
+                        {% if form.tipo_resultado.errors %}
+                            <div id="error_tipo_resultado" class="error-message">
+                                {% for error in form.tipo_resultado.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        <label for="id_servicio_diagnostico">Servicio que realiza el estudio</label>
+                        {{ form.servicio_diagnostico }}
+                        {% if form.servicio_diagnostico.errors %}
+                            <div id="error_servicio_diagnostico" class="error-message">
+                                {% for error in form.servicio_diagnostico.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input scroll-wrapper-multipleCheck">
+                        <label for="id_especialidad">Especialidades que pueden solicitar este estudio:</label>
+                        {{ form.especialidad }}
+                        <div class="fade-bottom"></div>
+                    </div>
+                    {% if form.especialidad.errors %}
+                        <div id="error_especialidad" class="error-message">
+                            {% for error in form.especialidad.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+        
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/superadmin.js' %}"></script>
+{% endblock %}

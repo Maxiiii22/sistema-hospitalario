@@ -1,0 +1,216 @@
+Hospital:
+
+Tabla Usuarios : Guarda la información de todas las personas que pueden acceder al sistema: médicos, enfermeros, administrativos y el Superadmin.
+Campo	
+id_usuario (PK) :	Identificador único del usuario
+legajo,Número matrícula o "superadmin"
+nombre	 : Nombre del usuario
+apellido	: Apellido del usuario
+contraseña 
+debe_cambiar_contraseña	  :  Indica si el usuario debe cambiar la contraseña en su próximo ingreso
+estado	  : Estado de la cuenta: 'activo' o 'inactivo'
+fecha_alta    |	Fecha en que se creó el usuario en el sistema
+rol_id	     |Rol del usuario (médico, enfermero, admin, etc.)
+
+
+Tabla Turnos :Guarda los turnos otorgados a los pacientes con los profesionales.
+Campo	
+id_turno (PK)  |	Identificador único del turno
+id_paciente	| ID del paciente que solicitó el turno
+id_usuario  |	ID del profesional asignado al turno
+fecha  |	Fecha y hora del turno
+estado  |	Estado del turno: 'pendiente', 'completado', 'cancelado'
+motivo  |	Descripción del motivo de la consulta o turno
+
+
+Tabla Estudios : Guarda estudios de laboratorio, imágenes, etc. solicitados a los pacientes.
+Campo	        | ¿Qué guarda?
+id_estudio (PK)	| ID único del estudio
+id_consulta (FK)| Consulta en la que se solicitó el estudio
+id_paciente	| Paciente al que se le hizo el estudio
+id_usuario	| Profesional que solicitó el estudio
+tipo_estudio	| Tipo de estudio (ej: análisis de sangre, radiografía)
+resultado	| Resultado del estudio
+fecha	        | Fecha en que se realizó
+estado	        | Estado: 'pendiente', 'realizado'
+
+
+Tabla Medicamentos : Registra medicamentos recetados a pacientes.
+Campo	           | ¿Qué guarda?
+id_medicacion (PK) | ID único del medicamento prescripto
+id_paciente	   | Paciente al que se le indica la medicación
+id_consulta (FK)   | Consulta en la que se receto el medicamento.
+medicamento	   | Nombre del medicamento
+dosis	           | Dosis indicada (ej: 500mg)
+frecuencia	   | Frecuencia (ej: cada 8 horas)
+fecha_inicio	   | Inicio del tratamiento
+fecha_fin	   | Fin del tratamiento
+prescripto_por	   | ID del profesional que recetó
+
+
+
+
+
+
+
+
+
+
+
+
+Login : El usuario solo podra acceder al sistema con su numero de legajo o matricula y una contrasela proporcionada por el superadmin. 
+ Si el usuario es la primera vez que accede al sistema se debera mostrar un mensaje que lo obligue a ingresar una nueva contraseña.
+
+SUPERADMIN:
+▶ Podra darle un rol a cada usuario
+▶ Podra generar una nueva contraseña tanto para los nuevos usuarios, como para los usuario que olviden su contraseña. (Se las dira de manera verbal citando al usuario a su oficina) campos :Legajo o matricula , contrasela , si cambio la contra
+▶
+
+
+
+En un sistema de hospital privado, los roles y permisos pueden variar dependiendo de la estructura del hospital y el tipo de servicios que ofrece. Sin embargo, en general, los sistemas de gestión hospitalaria suelen tener roles bien definidos para gestionar la información de los pacientes, personal médico y administrativo, y otros aspectos operativos del hospital.
+
+Aquí te dejo una lista de los roles comunes que podrías encontrar en un sistema de hospital privado:
+
+-Administrador del sistema (Admin)
+
+Descripción: Este es el rol más alto en términos de permisos. El administrador tiene acceso completo a todos los módulos y configuraciones del sistema.
+
+Permisos:
+▶ Gestión Operativa de Usuarios:
+ -Activar o desactivar usuarios no críticos (enfermería,médicos).
+ -Editar información básica del usuario (correo, teléfono, servicio).
+ -Restablecer contraseñas (excepto Superadmin).
+ -Ver el listado completo de usuarios.
+
+▶ Gestión de Agendas y Consultorios:
+ -Reprogramar citas cuando un médico falta.
+ -Ver todas las agendas de todos los médicos.
+ -Cancelar citas con motivo obligatorio.
+
+▶ Gestión de Reportes y Estadísticas:
+ -Ver reportes de consultas diarias y mensuales.
+ -Ver productividad médica.
+ -Ver reportes de estudios solicitados.
+
+
+
+-Médico / Especialista
+
+Descripción: Este rol está destinado a los médicos que diagnostican, tratan y realizan seguimientos de los pacientes.
+
+Permisos:
+
+Acceso a los registros médicos de los pacientes asignados.
+
+Crear, modificar y visualizar informes médicos.
+
+Realizar diagnósticos y prescripciones.
+
+Programar y realizar procedimientos médicos.
+
+Consultar historiales médicos.
+
+
+-Medico hospitalario:
+Descripción: Rol asociado a los médicos responsables de la evaluación, diagnóstico, tratamiento y seguimiento clínico de los pacientes hospitalizados. Este rol tiene acceso ampliado a información clínica y herramientas de decisión médica.
+
+Permisos:
+El rol del médico hospitalario está enfocado en la atención integral del paciente, la toma de decisiones clínicas y la coordinación del tratamiento. Sus funciones abarcan tareas que impactan directamente en el diagnóstico, tratamiento y evolución del paciente.
+
+Ver el historial del paciente.
+
+Registrar diagnósticos.
+
+Registrar notas de evolución médica.
+
+Prescribir medicación u órdenes médicas.
+
+
+Indicar alta médica del paciente.
+
+Responder o revisar alertas/solicitudes que envía enfermería.
+
+
+
+
+-Enfermero/a
+Descripción: Rol asociado a los profesionales de enfermería que brindan atención directa a los pacientes.
+
+Permisos:
+
+el rol del enfermero está principalmente enfocado en la atención clínica de los pacientes a su cargo. Es decir, sus funciones se limitan a lo que impacta directamente el cuidado del paciente, y eso incluye:
+
+Registrar signos vitales.
+
+Documentar observaciones de evolución diaria.
+
+Registrar procedimientos realizados.
+
+Registrar medicación administrada y horarios.
+
+Hacer solicitudes o alertas para médicos o administración.
+
+Consultar el historial clínico del paciente a su cargo para tomar decisiones de cuidado.
+
+
+-Técnico de laboratorio
+
+Descripción: Este rol está asociado a las personas encargadas de realizar pruebas de laboratorio y analizar los resultados.
+
+Permisos:
+
+Acceso a los registros de resultados de laboratorio.
+
+Introducir y actualizar los resultados de pruebas de diagnóstico.
+
+Coordinar la toma de muestras y la programación de análisis.
+
+Enviar resultados de laboratorio a los médicos responsables.
+
+
+
+
+ -Pacientes
+
+Descripción: Este rol es para los propios pacientes del hospital. En muchos sistemas modernos, los pacientes pueden tener acceso a una plataforma para gestionar su propia información.
+
+Permisos:
+
+Acceso a su historial médico.
+
+Solicitar citas médicas.
+
+Ver recetas y diagnósticos previos.
+
+Ver los resultados de pruebas y análisis.
+
+Actualizar su información personal.
+
+-Supervisor o Coordinador de Área
+
+Descripción: Este rol puede ser utilizado para supervisar a diferentes grupos de trabajo, como los enfermeros, el personal administrativo o el personal de laboratorio.
+
+Permisos:
+
+Supervisión y gestión de turnos del personal.
+
+Revisión de la carga de trabajo y rendimiento de equipos.
+
+Generación de informes operativos o de calidad.
+
+
+-Jefe de enfermeria:
+Asignación de pacientes:
+Repartir pacientes entre enfermeros según carga de trabajo.
+Cada enfermero ve solo sus pacientes.
+
+Supervisión de registros clínicos:
+Revisar notas y registros subidos por los enfermeros.
+Dejar observaciones si algo está incompleto.
+
+Gestión de turnos simple:
+Ver qué enfermeros están disponibles en cada turno.
+Ajustar asignaciones si alguien no está disponible.
+
+

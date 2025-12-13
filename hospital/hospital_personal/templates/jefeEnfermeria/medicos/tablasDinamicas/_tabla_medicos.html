@@ -1,0 +1,40 @@
+<table class="tabla-global" id="tabla-lista-medicos">
+    <thead>
+        {% if medicosDeLaUnidad %}
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>N° Matricula</th>
+            <th class="columna-ubicado">Turno</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay médicos registrados.</td>
+            </tr>        
+        {% elif medicosDeLaUnidad.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay médicos que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for medico in medicosDeLaUnidad %}
+                <tr class="fila">
+                    <td data-label="Nombre:">{{medico.usuario.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{medico.usuario.persona.last_name}}</td>
+                    <td data-label="N° Matricula:">{{medico.usuario.numero_matricula}}</td>
+                    <td data-label="Turno:" class="columna-ubicado">{{medico.jornada.get_turno_display_personalizado}}</td>
+                    <td data-label="Estado:">{% if medico.usuario.persona.is_active %}Activo{% else %}Inactivo{% endif %}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <a href="{% url 'fichaMedico-jefe-enfermeria' medico.usuario.id %}" class="btn-masDetalles">Ver ficha de médico</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

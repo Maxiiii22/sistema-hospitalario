@@ -1,0 +1,184 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Gestion de tipos de usuario y Roles profesionales</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="box-container-roles">
+        <div class="container-roles">
+            <div class="encabezado-roles">
+                <h2>Gestionar Tipos de Usuarios</h2>
+                <div class="box-btn-add-rol"">
+                    <button class="btn-masDetalles" id="newTipoUsuario"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nuevo tipo de usuario</button>
+                </div>
+            </div>
+            <div class="box-tablas-superadmin">
+                <table class="tabla-global" id="tabla-tipo-usuarios">
+                    <thead>
+                        {% if allTiposUsuarios %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo usuario</th>
+                            <th></th>
+                        </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% for tipoUsuario in allTiposUsuarios %}
+                            <tr class="fila">
+                                <td data-label="ID:">{{tipoUsuario.id}}</td>
+                                <td data-label="Nombre">{{tipoUsuario.nombre_tipoUsuario}}</td>
+                                <td data-label="Acciones">
+                                    <div class="box-btns-td-acciones">
+                                        <button class="btn-masDetalles" data-id-tipo-usuario="{{ tipoUsuario.id }}">Mas detalles</button>
+                                    </div>
+                                </td>  
+                            </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="3" class="empty-message">No hay tipos de usuarios registrados.</td>
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container-roles">
+            <div class="encabezado-roles">
+                <h2>Gestionar Roles Profesionales</h2>
+                <div class="box-btn-add-rol"">
+                    <button class="btn-masDetalles" id="newRolProfesional"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nuevo rol profesional</button>
+                    <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+                </div>
+            </div>
+            <div class="box-tablas-superadmin" id="box-tabla-general">
+                {% include 'superadmin/tablasDinamicas/_tabla_rolesProfesionales.html' %}
+            </div>
+        </div>
+    </div>
+
+
+    <div id="editModal" class="modal {% if abrir_modal_rol_profesional_por_error or abrir_modal_tipo_usuario_por_error %}show errorModal{% endif %}">
+        <div class="modal-content">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">{% if abrir_modal_rol_profesional_por_error or abrir_modal_tipo_usuario_por_error %} {{title_modal}} {% endif %}</h2>
+            <div id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.nombre_rol_profesional.label_tag}}
+                        {{filtro.form.nombre_rol_profesional}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.tipoUsuario.label_tag}}
+                        {{filtro.form.tipoUsuario}}
+                    </div>
+                </form>
+            </div>
+            <div id="seccion-edit" {% if abrir_modal_rol_profesional_por_error or abrir_modal_tipo_usuario_por_error %}style="display: block;"{% endif %}>
+                <div class="seccion-tipo-usuario" {% if abrir_modal_tipo_usuario_por_error %}style="display: block;"{% endif %}>
+                    <form id="editForm" class="formTipoUsuario" method="POST" action="{% url 'gestionDeRoles' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="tipo-form" value="FormTipoUsuario">
+                        <input type="hidden" name="id_tipo_usuario" id="id_tipo_usuario" />
+                        <div class="campo-input">
+                            <label for="id_nombre_tipoUsuario">Tipo usuario:</label>
+                            {{ formTipoUsuarios.nombre_tipoUsuario }}
+                            {% if formTipoUsuarios.nombre_tipoUsuario.errors %}
+                                <div id="error_nombre_rol" class="error-message">
+                                    {% for error in formTipoUsuarios.nombre_tipoUsuario.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %} 
+                        </div>
+                        <button type="submit" class="btn-guardar">Guardar</button>
+                    </form>
+                </div>
+                <div class="seccion-rol-profesional" {% if abrir_modal_rol_profesional_por_error %}style="display: block;"{% endif %}>
+                    <form id="editForm" class="formRolProfesional" method="POST" action="{% url 'gestionDeRoles' %}">
+                        {% csrf_token %}
+
+                        {% if formRolesProfesionales.non_field_errors %}
+                            <div class="error-message-main">
+                                {{ formRolesProfesionales.non_field_errors.0 }}
+                            </div>
+                        {% endif %}
+
+                        <input type="hidden" name="tipo-form" value="FormRolProfesional">
+                        <input type="hidden" name="id_rol_profesional" id="id_rol_profesional" />
+                        <div class="campo-input">
+                            <label for="id_tipoUsuario">Tipo usuario:</label>
+                            {{ formRolesProfesionales.tipoUsuario }}
+                            {% if formRolesProfesionales.tipoUsuario.errors %}
+                                <div id="error_tipoUsuario" class="error-message">
+                                    {% for error in formRolesProfesionales.tipoUsuario.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                      
+                        </div>
+                        <div class="campo-input">
+                            {{ formRolesProfesionales.nombre_rol_profesional.label_tag }}
+                            {{ formRolesProfesionales.nombre_rol_profesional }}
+                            {% if formRolesProfesionales.nombre_rol_profesional.errors %}
+                                <div id="error_nombre_rol_profesional" class="error-message">
+                                    {% for error in formRolesProfesionales.nombre_rol_profesional.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                    
+                        </div>
+                        <div class="campo-input" id="seccion-especialidad">
+                            <label for="id_especialidad">Especialidad medica:</label>
+                            {{ formRolesProfesionales.especialidad }}
+                            {% if formRolesProfesionales.especialidad.errors %}
+                                <div class="error-message">
+                                    {% for error in formRolesProfesionales.especialidad.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                      
+                        </div>
+                        <div class="campo-input" id="seccion-servicio_diagnostico">
+                            <label for="id_servicio_diagnostico">Servicio de diagnostico:</label>
+                            {{ formRolesProfesionales.servicio_diagnostico }}
+                            {% if formRolesProfesionales.servicio_diagnostico.errors %}
+                                <div class="error-message">
+                                    {% for error in formRolesProfesionales.servicio_diagnostico.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                      
+                        </div>
+                        <div class="campo-input" id="seccion-departamento">
+                            <label for="id_departamento">Departamento:</label>
+                            {{ formRolesProfesionales.departamento }}
+                            {% if formRolesProfesionales.departamento.errors %}
+                                <div class="error-message">
+                                    {% for error in formRolesProfesionales.departamento.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                      
+                        </div>
+                        <button type="submit" class="btn-guardar">Guardar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/superadmin.js' %}"></script>
+{% endblock %}
+
+

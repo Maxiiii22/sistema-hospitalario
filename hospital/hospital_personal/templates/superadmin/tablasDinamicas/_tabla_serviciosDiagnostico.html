@@ -1,0 +1,32 @@
+<table class="tabla-global" id="tabla-gestion-servicios-diagnostico">
+    <thead>
+        {% if allServicios %}
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th class="columna-ubicacion">Ubicado en el departamento de</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay servicios de diagnostico registrados.</td>
+            </tr>        
+        {% elif allServicios.count == 0 %}
+            <tr>
+                <td colspan="4" class="empty-message">No hay servicios de diagnostico que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for servicio in allServicios %}
+            <tr class="fila">
+                <td data-label="ID:">{{servicio.id}}</td>
+                <td data-label="Nombre:">{{servicio.nombre_servicio}}</td>
+                <td data-label="Ubicado en el departamento de:" class="columna-ubicacion">{{servicio.departamento.nombre_departamento}}</td>
+                <td data-label="Acciones:"><button class="btn-masDetalles" data-id-servicio="{{ servicio.id }}">Mas detalles</button></td>  
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

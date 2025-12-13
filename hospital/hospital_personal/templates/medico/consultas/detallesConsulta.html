@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar consulta</title>
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_medico.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}    
+</head>
+<body class="body-consultasMedico">
+    <main class="container-consulta-medico">
+        <div class="container-form-consulta">
+            <a id="back-link-solo" href="{% url 'turnosProgramados' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+            <h3 id="back-link-solo">Paciente: {{consulta.turno.paciente.persona.get_full_name}} - DNI: {{consulta.turno.paciente.persona.dni}} {% if consulta.turno.paciente.responsable %}- Responsable: {{consulta.turno.paciente.responsable.adulto.persona.get_full_name}} - DNI: {{consulta.turno.paciente.responsable.adulto.persona.dni}} - Parentesco: {{consulta.turno.paciente.responsable.get_parentesco_display}} {% endif %}</h2>
+                <h2 class="title-consulta"><strong>Detalles de la consulta N° {{consulta.id}}</strong> </h2>      
+                <div class="seccion-nota-clinica">
+                    <h2>Evaluación Médica</h2>
+                    <div class="box-inputs-registro-consulta">
+                        <label for="id_motivo_turno">Motivo del turno:</label>
+                        <textarea id="id_motivo_turno" readonly>{% if consulta.turno.motivo %}{{ consulta.turno.motivo }}{% else %}No especificado{% endif %}</textarea>
+                    </div>
+                    <div class="box-inputs-registro-consulta">
+                        <label for="id_diagnostico">Diagnostico:</label>
+                        <textarea id="id_diagnostico" readonly>{{consulta.diagnostico}}</textarea>
+                    </div>
+                    <div class="box-inputs-registro-consulta">
+                        <label for="id_tratamiento">Tratamiento:</label>
+                        <textarea id="id_tratamiento" readonly>{{consulta.tratamiento}}</textarea>
+                    </div>
+                    <div class="box-inputs-registro-consulta">
+                        <label for="id_observaciones">Observaciones:</label>
+                        <textarea id="id_observaciones" readonly>{{consulta.observaciones}}</textarea>
+                    </div>
+                </div>
+
+                {% if consulta.estudios.all %}
+                <div class="seccion-nota-clinica">
+                    <div class="box-header-tabla-registro-consultas">
+                        <h2>Estudios solicitados</h2>
+                    </div>
+                    <table class="tabla-registro-consultas tabla-detalles-consulta" id="table-estudios">
+                        <thead>
+                            <tr>
+                            <th>Estudio</th>
+                            <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for estudio in consulta.estudios.all %}
+                                <tr class="fila">
+                                    <td class="campo-center" data-label="Tipo de estudio:">{{ estudio.tipo_estudio.nombre_estudio }}</td>
+                                    <td data-label="Acciones:" class="campo-center">
+                                        <button class="btn-global" id="idOrden_{{estudio.id}}" onclick="abrirDetalleEstudiosSimple(this)"
+                                        data-tipo-estudio="{{estudio.tipo_estudio.nombre_estudio }}"
+                                        data-motivo="{{estudio.motivo_estudio }}"
+                                        data-indicaciones="{{estudio.indicaciones }}"
+                                        data-estado="{{ estudio.estado_detallado|safe }}"
+                                        >Mas detalles
+                                    </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% if consulta.medicaciones.all %}
+                <div class="seccion-nota-clinica">
+                    <div class="box-header-tabla-registro-consultas">
+                        <h2>Medicaciones</h2>          
+                    </div>
+                    <table class="tabla-registro-consultas tabla-detalles-consulta" id="table-medicamentos">
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Accion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                {% for medicamento in consulta.medicaciones.all %}
+                                <tr>
+                                    <td class="campo-center" data-label="Medicamento:">{{ medicamento.medicamento }}</td>
+                                    <td data-label="Acciones:" class="campo-center">
+                                        <button class="btn-global" id="idMedicamento_{{medicamento.id}}" onclick="abrirDetalleMedicamentoSimple(this)"
+                                            data-id-consulta="{{medicamento.consulta.id}}"
+                                            data-profesional="{{medicamento.recetada_por.persona.get_full_name}} - N° Legajo: {{medicamento.recetada_por.numero_matricula}}"
+                                            data-paciente="{{ medicamento.consulta.turno.paciente.persona.get_full_name}} - DNI: {{medicamento.consulta.turno.paciente.persona.dni}}"
+                                            data-fecha="{{medicamento.consulta.fecha|date:'d-m-Y'}}"
+                                            data-medicamento="{{medicamento.medicamento }}"
+                                            data-dosis="{{medicamento.dosis }}"
+                                            data-frecuencia="{{medicamento.frecuencia }}"
+                                            data-tiempo-uso="{{medicamento.tiempo_uso }}">
+                                            Mas detalles
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+        </div>
+
+ 
+    </main>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-detalles-consulta">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Detalles de la consulta</h2>
+
+            <div id="parte-estudios">
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Tipo estudio:</strong></p>
+                    <pre id="modalTipoEstudio"></pre>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Motivo:</strong></p>
+                    <pre id="modalMotivo"></pre>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Indicaciones:</strong></p>
+                    <pre id="modalIndicaciones"></pre>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Estado:</strong></p>
+                    <pre id="modalEstado"></pre>
+                </div>
+            </div>
+            <div id="parte-medicamentos">
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Medicamento:</strong></p>
+                    <pre id="modalMedicamento"></pre>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Dosis:</strong></p>
+                    <pre id="modalDosis"></pre>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Frecuencia:</strong></p>
+                    <pre id="modalFrecuencia"></pre>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Tiempo de uso:</strong></p>
+                    <pre id="modalTiempoUso"></pre>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="{% static 'js/medicos.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}    
+</body>
+</html>

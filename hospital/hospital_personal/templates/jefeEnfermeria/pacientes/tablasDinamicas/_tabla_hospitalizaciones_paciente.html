@@ -1,0 +1,38 @@
+<table class="tabla-global" id="tabla-hospitalizaciones">
+    <thead>
+        {% if hospitalizaciones %}
+        <tr>
+            <th>ID</th>
+            <th>Fecha Ingreso</th>
+            <th>Fecha Salida</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if hospitalizaciones %}
+            {% for hospitalizacion in hospitalizaciones %}
+                <tr class="fila">
+                    <td data-label="ID:">{{hospitalizacion.id}}</td>
+                    <td data-label="Fecha Ingreso:">{{hospitalizacion.fecha_ingreso|date:"d-m-Y H:i A"}}</td>
+                    <td data-label="Fecha Salida:">{{hospitalizacion.fecha_salida|date:"d-m-Y H:i A"}}</td>
+                    <td data-label="Estado:" class="columna-estado">{{hospitalizacion.get_estado_display}}</td>          
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <a class="btn-accion" href="{% url 'fichaHospitalizacion-jefe-enfermeria' hospitalizacion.id %}">Ver detalles</a>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="9" class="empty-message">No hay hospitalizaciones que coincidan con los filtros.</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="9" class="empty-message">No hay hospitalizaciones registrados.</td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>

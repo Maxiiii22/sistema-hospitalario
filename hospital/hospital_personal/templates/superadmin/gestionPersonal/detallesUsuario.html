@@ -1,0 +1,489 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}    
+    <title>Detalles del usuario</title>
+</head>
+<body>
+    <main class="container-detalles-usuario">
+        <div class="box-form-detalles-usuario">
+            <a href="{% url 'gestionDelPersonal' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+            <h2>Detalles del usuario {{usuario.persona.get_full_name}} - N° Legajo: {{usuario.persona.login_id}}</h2>  
+            <form class="secciones" action="" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="form_editarPersonal">
+                <div>
+                    <div class="datos-personales">
+                        <span class="titulo">Datos personales</span>
+                        {% if formUsuario.persona_form.non_field_errors %}
+                            <ul class="form-errors">
+                                {% for error in formUsuario.persona_form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label for="id_login_id">Numero legajo:</label>
+                                {{ formUsuario.persona_form.login_id }}
+                                {% if formUsuario.persona_form.login_id.errors %}
+                                    <div id="error_login_id" class="error-message">
+                                        {% for error in formUsuario.persona_form.login_id.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_password">Contraseña:</label>
+                                {{ formUsuario.persona_form.password }}
+                                {% if formUsuario.persona_form.password.errors %}
+                                    <div id="error_password" class="error-message">
+                                        {% for error in formUsuario.persona_form.password.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.dni.label_tag }}
+                                {{ formUsuario.persona_form.dni }}
+                                {% if formUsuario.persona_form.dni.errors %}
+                                    <div id="error_dni" class="error-message">
+                                        {% for error in formUsuario.persona_form.dni.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_first_name">Nombre:</label>
+                                {{ formUsuario.persona_form.first_name }}
+                                {% if formUsuario.persona_form.first_name.errors %}
+                                    <div id="error_first_name" class="error-message">
+                                        {% for error in formUsuario.persona_form.first_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}       
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_last_name">Apellido:</label>
+                                {{ formUsuario.persona_form.last_name }}
+                                {% if formUsuario.persona_form.last_name.errors %}
+                                    <div id="error_last_name" class="error-message">
+                                        {% for error in formUsuario.persona_form.last_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                         
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.sexo.label_tag }}
+                                {{ formUsuario.persona_form.sexo }}
+                                {% if formUsuario.persona_form.sexo.errors %}
+                                    <div id="error_sexo" class="error-message">
+                                        {% for error in formUsuario.persona_form.sexo.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}               
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.telefono.label_tag }}
+                                {{ formUsuario.persona_form.telefono }}
+                                {% if formUsuario.persona_form.telefono.errors %}
+                                    <div id="error_telefono" class="error-message">
+                                        {% for error in formUsuario.persona_form.telefono.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                              
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.fecha_nacimiento.label_tag }}
+                                {{ formUsuario.persona_form.fecha_nacimiento }}
+                                {% if formUsuario.persona_form.fecha_nacimiento.errors %}
+                                    <div id="error_fecha_nacimiento" class="error-message">
+                                        {% for error in formUsuario.persona_form.fecha_nacimiento.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                             
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_email">Email:</label>
+                                {{ formUsuario.persona_form.email }}
+                                {% if formUsuario.persona_form.email.errors %}
+                                    <div id="error_email" class="error-message">
+                                        {% for error in formUsuario.persona_form.email.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="datos-personales">
+                        <span class="titulo">Datos de usuario</span>
+                        {% if formUsuario.usuario_form.non_field_errors %}
+                            <ul class="form-errors">
+                                {% for error in formUsuario.usuario_form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label for="id_tipoUsuario">Tipo usuario:</label>
+                                {{ formUsuario.usuario_form.tipoUsuario }}
+                                {% if formUsuario.usuario_form.tipoUsuario.errors %}
+                                    <div id="error_tipoUsuario" class="error-message">
+                                        {% for error in formUsuario.usuario_form.tipoUsuario.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                              
+                            </div>
+                            <div class="campo-input box-campo-matricula">
+                                {{ formUsuario.usuario_form.numero_matricula.label_tag }}
+                                {{ formUsuario.usuario_form.numero_matricula }}
+                                {% if formUsuario.usuario_form.numero_matricula.errors %}
+                                    <div id="error_numero_matricula" class="error-message">
+                                        {% for error in formUsuario.usuario_form.numero_matricula.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}  
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="cambio_contraseña">Debe cambiar constraseña:</label>
+                                <input type="text" readonly value="{% if usuario.debe_cambiar_contraseña %} Si {% else %} No {% endif %}" id="cambio_contraseña">
+                            </div>
+                            <div class="campo-input">
+                                <label for="date_joined">Fecha de registro:</label>
+                                <input type="text" readonly value="{{usuario.persona.date_joined|date:'d-m-Y H:i A'}}" id="date_joined">
+                            </div>
+                            <div class="campo-input">
+                                <label for="last_login">Ultimo inicio de sesion:</label>
+                                <input type="text" readonly value="{% if usuario.persona.last_login %}{{usuario.persona.last_login|date:'d-m-Y H:i A'}}{% else %}Nunca accedió{% endif %}" id="last_login">
+                            </div>
+                            <div class="campo-input">
+                                <label for="id_is_active">Usuario habilitado:</label>
+                                {{ formUsuario.persona_form.is_active }}
+                                {% if formUsuario.persona_form.is_active.errors %}
+                                    <div class="error-message">
+                                        {% for error in formUsuario.persona_form.is_active.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                                  
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <button type="submit" class="btn-global">Guardar cambios</button>
+            </form>
+
+            {% if usuario.persona.is_active == True %}
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <div class="box-header-datos">
+                            <span class="titulo">Rol profesional</span>
+                            <button type="button" class="btn-masDetalles" id="newAsignaciones"><i class="hgi hgi-stroke hgi-plus-sign"></i> Asignar rol profesional</button>
+                        </div>                        
+                        <div class="roles-profesionales">
+                            <ul>
+                                {% for rolProfesional in rolesProfesionales %}
+                                    <li class="rol-profesional-item">
+                                        <div class="box-p-rol-profesional">
+                                            <p><strong>{{rolProfesional.usuario.tipoUsuario}} ({{rolProfesional.rol_profesional.nombre_rol_profesional}})</strong></p>
+                                        </div>
+                                        <div class="rol-profesional-btns-acciones">
+                                            <button type="button" class="btn-edit-lugarTrabajo" id="usuario-id-{{rolProfesional.id}}" onclick="modalEditarRolProfesional('{{ rolProfesional.id }}')"><i class="hgi hgi-stroke hgi-edit-03"></i></button>
+                                            <button type="button" class="btn-delete-lugarTrabajo"  onclick="modalDesasignarRolProfesional(this)" data-url="{% url 'deleteRolProfesionalAsignado' rolProfesional.id %}"><i class="hgi hgi-stroke hgi-delete-04"></i></button>                                           
+                                        </div>
+                                    </li>
+                                {% empty %}
+                                    <li class="item-noRol"><strong>No tiene roles profesionales asignados</strong></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <div class="box-header-datos">
+                            <span class="titulo">Lugares donde presta servicios</span>   
+                            <button  type="button" class="btn-masDetalles" id="newLugarTrabajo"><i class="hgi hgi-stroke hgi-plus-sign"></i> Asignar lugar de trabajo</button>
+                        </div>                           
+                        {% if departamentos_con_jornadas %}
+                            {% for departamento, asignaciones in departamentos_con_jornadas.items %}
+                                <div class="box-lugar" id="boxLugar-{{ departamento.id }}">
+                                    <div class="lugar-header">
+                                        <div>
+                                            <span><strong>Departamento: {{ departamento.nombre_departamento }}</strong></span>
+                                        </div>
+                                        <div>
+                                            <i class="hgi hgi-stroke hgi-arrow-down-01" id="icon-arrow-{{departamento.id}}" onclick="toggleLugar('{{ departamento.id }}')"></i>
+                                        </div>
+                                    </div>
+                                    <div class="lugar-items hidden-linea" id="items-lugar-{{departamento.id}}">
+                                        {% for asignacion in asignaciones %}
+                                            <div class="item-lugar">
+                                                <p>{{ asignacion.info|safe }}</p> {# En el backend, usamos <strong> para rodear las partes del texto que deseamos en negrita. En el template, usamos |safe para renderizar el contenido HTML correctamente. #}
+                                                <div>
+                                                    <button type="button" class="btn-edit-lugarTrabajo" onclick="modalEditarLugarTrabajo('{{ asignacion.id }}')"><i class="hgi hgi-stroke hgi-edit-03"></i></button>
+                                                    <button type="button" class="btn-delete-lugarTrabajo" onclick="modalDesasignarLugarTrabajo(this)" data-url="{% url 'deleteLugarTrabajo' asignacion.id %}" data-id-asignacion-lugar-trabajo="{{asignacion.id}}" {% if asignacion.estado == "desasignado" %} data-desasignado="1" {% endif %} ><i class="hgi hgi-stroke hgi-delete-04"></i></button>                                                    
+                                                </div>                                                
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="container-noLugar">
+                                <p class="item-noLugar"><strong>No hay lugares de trabajo asignados</strong></p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <div class="container-noLugar">
+                    <p class="item-noLugar item-usuarioInhabilitado"><strong>Habilite al usuario para que pueda gestionar la recepción de sus labores.</strong></p>
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    {% if usuario.persona.is_active == True %}
+        <div id="editModal" class="modal {% if errorFormEditarLugarTrabajo or errorFormLugarTrabajo or errorFormAsignaciones %}show errorModal{% endif %}">
+            <div class="modal-content modal-detalles-usuario">
+                <span id="closeEditModal" class="close">&times;</span>
+                <h2 id="modal-title">{% if titleModal %}{{titleModal}}{% endif %}</h2>
+                <input type="hidden" id="url-getLugarTrabajoDisponibilidad" value="{% url 'getLugarTrabajoDisponibilidad' %}">
+                <input type="hidden" id="url-getLugarTrabajoORolProfesional" value="{% url 'getLugarTrabajoORolProfesional' %}">
+                <div class="seccionesDelForm" id="seccion-lugarTrabajo" {% if errorFormLugarTrabajo %}style="display:block"{% endif %}>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {% if formLugarTrabajo.non_field_errors %}
+                            <p class="error-message-main">
+                                {{ formLugarTrabajo.non_field_errors|first }}
+                            </p>
+                        {% endif %}
+                    
+                        <input type="hidden" name="tipo_form" value="form_lugarTrabajo">
+                        {{ formLugarTrabajo.id_usuario }}
+                        <div class="campo-input">
+                            {{ formLugarTrabajo.rolProfesionalAsignado.label_tag }}
+                            {{ formLugarTrabajo.rolProfesionalAsignado }}
+                            {% if formLugarTrabajo.rolProfesionalAsignado.errors %}
+                                <div class="error-message">
+                                    {% for error in formLugarTrabajo.rolProfesionalAsignado.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                        
+                        </div>
+                        <div class="campo-input">
+                            {{ formLugarTrabajo.lugar.label_tag }}
+                            {{ formLugarTrabajo.lugar }}
+                            {% if formLugarTrabajo.lugar.errors %}
+                                <div class="error-message">
+                                    {% for error in formLugarTrabajo.lugar.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                     
+                        </div>
+                        <div class="campo-input scroll-wrapper-multipleCheck">
+                            <label for="id_jornada">Seleccione los dias y horarios de trabajo:</label>
+                            {{ formLugarTrabajo.jornada }}
+                            <div class="fade-bottom"></div>
+                        </div>
+                        {% if formLugarTrabajo.jornada.errors %}
+                        <div class="error-message">
+                            {% for error in formLugarTrabajo.jornada.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <button type="submit" class="btn-guardar">Guardar</button>
+                    </form>
+                </div>
+
+                <div class="seccionesDelForm" id="seccion-asignaciones" {% if errorFormAsignaciones %}style="display:block"{% endif %}>
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        {% if formAsignaciones.non_field_errors %}
+                            <p class="error-message-main">
+                                {{ formAsignaciones.non_field_errors|first }}
+                            </p>
+                        {% endif %}
+                        <input type="hidden" name="tipo_form" value="form_asignaciones">
+                        {{ formAsignaciones.id_instancia }}
+                        {{ formAsignaciones.usuario }}
+                        <div class="campo-input">
+                            {{ formAsignaciones.rol_profesional.label_tag }}
+                            {{ formAsignaciones.rol_profesional }}
+                            {% if formAsignaciones.rol_profesional.errors %}
+                                <div class="error-message">
+                                    {% for error in formAsignaciones.rol_profesional.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                     
+                        </div>
+                        <div class="campo-input">
+                            <label for="id_input-mostrar-dato" id="label-input-mostrar-dato"></label>
+                            <input class="campos-modal" type="text" id="id_input-mostrar-dato" value="" readonly>
+                        </div>                        
+                        <button type="submit" class="btn-guardar">Guardar</button>
+                    </form>
+                </div>
+                
+                <div class="seccionesDelForm" id="seccion-editarLugarTrabajo" {% if errorFormEditarLugarTrabajo %}style="display:block"{% endif %}>
+                    <form method="POST" action="" id="form_editarLugarTrabajo">
+                        {% csrf_token %}
+                        {% if formEditarLugarTrabajo.non_field_errors %}
+                            <p class="error-message-main">
+                                {{ formEditarLugarTrabajo.non_field_errors|first }}
+                            </p>
+                        {% endif %}                        
+                        <input type="hidden" name="tipo_form" value="form_editarLugarTrabajo">
+                        {{ formEditarLugarTrabajo.id_instancia }}
+                        <p class="p-cancelar-cita" id="p-editar-lugarTrabajo"></p>
+                        {{ formEditarLugarTrabajo.usuario }}
+                        <div class="campo-input">
+                            <label for="id_rol_edit">Rol profesional asignado:</label>
+                            {{ formEditarLugarTrabajo.rolProfesionalAsignado }}
+                            {% if formEditarLugarTrabajo.rolProfesionalAsignado.errors %}
+                                <div class="error-message">
+                                    {% for error in formEditarLugarTrabajo.rolProfesionalAsignado.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                        
+                        </div>
+                        <div class="campo-input">
+                            {{ formEditarLugarTrabajo.lugar.label_tag }}
+                            {{ formEditarLugarTrabajo.lugar }}
+                            {% if formEditarLugarTrabajo.lugar.errors %}
+                                <div class="error-message">
+                                    {% for error in formEditarLugarTrabajo.lugar.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}                        
+                        </div>
+                        <div class="campo-input">
+                            {{ formEditarLugarTrabajo.jornada.label_tag }}
+                            {{ formEditarLugarTrabajo.jornada }}
+                            {% if formEditarLugarTrabajo.jornada.errors %}
+                                <div class="error-message">
+                                    {% for error in formEditarLugarTrabajo.jornada.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" id="btn-guardar-edicion-lugarTrabajo" class="btn-guardar">Guardar</button>
+                    </form>
+                </div>
+                <div class="seccionesDelForm" id="seccion-form-desasignar-rolProfesional">                    
+                    <form id="formDesasignarRolProfesional" method="POST" action="">
+                        {% csrf_token %}
+                        <p class="p-cancelar-cita">¿Estás seguro/a de desasignar el rol profesional del usuario?</p>
+                        <button type="submit"  class="btn-global">Confirmar</button>
+                    </form>
+                </div>                
+                <div class="seccionesDelForm" id="seccion-form-desasignar-lugarTrabajo">                    
+                    <form id="formDesasignarLugarTrabajo" method="POST" action="">
+                        {% csrf_token %}
+                        <p class="p-cancelar-cita" id="p-desasignar-lugarTrabajo"></p>
+                        <button type="submit" id="btn-confirmar-desasignacion-lugarTrabajo"  class="btn-global">Confirmar</button>
+                    </form>
+                </div>                
+                <div class="seccionesDelForm" id="seccion-confirmarEditarLugarTrabajo">                    
+                    <form id="formSolicitarEditarLugarTrabajo" method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="tipo_form" value="form_solicitarEditarLugarTrabajo">
+                        <p class="p-cancelar-cita" id="p-solicitar-edicion-lugarTrabajo"></p>
+                        <button type="submit" id="btn-confirmar-edicion-lugarTrabajo"  class="btn-global">Confirmar</button>
+                    </form>
+                </div>                
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'js/superadmin.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "10000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+
+</body>
+</html>

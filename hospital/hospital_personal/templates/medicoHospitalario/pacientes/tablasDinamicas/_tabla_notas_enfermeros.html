@@ -1,0 +1,40 @@
+<table class="tabla-global" id="tabla-notas-enfermeria">
+    <thead>
+        {% if observacionesEnfermeros %}
+        <tr>
+            <th>Nombre enfermero</th>
+            <th>Apellido enfermero</th>
+            <th>N° Matricula</th>
+            <th>Turno</th>
+            <th>Subida</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay notas de enfermeria registradas.</td>
+            </tr>        
+        {% elif observacionesEnfermeros.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay notas de enfermeria que coincidan con el filtro.</td>
+            </tr>            
+        {% else %}
+            {% for observacion in observacionesEnfermeros %}
+                <tr class="fila">
+                    <td data-label="Nombre:">{{observacion.asignacion_enfermero.enfermero.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{observacion.asignacion_enfermero.enfermero.persona.last_name}}</td>
+                    <td data-label="N° Matricula:">{{observacion.asignacion_enfermero.enfermero.numero_matricula}}</td>
+                    <td data-label="Turno:" class="columna-ubicado">{{observacion.asignacion_enfermero.jornada.get_turno_display_personalizado}}</td>
+                    <td data-label="Subida:" class="columna-estado">{{observacion.fecha_y_horario|date:"d-m-Y H:i A"}}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <button type="button" class="btn-masDetalles" onclick="abrirModalDetalleObservacion(this)" data-id-observacion-enfermero="{{observacion.id}}">Ver detalles</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacar turno para consulta medica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  <!-- Toastr CSS: Estilos para mostrar notificaciones tipo toast -->
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+</head>
+<body>
+    <main class="container-sacarTurno" {% if estaBuscando %} style="height: auto;" {% endif %}>
+        <div class="box-form-seleccionar-especialidad">
+            {% if menor %}
+                <a id="back-link-solo" class="back-link" href="{% url 'seleccionarTurno' menor.menor.id %}"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>
+            {% else %}
+                <a id="back-link-solo" class="back-link" href="{% url 'seleccionarTurno' user.paciente.id %}"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>
+            {% endif %}
+            <h2>Sacar turno {% if parentesco %}{{parentesco}}{% endif %}</h2>     
+            <form method="POST"> 
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="formSeleccionEspecialidad">
+                <div>
+                    <label for="especialidad"><strong>Selecciona una especialidad:</strong></label>
+                    <select id="especialidad" name="especialidad">
+                        <option hidden>Seleccione una especialidad</option>
+                        {% for especialidad in especialidades %}
+                            <option value="{{ especialidad.id }}" {% if especialidadSeleccionada.id == especialidad.id %} selected {% endif %}>{{ especialidad.nombre_especialidad }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label for="horario_turno"><strong>Seleccione el horario del turno</strong></label>
+                    <select name="horario" id="horario_turno">
+                        <option hidden>Seleccione el horario</option>
+                        {% for horario in horariosDeConsultas %}
+                            <option value="{{ horario.turno }}" {% if horarioSeleccionado.turno == horario.turno %} selected {% endif %}>{{ horario.get_turno_display }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+                <button type="submit" class="btn-global">Ver Profesionales</button>
+            </form>
+        </div>
+
+        {% if estaBuscando %}
+            {% if formularios %}
+                <div class="container-profesionales">
+                    <div class="box-title-profesionales-disponibles">
+                        <h2>Profesionales disponibles en {{ especialidadSeleccionada.nombre_especialidad }}</h2>
+                    </div>
+                    <div class="box-cards-profesionales">
+                        {% for item in formularios %}
+                        <div class="card-profesional">
+                            <h2>{{ item.profesional.usuario.persona.get_full_name }}</h2>
+                            <p><strong>N° Matricula:</strong> {{ item.profesional.usuario.numero_matricula }}</p>
+                            <p><strong>Sexo:</strong> {{ item.profesional.usuario.persona.sexo }}</p>
+                            <p><strong>Horario:</strong> {{ item.profesional.jornada.get_turno_display }}</p>    
+                            <p><strong>Atención en:</strong> {{item.profesional.lugar.nombre}} <br> <strong>(Piso: {{item.profesional.lugar.piso}} - N° Sala: {{item.profesional.lugar.sala}})</strong></p>    
+                            <form action="" method="POST">    
+                                {% csrf_token %}   
+                                <input type="hidden" name="tipo_form" value="formSeleccionProfesional">
+                                {{ item.form.lugar }}
+                                <input type="hidden" name="{{ item.form.fecha_turno.name }}" id="fecha_seleccionada_{{ item.profesional.usuario.id }}" value=""> 
+                                {{ item.form.horario_turno }}
+                                {{ item.form.especialidad }}
+                                {{ item.form.paciente }}
+                                {{ item.form.profesional }}
+                                <div class="turnos">
+                                    <h3>Días disponibles:</h3>
+                                    <div class="nav-buttons">
+                                        <button type="button" class="prevMonth_{{ item.profesional.usuario.id }}">Mes Anterior</button>
+                                        <button type="button" class="nextMonth_{{ item.profesional.usuario.id }}">Mes Siguiente</button>
+                                    </div>
+                                    <div class="calendar" id="calendar_{{ item.profesional.usuario.id }}"></div>
+                                </div>
+                                {{ item.form.motivo }}
+                                <button type="submit" disabled class="btn-global btn-form-seleccionar-profesional" id="btn-form-profesional-id_{{item.profesional.usuario.id}}">Confirmar turno</button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {{ dias_disponibles|json_script:"diasDisponibles" }}
+            {% else %}
+                <div class="container-profesionales">
+                    <h2>No hay profesionales disponibles para {{ especialidadSeleccionada.nombre_especialidad }} en este momento</h2>
+                </div>
+            {% endif %}
+        {% endif %}
+    </main>
+    
+    <script src="{% static 'js/pacientes.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>  {# jQuery (requerido por Toastr.js) #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+</body>
+</html>

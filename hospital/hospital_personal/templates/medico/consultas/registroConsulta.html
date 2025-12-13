@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar consulta</title>
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_medico.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}
+</head>
+<body class="body-consultasMedico">
+    <main class="container-consulta-medico">
+        <div class="container-form-consulta">
+            <a id="back-link-solo" href="{% url 'turnosProgramados' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+            <h3 id="back-link-solo">Paciente: {{datos_turno.paciente.persona.get_full_name}} - DNI: {{datos_turno.paciente.persona.dni}} {% if datos_turno.paciente.responsable %}- Responsable: {{datos_turno.paciente.responsable.adulto.persona.get_full_name}} - DNI: {{datos_turno.paciente.responsable.adulto.persona.dni}} - Parentesco: {{datos_turno.paciente.responsable.get_parentesco_display}} {% endif %}</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <h2 class="title-consulta">{{ edicion|yesno:"Editar consulta,Nueva consulta" }} - <strong>{{datos_turno.especialidad.nombre_especialidad}}</strong> </h2>      
+                <div class="seccion-nota-clinica">
+                    <h2>Evaluación Médica</h2>
+                    <div class="box-inputs-registro-consulta">
+                        <label for="id_motivo_turno">Motivo del turno:</label>
+                        <textarea id="id_motivo_turno" readonly>{% if datos_turno.motivo %}{{ datos_turno.motivo }}{% else %}No especificado{% endif %}</textarea>
+                    </div>
+                    <div class="box-inputs-registro-consulta">
+                        {{ form_consulta.diagnostico.label_tag }}
+                        {{ form_consulta.diagnostico }}
+                        {% if form_consulta.diagnostico.errors %}
+                            <div id="error_diagnostico" class="error-message">
+                                {% for error in form_consulta.diagnostico.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}          
+                    </div>
+                    <div class="box-inputs-registro-consulta">
+                        {{ form_consulta.tratamiento.label_tag }}
+                        {{ form_consulta.tratamiento }}
+                        {% if form_consulta.tratamiento.errors %}
+                            <div id="error_tratamiento" class="error-message">
+                                {% for error in form_consulta.tratamiento.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}          
+                    </div>
+                    <div class="box-inputs-registro-consulta">
+                        {{ form_consulta.observaciones.label_tag }}
+                        {{ form_consulta.observaciones }}
+                        {% if form_consulta.observaciones.errors %}
+                            <div id="error_observaciones" class="error-message">
+                                {% for error in form_consulta.observaciones.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}          
+                    </div>
+                </div>
+
+                <div class="seccion-nota-clinica">
+                    <div class="box-header-tabla-registro-consultas">
+                        <h2>Estudios solicitados</h2>
+                        <button type="button" class="btn-agregar" onclick="agregarFilaFormset('estudios', '#table-estudios tbody')">+ Agregar estudio</button>
+                    </div>
+                    {{ estudios_formset.management_form }}
+                    <table class="tabla-registro-consultas" id="table-estudios">
+                        <thead>
+                            <tr>
+                            <th>Tipo de estudio</th>
+                            <th>Motivo</th>
+                            <th>Indicaciones</th>
+                            <th>Cancelar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in estudios_formset %}
+                                <tr>
+                                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                    <td data-label="Tipo de estudio:">{{ form.tipo_estudio }} {% if form.tipo_estudio.errors %} <div style="color:red;">{{ form.tipo_estudio.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Motivo:">{{ form.motivo_estudio }}{% if form.motivo_estudio.errors %} <div style="color:red;">{{ form.motivo_estudio.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Indicaciones:">{{ form.indicaciones }}{% if form.indicaciones.errors %} <div style="color:red;">{{ form.indicaciones.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Cancelar:"><div class="box-check-cancelar">{% if form.DELETE %}{{ form.DELETE }}{% endif %}</div></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="seccion-nota-clinica">
+                    <div class="box-header-tabla-registro-consultas">
+                        <h2>Medicaciones</h2>          
+                        <button type="button" class="btn-agregar" onclick="agregarFilaFormset('medicaciones', '#table-medicamentos tbody')">+ Agregar medicación</button>
+                    </div>
+                    {{ medicaciones_formset.management_form }}
+                    <table class="tabla-registro-consultas" id="table-medicamentos">
+                        <thead>
+                            <tr>
+                                <th>Medicamento</th>
+                                <th>Dosis</th>
+                                <th>Frecuencia</th>
+                                <th>Tiempo de uso</th>
+                                <th>Eliminar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in medicaciones_formset %}
+                                <tr>
+                                    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+                                    <td data-label="Medicamento:">{{ form.medicamento }}{% if form.medicamento.errors %} <div style="color:red;">{{ form.medicamento.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Dosis:">{{ form.dosis }}{% if form.dosis.errors %} <div style="color:red;">{{ form.dosis.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Frecuencia:">{{ form.frecuencia }}{% if form.frecuencia.errors %} <div style="color:red;">{{ form.frecuencia.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Tiempo de uso:">{{ form.tiempo_uso }}{% if form.tiempo_uso.errors %} <div style="color:red;">{{ form.tiempo_uso.errors|striptags }}</div>{% endif %}</td>
+                                    <td data-label="Cancelar:"><div class="box-check-cancelar">{% if form.DELETE %}{{ form.DELETE }}{% endif %}</div></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <button type="submit" class="btn">Guardar consulta</button>
+                </div>
+            </form>        
+        </div>
+
+        {% if historialConsultas %}
+            <div class="containerUltimasConsultas">
+                <h2 class="title-consulta">Historial de Consultas Anteriores del paciente</h3>
+                <table id="tablaHistorialConsultas">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consulta in historialConsultas %}
+                            <tr>
+                                <td class="td-fecha">{{ consulta.fecha|date:"d/m/Y" }}</td>
+                                <td class="td-acciones">
+                                    <button class="btn" id="idConsulta_{{consulta.id}}"
+                                        onclick="abrirDetalle(this)"
+                                        data-profesional="{{ consulta.turno.profesional.persona.get_full_name}} - N° Legajo: {{ consulta.turno.profesional.persona.login_id}}"
+                                        data-paciente="{{ consulta.turno.paciente.persona.get_full_name}} - DNI: {{ consulta.turno.paciente.persona.dni}}"
+                                        data-fecha="{{ consulta.fecha|date:'d/m/Y' }}"
+                                        data-diagnostico="{{ consulta.diagnostico|default:'-'|escapejs }}"
+                                        data-observaciones="{{ consulta.observaciones|default:'-'|escapejs }}"
+                                        data-tratamiento="{% if consulta.tratamiento %}{{ consulta.tratamiento|default:'-'|escapejs }} {% else %} Ninguno {% endif %}"
+                                        data-estudios="{% for e in consulta.estudios.all %}<p>• {{ e.tipo_estudio.nombre_estudio }} <button onClick='DetalleEstudio(this)' class='btn-global' type='button' data-id-orden='{{e.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}"
+                                        data-medicaciones="{% for m in consulta.medicaciones.all %}<p>• {{ m.medicamento }} <button onClick='DetalleMedicamento(this)' class='btn-global' type='button' data-id-medicamento='{{m.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}">
+                                        Ver más
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </main>
+
+    
+ 
+
+
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-detalles-consulta">
+            <span id="closeEditModal" class="close">&times;</span>
+            <button style="display:none;" onClick='DetalleConsulta(this)' class='btn-global btn-volver-consulta' type='button' data-id-consulta=''><i class="hgi hgi-stroke hgi-arrow-left-02"></i>Volver a la consulta</button>            
+            <h2 id="modal-title">Detalles de la consulta</h2>          
+            <div id="seccion-edit">
+                <div class="modal-detalles-consulta-item">
+                    <p><strong id="textProfesional">Profesional a cargo:</strong> <span id="modalProfesional"></span></p>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Paciente:</strong> <span id="modalPaciente"></span></p>
+                </div>
+                <div class="modal-detalles-consulta-item">
+                    <p><strong>Fecha:</strong> <span id="modalFecha"></span></p>
+                </div>
+                <div class="seccionesDelForm" id="parte-consultas">
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Diagnóstico:</strong></p>
+                        <pre id="modalDiagnostico"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Observaciones:</strong></p>
+                        <pre id="modalObservaciones"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Tratamiento:</strong></p>
+                        <pre id="modalTratamiento"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Estudios solicitados:</strong></p>
+                        <div id="modalEstudios" class="div-p">
+                        </div>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Medicaciones:</strong></p>
+                        <div id="modalMedicaciones" class="div-p">
+                        </div>                    
+                    </div>                
+                </div>
+                <div class="seccionesDelForm" id="parte-estudios">
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Tipo estudio:</strong></p>
+                        <pre id="modalTipoEstudio"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Motivo:</strong></p>
+                        <pre id="modalMotivo"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Indicaciones:</strong></p>
+                        <pre id="modalIndicaciones"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Estado:</strong></p>
+                        <pre id="modalEstado"></pre>
+                    </div>
+                </div>
+                <div class="seccionesDelForm" id="parte-medicamentos">
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Medicamento:</strong></p>
+                        <pre id="modalMedicamento"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Dosis:</strong></p>
+                        <pre id="modalDosis"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Frecuencia:</strong></p>
+                        <pre id="modalFrecuencia"></pre>
+                    </div>
+                    <div class="modal-detalles-consulta-item">
+                        <p><strong>Tiempo de uso:</strong></p>
+                        <pre id="modalTiempoUso"></pre>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+
+    <script src="{% static 'js/medicos.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}    
+</body>
+</html>

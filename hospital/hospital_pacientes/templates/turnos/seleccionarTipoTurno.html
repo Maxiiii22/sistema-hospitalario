@@ -1,0 +1,29 @@
+{% extends 'layout/base-pacientes.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Tipo turno</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-tipo-turno">
+        <div class="box-seleccionar-tipo-turno">
+            <h1>Seleccione el tipo de turno</h1>
+            {% if paciente %} 
+                <a href="{% url 'sacarTurno' paciente.id %}" class="box-link-turno">Sacar turno para consultas médicas</a>
+                {% if orden_pendiente %}  
+                    <a class="box-link-turno" href="{% url 'sacarTurnoEstudio' paciente.id %}">Sacar turno para estudios solicitados</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %}  {% endblock %}
+
+

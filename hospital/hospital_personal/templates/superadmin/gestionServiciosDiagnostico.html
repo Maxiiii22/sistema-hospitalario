@@ -1,0 +1,119 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Gestion de servicios de diagnosticos</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-superadmin">
+        <h1>Gestionar Servicios de Diagnostico</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="newServicio"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nuevo servicio de diagnostico</button>
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-superadmin" id="box-tabla-general">
+            {% include 'superadmin/tablasDinamicas/_tabla_serviciosDiagnostico.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal {% if abrir_modal_por_error %}show errorModal{% endif %}">
+        <div class="modal-content modal-servicios-diagnostico">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Editar servicio de diagnostico</h2>
+            <div id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.nombre_servicio.label_tag}}
+                        {{filtro.form.nombre_servicio}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.departamento.label_tag}}
+                        {{filtro.form.departamento}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.lugar.label_tag}}
+                        {{filtro.form.lugar}}
+                    </div>
+                </form>
+            </div>
+            <div id="seccion-edit">
+                <form id="editForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_servicio" name="id_servicio" >
+                                
+                    <div class="campo-input">
+                        {{ form.nombre_servicio.label_tag }}
+                        {{ form.nombre_servicio }}
+                        {% if form.nombre_servicio.errors %}
+                            <div id="error_nombre_servicio" class="error-message">
+                                {% for error in form.nombre_servicio.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="campo-input">
+                        {{ form.capacidad_diaria.label_tag }}
+                        {{ form.capacidad_diaria }}
+                        {% if form.capacidad_diaria.errors %}
+                            <div class="error-message">
+                                {% for error in form.capacidad_diaria.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>                    
+    
+                    <div class="campo-input">
+                        {{ form.descripcion.label_tag }}
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <div id="error_descripcion" class="error-message">
+                                {% for error in form.descripcion.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    <div class="campo-input">
+                        <label for="id_departamento">Ubicado en el departamento de:</label>
+                        {{ form.departamento }}
+                        {% if form.departamento.errors %}
+                            <div id="error_departamento" class="error-message">
+                                {% for error in form.departamento.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    <div class="campo-input scroll-wrapper-multipleCheck">
+                        {{ form.lugar.label_tag }}
+                        {{ form.lugar }}
+                        <div class="fade-bottom"></div>
+                        {% if form.lugar.errors %}
+                            <div id="error_lugar" class="error-message">
+                                {% for error in form.lugar.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+    
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/superadmin.js' %}"></script>
+{% endblock %}

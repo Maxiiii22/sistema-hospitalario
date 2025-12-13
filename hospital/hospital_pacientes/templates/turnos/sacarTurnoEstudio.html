@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacar turno para servicios de diagnostico</title>
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+</head>
+<body>
+    <main class="container-sacarTurnoEstudios">
+        <div class="box-seleccionarTurnoEstudio">
+            {% if menor %}
+                <a id="back-link-solo" class="back-link" href="{% url 'seleccionarTurno' menor.menor.id %}"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>
+            {% else %}
+                <a id="back-link-solo" class="back-link" href="{% url 'seleccionarTurno' user.paciente.id %}"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>
+            {% endif %}
+            <h2>Sacar turno {% if parentesco %} {{parentesco}} {% endif %}</h2>
+            <div class="ordenes-solicitadas">
+                <h3>Ordenes solicitadas:</h3>
+                {% for estudio in estudios %}
+                    <div class="box-estudio" data-id-orden="{{estudio.id}}" data-id-paciente="{{estudio.consulta.turno.paciente.id}}">
+                        <p><strong>N° de orden:</strong> {{estudio.id}} - <strong>Estudio:</strong> {{estudio.tipo_estudio.nombre_estudio}} - <strong>Estado:</strong> {{estudio.get_estado_display}}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    
+    <div id="editModal" class="modal">
+        <div class="modal-content modal-sacarTurnoEstudio">
+        <span id="closeEditModal" class="close">&times;</span>
+        <h2 id="modal-title">Sacar turno</h2>
+        <form id="editForm" method="POST">
+            {% csrf_token %}
+            {{form}}
+            <p id="orden"></p>
+            <p id="estudio"></p>
+            <p id="p-servicio"></p>
+            <p id="p-lugar"></p> 
+            <p id="horario"></p>
+            <h3>Días disponibles:</h3>
+            <div class="nav-buttons">
+                <button type="button" id="prevMonth" class="prevMonth">Mes Anterior</button>
+                <button type="button" id="nextMonth" class="nextMonth">Mes Siguiente</button>
+            </div>
+            <div class="calendar" id="calendar"></div>  
+            <button type="submit" disabled class="btn-global btn-form-sacar-turnoEstudio">Confirmar</button>
+        </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/pacientes.js' %}"></script>
+</body>
+</html>

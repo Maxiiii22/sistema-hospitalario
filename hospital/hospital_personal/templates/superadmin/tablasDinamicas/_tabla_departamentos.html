@@ -1,0 +1,34 @@
+<table class="tabla-global" id="tabla-gestion-departamentos">
+    <thead>
+        {% if allDepartamentos %}
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0%}
+            <tr>
+                <td colspan="3" class="empty-message">No hay departamentos registrados.</td>
+            </tr>        
+        {% elif allDepartamentos.count == 0%}
+            <tr>
+                <td colspan="3" class="empty-message">No hay departamentos que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for departamento in allDepartamentos %}
+                <tr class="fila">
+                    <td data-label="ID:">{{departamento.id}}</td>
+                    <td data-label="Nombre:">{{departamento.nombre_departamento}}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <button class="btn-masDetalles" data-id-departamento="{{ departamento.id }}">Mas detalles</button>
+                        </div>                    
+                    </td>  
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

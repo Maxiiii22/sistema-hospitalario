@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Página no encontrada</title>
+</head>
+<body>
+    <h1>404</h1>
+    <h2>Página no encontrada</h2>
+    <p>Lo sentimos, la página que estás buscando no existe o ha sido movida.</p>
+    {% if user.usuario %}
+        <a href="{% url 'indexPersonal' %}">Volver al inicio</a>
+    {% elif user.paciente %}
+        <a href="{% url 'indexPaciente' %}">Volver al inicio</a>
+    {% endif %}
+
+</body>
+</html>

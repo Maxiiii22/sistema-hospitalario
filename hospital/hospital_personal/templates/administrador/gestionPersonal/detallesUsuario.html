@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_administrador.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}    
+    <title>Detalles del usuario</title>
+</head>
+<body>
+    <main class="container-detalles-usuario">
+        <div class="box-form-detalles-usuario">
+            <a href="{% url 'administrador-gestionDelPersonal' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+            <h2>Detalles del usuario {{usuario.persona.get_full_name}} - N° Legajo: {{usuario.persona.login_id}}</h2>  
+            <form action="" method="POST" class="secciones">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="form_editarPersonal">
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <span class="titulo">Datos personales</span>
+                        {% if formUsuario.persona_form.non_field_errors %}
+                            <ul class="form-errors">
+                                {% for error in formUsuario.persona_form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label for="id_login_id">Numero legajo:</label>
+                                {{ formUsuario.persona_form.login_id }}
+                                {% if formUsuario.persona_form.login_id.errors %}
+                                    <div id="error_login_id" class="error-message">
+                                        {% for error in formUsuario.persona_form.login_id.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_password">Contraseña:</label>
+                                {{ formUsuario.persona_form.password }}
+                                {% if formUsuario.persona_form.password.errors %}
+                                    <div id="error_password" class="error-message">
+                                        {% for error in formUsuario.persona_form.password.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.dni.label_tag }}
+                                {{ formUsuario.persona_form.dni }}
+                                {% if formUsuario.persona_form.dni.errors %}
+                                    <div id="error_dni" class="error-message">
+                                        {% for error in formUsuario.persona_form.dni.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_first_name">Nombre:</label>
+                                {{ formUsuario.persona_form.first_name }}
+                                {% if formUsuario.persona_form.first_name.errors %}
+                                    <div id="error_first_name" class="error-message">
+                                        {% for error in formUsuario.persona_form.first_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}       
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_last_name">Apellido:</label>
+                                {{ formUsuario.persona_form.last_name }}
+                                {% if formUsuario.persona_form.last_name.errors %}
+                                    <div id="error_last_name" class="error-message">
+                                        {% for error in formUsuario.persona_form.last_name.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                         
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.sexo.label_tag }}
+                                {{ formUsuario.persona_form.sexo }}
+                                {% if formUsuario.persona_form.sexo.errors %}
+                                    <div id="error_sexo" class="error-message">
+                                        {% for error in formUsuario.persona_form.sexo.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}               
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.telefono.label_tag }}
+                                {{ formUsuario.persona_form.telefono }}
+                                {% if formUsuario.persona_form.telefono.errors %}
+                                    <div id="error_telefono" class="error-message">
+                                        {% for error in formUsuario.persona_form.telefono.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                              
+                            </div>
+                            
+                            <div class="campo-input">
+                                {{ formUsuario.persona_form.fecha_nacimiento.label_tag }}
+                                {{ formUsuario.persona_form.fecha_nacimiento }}
+                                {% if formUsuario.persona_form.fecha_nacimiento.errors %}
+                                    <div id="error_fecha_nacimiento" class="error-message">
+                                        {% for error in formUsuario.persona_form.fecha_nacimiento.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                             
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="id_email">Email:</label>
+                                {{ formUsuario.persona_form.email }}
+                                {% if formUsuario.persona_form.email.errors %}
+                                    <div id="error_email" class="error-message">
+                                        {% for error in formUsuario.persona_form.email.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <span class="titulo">Datos de usuario</span>
+                        {% if formUsuario.usuario_form.non_field_errors %}
+                            <ul class="form-errors">
+                                {% for error in formUsuario.usuario_form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label for="id_tipoUsuario">Tipo usuario:</label>
+                                {{ formUsuario.usuario_form.tipoUsuario }}
+                                {% if formUsuario.usuario_form.tipoUsuario.errors %}
+                                    <div id="error_tipoUsuario" class="error-message">
+                                        {% for error in formUsuario.usuario_form.tipoUsuario.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}                              
+                            </div>
+                            <div class="campo-input box-campo-matricula">
+                                {{ formUsuario.usuario_form.numero_matricula.label_tag }}
+                                {{ formUsuario.usuario_form.numero_matricula }}
+                                {% if formUsuario.usuario_form.numero_matricula.errors %}
+                                    <div id="error_numero_matricula" class="error-message">
+                                        {% for error in formUsuario.usuario_form.numero_matricula.errors %}
+                                            <p>{{ error }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}  
+                            </div>
+                            
+                            <div class="campo-input">
+                                <label for="cambio_contraseña">Debe cambiar constraseña:</label>
+                                <input type="text" readonly value="{% if usuario.debe_cambiar_contraseña %} Si {% else %} No {% endif %}" id="cambio_contraseña">
+                            </div>
+                            <div class="campo-input">
+                                <label for="date_joined">Fecha de registro:</label>
+                                <input type="text" readonly value="{{usuario.persona.date_joined|date:'d-m-Y H:i A'}}" id="date_joined">
+                            </div>
+                            <div class="campo-input">
+                                <label for="last_login">Ultimo inicio de sesion:</label>
+                                <input type="text" readonly value="{% if usuario.persona.last_login %}{{usuario.persona.last_login|date:'d-m-Y H:i A'}}{% else %}Nunca accedió{% endif %}" id="last_login">
+                            </div>
+                            <div class="campo-input">
+                                <label for="id_is_active">Usuario habilitado:</label>
+                                {{ formUsuario.persona_form.is_active }}
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <button type="submit" class="btn-global">Guardar cambios</button>
+            </form>
+
+            <div class="secciones">
+                <div class="datos-personales">
+                    <div class="box-header-datos">
+                        <span class="titulo">Rol profesional</span>
+                    </div>                        
+                    <div class="roles-profesionales">
+                        <ul>
+                            {% for rolProfesional in rolesProfesionales %}
+                                <li class="rol-profesional-item">
+                                    <div class="box-p-rol-profesional">
+                                        <p><strong>{{rolProfesional.usuario.tipoUsuario}} ({{rolProfesional.rol_profesional.nombre_rol_profesional}})</strong></p>
+                                    </div>                                    
+                                </li>
+                            {% empty %}
+                                <li class="item-noRol"><strong>No tiene roles profesionales asignados</strong></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="secciones">
+                <div class="datos-personales">
+                    <div class="box-header-datos">
+                        <span class="titulo">Lugares donde presta servicios</span>   
+                    </div>                           
+                    {% if departamentos_con_jornadas %}
+                        {% for departamento, asignaciones in departamentos_con_jornadas.items %}
+                            <div class="box-lugar" id="boxLugar-{{ departamento.id }}">
+                                <div class="lugar-header">
+                                    <div>
+                                        <span><strong>Departamento: {{ departamento.nombre_departamento }}</strong></span>
+                                    </div>
+                                    <div>
+                                        <i class="hgi hgi-stroke hgi-arrow-down-01" id="icon-arrow-{{departamento.id}}" onclick="toggleLugar('{{ departamento.id }}')"></i>
+                                    </div>
+                                </div>
+                                <div class="lugar-items hidden-linea" id="items-lugar-{{departamento.id}}">
+                                    {% for asignacion in asignaciones %}
+                                        <div class="item-lugar">
+                                            <p>{{ asignacion.info|safe }}</p> {# En el backend, usamos <strong> para rodear las partes del texto que deseamos en negrita. En el template, usamos |safe para renderizar el contenido HTML correctamente. #}                                            
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="container-noLugar">
+                            <p class="item-noLugar"><strong>No hay lugares de trabajo asignados</strong></p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="{% static 'js/superadmin.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+</body>
+</html>

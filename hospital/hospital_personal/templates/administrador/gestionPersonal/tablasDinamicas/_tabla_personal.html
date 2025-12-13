@@ -1,0 +1,46 @@
+<table class="tabla-global" id="tabla-gestion-personal">
+    <thead>
+        {% if allPersonal %}
+        <tr>
+            <th>ID</th>
+            <th>N° Legajo hospitalario</th>
+            <th>Tipo usuario</th>
+            <th class="columna-matricula">N° Matricula</th>
+            <th class="columna-nombre">Nombre</th>
+            <th class="columna-apellido">Apellido</th>
+            <th class="columna-ultimoAcceso">Ultimo acceso</th>
+            <th class="columna-estado">Estado</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="9" class="empty-message">No hay personal registrado.</td>
+            </tr>        
+        {% elif allPersonal.count == 0 %}
+            <tr>
+                <td colspan="9" class="empty-message">No hay personal que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for persona in allPersonal %}
+            <tr class="fila">
+                <td data-label="ID:">{{persona.id}}</td>
+                <td data-label="N° Legajo hospitalario:">{{persona.persona.login_id}}</td>
+                <td data-label="Tipo de usuario:">{{persona.tipoUsuario}} {% for u in persona.rolesProfesionalesUsuario.all %}({{u.rol_profesional}}) {% endfor %}</td>
+                <td data-label="N° Matricula:" class="columna-matricula">{% if persona.numero_matricula %}{{persona.numero_matricula}}{% else %}No aplica{% endif %}</td>
+                <td data-label="Nombre:" class="columna-nombre">{{persona.persona.first_name}}</td>
+                <td data-label="Apellido:" class="columna-apellido">{{persona.persona.last_name}}</td>
+                <td data-label="Ultimo acceso:" class="columna-ultimoAcceso">{% if persona.persona.last_login %} {{persona.persona.last_login|date:"d-m-Y H:i"}} {% else %} Nunca accedió {% endif %}</td>
+                <td data-label="Estado:" class="columna-estado">{% if persona.persona.is_active %} Activo {% else %} Inactivo {% endif %}</td>
+                <td data-label="Acciones:">
+                    <div class="box-btns-td-acciones">
+                        <a href="{% url 'administrador-detalle-usuario' persona.id %}" class="btn-masDetalles" >Ver Ficha</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Turno</title>
+    <link rel="stylesheet" href="{% static 'estilos/styles_pacientes.css' %}">
+</head>
+<body>
+    <main class="container-turno-confirmado">
+        <div class="confirmacion">
+            <h1>Confirmación de Turno</h1>
+            {% if is_menor %}
+                <h2>¡El turno para {{datos_turno.paciente.persona.get_full_name}} ha sido confirmado con éxito!</h2>
+            {% else %}
+                <h2>¡Tu turno ha sido confirmado con éxito!</h2>
+            {% endif %}
+            
+            <div class="box-detalles-confirmarcion">
+                <p><strong>Fecha creacion:</strong> {{ datos_turno.fecha_creacion|date:"d/m/Y H:i A" }}</p>
+                <p><strong>Fecha del turno:</strong> {{ datos_turno.fecha_turno|date:"d/m/Y" }} 
+                <p><strong>Horario:</strong> {% if datos_turno.horario_turno == "dia" %} 7:00 a 15:00 {% elif datos_turno.horario_turno == "tarde" %} 15:00 a 23:00 {% endif %}</p>
+                <p><strong>Atención en:</strong> {{ datos_turno.lugar.nombre }} <strong>(Piso: {{ datos_turno.lugar.piso }} - N° de sala: {{ datos_turno.lugar.sala }})</strong></p>   
+                {% if turnoEstudio %}
+                    <p><strong>Estudio:</strong> {{ datos_turno.orden.tipo_estudio.nombre_estudio }}</p>
+                    <p><strong>Realizado por:</strong> {{ datos_turno.orden.tipo_estudio.servicio_diagnostico.nombre_servicio }}</p>
+                {% else %}
+                    <p><strong>Profesional:</strong> {{ datos_turno.profesional.persona.get_full_name }} - <strong>N° Matricula:</strong> {{datos_turno.profesional.numero_matricula}}</p>
+                    <p><strong>Especialidad:</strong> {{ datos_turno.especialidad.nombre_especialidad }}</p>
+                    <p><strong>Motivo:</strong> {{ datos_turno.motivo }}</p>
+                {% endif %}
+                
+        
+                {% if is_menor %}
+                    {% if turnoEstudio %}
+                        <a href="{% url 'susTurnos' datos_turno.orden.consulta.turno.paciente.id %}" class="btn-global">Ver sus turnos</a>  <!-- Redirige a la página donde el paciente puede ver todos los turnos de su menor a cargo-->
+                    {% else %}
+                        <a href="{% url 'susTurnos' datos_turno.paciente.id %}" class="btn-global">Ver sus turnos</a>  <!-- Redirige a la página donde el paciente puede ver todos los turnos de su menor a cargo-->
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'misTurnos' %}" class="btn-global">Ver mis turnos</a>  <!-- Redirige a la página donde el paciente puede ver todos sus turnos -->
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>

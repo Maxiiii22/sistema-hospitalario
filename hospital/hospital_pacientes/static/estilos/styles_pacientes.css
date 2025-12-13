@@ -1,0 +1,2111 @@
+/* Clases globales */ 
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-terciario: #DCDDEB;
+    --color-hover: #34A;
+}
+
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+body{
+    background-color: #e6e6e6;
+}
+
+#back-link-solo{
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color .3s ease;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+
+}
+
+#back-link-solo:hover{
+    background-color: var(--color-hover);
+}
+
+.seccionesDelForm{
+    display: none;
+}
+
+.p-cancelar-cita{
+    text-align: center;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+.error-message-main{
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.error-message p{
+    margin: 0;
+}
+
+.btn-global{
+    background-color: var(--color-primario);
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color .5s ease;
+}
+
+.btn-global:hover{
+    background-color: var(--color-hover);
+}
+
+button:disabled {
+    opacity: 0.6;            
+    pointer-events: none;     
+    cursor: not-allowed;      
+}
+
+.btn-masDetalles{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: clamp(0.8rem, 3vw, .9rem);
+    font-weight: normal;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color .5s ease;
+}
+
+.btn-masDetalles:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-accion {
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0 3px;
+    min-height: 30px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin-bottom: 2px;
+    transition: background-color .5s ease;
+}
+
+.btn-accion:hover {
+    background-color: var(--color-hover);
+}
+
+.fila{
+    background-color: #f4f4f1;
+    border-radius: 5px;
+}
+
+.fila:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+}
+
+#filtro-form .campo-input{ 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#btnformFilter{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: clamp(0.8rem, 3vw, .9rem);
+    font-weight: normal;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 5px;
+    transition: background-color .5s ease;
+}
+
+#btnformFilter:hover{
+    background-color: var(--color-hover);
+}
+
+
+/* Fin Clases globales */ 
+
+
+/* Modal global */
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center; 
+}
+
+.modal.show {
+    display: flex; 
+    
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    max-height: 95%;
+    overflow-y: auto;    
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#modal-title {
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+.btn-guardar {
+    padding: 0.7rem 1.5rem;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color .5s ease;
+
+}
+
+.btn-guardar {
+    background-color: var(--color-hover);
+}
+
+.form-error-modal {
+    background-color: red;
+    padding: 8px;
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    display: none;
+}
+
+#inputFeedback {
+    color: red;
+    text-align: center;
+}
+
+/* Fin Modal global */
+
+
+/* Tabla global */
+
+.tabla-global{
+    width: 100%;
+    border-radius: 5px;
+}
+
+.tabla-global thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.tabla-global th{
+    padding: 12px 0;
+    text-align: center;
+}
+
+.tabla-global td{
+    padding: 5px;
+    text-align: center;
+    height: 45px;
+    font-size: clamp(.8rem, 3vw, 1rem);
+}
+
+.box-btn-add{
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+/* Fin tabla global */
+
+
+/* ### Seccion "Mis turnos" ### */
+
+.container-turnos{
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.title-turnos {
+    padding: 5px 10px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    color: #fff;
+    width: fit-content;
+    font-size: 1.5rem;
+    margin: 5px 0;
+    text-align: center;
+}
+
+.section-turnos,.section-turnosEstudios{
+    margin-top: 20px;
+    outline: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+}
+
+.section-turnos .encabezado-turnos,.section-turnosEstudios .encabezado-turnos {
+    font-size: 20px;
+    background-color: var(--color-primario);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.section-turnos .encabezado-turnos h2,.section-turnosEstudios .encabezado-turnos h2 {
+    margin: 0 auto;
+    font-size: clamp(1.5rem, 3dvw, 1.7rem);
+}
+
+.btn-toggle {
+    padding: 10px;
+    background-color: var(--color-hover);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+    text-wrap:  nowrap;
+}
+
+.btn-toggle:hover {
+    background-color: #28B
+}
+
+.toggle-section{
+    display: none;
+}
+
+
+.box-btns-td-acciones{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.box-btns-td-acciones form button{
+    width: 100%;
+}
+
+
+.modal-reprogramar-turno{
+    background-color: #fff;
+    border: 1px solid #aaa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: clamp(300px, 90%, 380px);
+    transition: border-color 0.2s ease;
+}
+
+.modal-reprogramar-turno .seccion-reprogramar-turnoMedico p ,.modal-reprogramar-turno .seccion-reprogramar-turnoEstudio p  {
+    margin: 5px 0;
+}
+
+.modal-reprogramar-turno h3,.modal-reprogramar-turno p{
+    align-self: flex-start;
+}
+
+.modal-reprogramar-turno #closeEditModal{
+    align-self: flex-end;
+}
+
+.modal-reprogramar-turno h2{
+    margin-bottom: 5px;
+}
+
+.modal-reprogramar-turno form{
+    margin-top: 5px;
+}
+
+.modal-reprogramar-turno .nav-buttons button{
+    padding: 5px 15px;
+    margin: 3px 10px 0;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+.modal-reprogramar-turno .nav-buttons button:hover{
+    background-color: var(--color-hover);
+}
+
+.modal-reprogramar-turno .btn-global{
+    padding: 10px;
+}
+
+#seccion-reprogramar-turnoMedico p{
+    margin: 5px 0;
+    font-size: clamp(.9rem,3dvw,1rem);
+
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    max-width: 300px;
+    margin: 10px auto;
+}
+
+.calendar button {
+    padding: 9.4px;
+    text-align: center;
+    cursor: pointer;
+    background-color: white;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: color,border-color,background-color .3s;
+}
+
+.calendar button:disabled {
+    background-color: #ddd;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.calendar button.valid {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.calendar button:hover:not([disabled]) {
+    background-color: #f0f0f0;
+    color: #000;
+    border-color: #000;
+}
+
+.calendar button.seleccionado {
+    background-color: #000;
+    color: white;
+    font-weight: bold;
+    border-color: #000;
+}
+
+.header {
+    grid-column: span 7;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-buttons button {
+    padding: 5px 15px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+
+@media (width <= 1300px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-turnos-futuros,
+        #tabla-turnos-futuros thead,
+        #tabla-turnos-futuros tbody,
+        #tabla-turnos-futuros tr,
+        #tabla-turnos-futuros th,
+        #tabla-turnos-futuros td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-futuros tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-futuros td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-futuros td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-futuros td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-futuros thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-futuros .empty-message{
+        justify-content: center;
+    }
+}
+@media (width <= 1300px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-turnos-estudios-anteriores,
+        #tabla-turnos-estudios-anteriores thead,
+        #tabla-turnos-estudios-anteriores tbody,
+        #tabla-turnos-estudios-anteriores tr,
+        #tabla-turnos-estudios-anteriores th,
+        #tabla-turnos-estudios-anteriores td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-anteriores tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-anteriores td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-anteriores td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-anteriores td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-anteriores thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-anteriores .empty-message{
+        justify-content: center;
+    }
+}
+@media (width <= 1300px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-turnos-estudios-futuros,
+        #tabla-turnos-estudios-futuros thead,
+        #tabla-turnos-estudios-futuros tbody,
+        #tabla-turnos-estudios-futuros tr,
+        #tabla-turnos-estudios-futuros th,
+        #tabla-turnos-estudios-futuros td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-futuros tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-futuros td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-futuros td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-futuros td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-futuros thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-estudios-futuros .empty-message{
+        justify-content: center;
+    }
+}
+
+
+
+@media (width <= 1100px ){
+    body:has(.sidebar.minimizado) :is(
+        #tabla-turnos-futuros,
+        #tabla-turnos-futuros thead,
+        #tabla-turnos-futuros tbody,
+        #tabla-turnos-futuros tr,
+        #tabla-turnos-futuros th,
+        #tabla-turnos-futuros td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-futuros tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-futuros td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-futuros td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-futuros td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-futuros thead {
+        display: none;
+    }   
+
+    body:has(.sidebar.minimizado) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-futuros .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 1100px ){
+    body:has(.sidebar.minimizado) :is(
+        #tabla-turnos-estudios-futuros,
+        #tabla-turnos-estudios-futuros thead,
+        #tabla-turnos-estudios-futuros tbody,
+        #tabla-turnos-estudios-futuros tr,
+        #tabla-turnos-estudios-futuros th,
+        #tabla-turnos-estudios-futuros td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-futuros tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-futuros td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-futuros td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-futuros td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-futuros thead {
+        display: none;
+    }   
+
+    body:has(.sidebar.minimizado) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-futuros .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 1100px ){
+    body:has(.sidebar.minimizado) :is(
+        #tabla-turnos-estudios-anteriores,
+        #tabla-turnos-estudios-anteriores thead,
+        #tabla-turnos-estudios-anteriores tbody,
+        #tabla-turnos-estudios-anteriores tr,
+        #tabla-turnos-estudios-anteriores th,
+        #tabla-turnos-estudios-anteriores td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-anteriores tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-anteriores td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-anteriores td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-anteriores td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-anteriores thead {
+        display: none;
+    }   
+
+    body:has(.sidebar.minimizado) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-estudios-anteriores .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 1200px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-turnos-anteriores,
+        #tabla-turnos-anteriores thead,
+        #tabla-turnos-anteriores tbody,
+        #tabla-turnos-anteriores tr,
+        #tabla-turnos-anteriores th,
+        #tabla-turnos-anteriores td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-anteriores tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-anteriores td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-anteriores td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-anteriores td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-anteriores thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-turnos-anteriores .empty-message{
+        justify-content: center;
+    }
+}
+
+
+
+@media (width <= 1000px ){
+    body:has(.sidebar.minimizado) :is(
+        #tabla-turnos-anteriores,
+        #tabla-turnos-anteriores thead,
+        #tabla-turnos-anteriores tbody,
+        #tabla-turnos-anteriores tr,
+        #tabla-turnos-anteriores th,
+        #tabla-turnos-anteriores td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-anteriores tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-anteriores td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-anteriores td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-anteriores td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-anteriores thead {
+        display: none;
+    }   
+
+    body:has(.sidebar.minimizado) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-turnos-anteriores .empty-message{
+        justify-content: center;
+    }
+}
+
+
+@media (width <= 500px){
+    .section-turnos .encabezado-turnos,.section-turnosEstudios .encabezado-turnos{
+        flex-direction: column;
+        row-gap: 10px;
+    }
+
+    .section-turnos .container-btn-toggle,.section-turnosEstudios .container-btn-toggle{
+        width: 100%;
+    }
+
+    .section-turnos .btn-toggle,.section-turnosEstudios .btn-toggle{
+        width: 100%;
+    }
+}
+
+
+/* ### Fin Seccion "Mis turnos" ### */
+
+
+/* Parte de el Historial Clinico */
+.modal-content.modal-detalles-consulta{
+    width: clamp(300px, 90%, 1100px);
+    padding: 20px 10px;
+    font-size: clamp(.9rem,3dvw,1rem);
+    display: flex;
+    flex-direction: column;
+} 
+
+.modal-content.modal-detalles-consulta .close{
+    align-self: flex-end;
+} 
+
+.modal-detalles-consulta-item {
+    margin-bottom: 10px;
+}
+
+.modal-detalles-consulta-item pre, .div-p {
+    background-color: #f4f4f4;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    font-family: 'Courier New', monospace;
+    max-height: 115px;
+    overflow-y: auto;
+}
+
+.div-p{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.div-p p{
+    padding: 5px;    
+    display: flex;
+    min-height: 40px;
+    background-color: #ccc;
+    border-radius: 5px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#modalEstudios{
+    line-height:20px
+}
+
+.btn-verEstudio{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 0 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+.btn-verEstudio:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-volver-consulta{
+    align-self: flex-start;
+}
+
+
+.container-historial-clinico{
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.container-historial-clinico-item{
+    padding: 5px;
+    border-radius: 10px;
+    outline: 2px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.encabezado-tabla {
+    font-size: clamp(1.5rem.3dvw,1.7rem);
+    padding: 5px;
+    background-color: var(--color-primario);
+    color: white;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+@media (width <= 420px ){
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consulta-especifica,
+        #tabla-consulta-especifica thead,
+        #tabla-consulta-especifica tbody,
+        #tabla-consulta-especifica tr,
+        #tabla-consulta-especifica th,
+        #tabla-consulta-especifica td,
+
+        #tabla-consulta-especifica-estudios,
+        #tabla-consulta-especifica-estudios thead,
+        #tabla-consulta-especifica-estudios tbody,
+        #tabla-consulta-especifica-estudios tr,
+        #tabla-consulta-especifica-estudios th,
+        #tabla-consulta-especifica-estudios td,
+
+        #tabla-consulta-especifica-medicacion,
+        #tabla-consulta-especifica-medicacion thead,
+        #tabla-consulta-especifica-medicacion tbody,
+        #tabla-consulta-especifica-medicacion tr,
+        #tabla-consulta-especifica-medicacion th,
+        #tabla-consulta-especifica-medicacion td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consulta-especifica tr,
+        #tabla-consulta-especifica-estudios tr,
+        #tabla-consulta-especifica-medicacion tr
+    ){
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consulta-especifica td,
+        #tabla-consulta-especifica-estudios td,
+        #tabla-consulta-especifica-medicacion td
+    ){
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consulta-especifica td:last-child,
+        #tabla-consulta-especifica-estudios td:last-child,
+        #tabla-consulta-especifica-medicacion td:last-child
+    ){
+        border-bottom: 0;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-consulta-especifica td::before,
+    body:has(.sidebar:not(.minimizado)) #tabla-consulta-especifica-estudios td::before,
+    body:has(.sidebar:not(.minimizado)) #tabla-consulta-especifica-medicacion td::before
+    {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consulta-especifica thead,
+        #tabla-consulta-especifica-estudios thead,
+        #tabla-consulta-especifica-medicacion thead
+    ){
+        display: none;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-consulta-especifica .empty-message,
+        #tabla-consulta-especifica-estudios .empty-message,
+        #tabla-consulta-especifica-medicacion .empty-message
+    ){
+        justify-content: center;
+    }
+}
+
+
+@media (width >= 700px ) and (width <= 805px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-resultado-estudio-especifico,
+        #tabla-resultado-estudio-especifico thead,
+        #tabla-resultado-estudio-especifico tbody,
+        #tabla-resultado-estudio-especifico tr,
+        #tabla-resultado-estudio-especifico th,
+        #tabla-resultado-estudio-especifico td,
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico tr{
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico td{
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico td:last-child{
+        border-bottom: 0;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico td::before
+    {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico thead{
+        display: none;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 480px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-resultado-estudio-especifico,
+        #tabla-resultado-estudio-especifico thead,
+        #tabla-resultado-estudio-especifico tbody,
+        #tabla-resultado-estudio-especifico tr,
+        #tabla-resultado-estudio-especifico th,
+        #tabla-resultado-estudio-especifico td,
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico tr{
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico td{
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico td:last-child{
+        border-bottom: 0;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico td::before
+    {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico thead{
+        display: none;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-resultado-estudio-especifico .empty-message{
+        justify-content: center;
+    }
+}
+
+
+@media (width >= 700px ) and (width <= 850px ){
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas,
+        #tabla-historial-consultas thead,
+        #tabla-historial-consultas tbody,
+        #tabla-historial-consultas tr,
+        #tabla-historial-consultas th,
+        #tabla-historial-consultas td
+
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas tr,
+        #tabla-historial-consultas-estudios tr,
+        #tabla-historial-consultas-medicaciones tr
+    ){
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas td,
+        #tabla-historial-consultas-estudios td,
+        #tabla-historial-consultas-medicaciones td
+    ){
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas td:last-child,
+        #tabla-historial-consultas-estudios td:last-child,
+        #tabla-historial-consultas-medicaciones td:last-child
+    ){
+        border-bottom: 0;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-historial-consultas td::before,
+    body:has(.sidebar:not(.minimizado)) #tabla-historial-consultas-estudios td::before,
+    body:has(.sidebar:not(.minimizado)) #tabla-historial-consultas-medicaciones td::before
+    {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas thead,
+        #tabla-historial-consultas-estudios thead,
+        #tabla-historial-consultas-medicaciones thead
+    ){
+        display: none;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas .empty-message,
+        #tabla-historial-consultas-estudios .empty-message,
+        #tabla-historial-consultas-medicaciones .empty-message
+    ){
+        justify-content: center;
+    }
+}
+
+@media (width <= 500px ){
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas,
+        #tabla-historial-consultas thead,
+        #tabla-historial-consultas tbody,
+        #tabla-historial-consultas tr,
+        #tabla-historial-consultas th,
+        #tabla-historial-consultas td,
+
+        #tabla-historial-consultas-estudios,
+        #tabla-historial-consultas-estudios thead,
+        #tabla-historial-consultas-estudios tbody,
+        #tabla-historial-consultas-estudios tr,
+        #tabla-historial-consultas-estudios th,
+        #tabla-historial-consultas-estudios td,
+
+        #tabla-historial-consultas-medicaciones,
+        #tabla-historial-consultas-medicaciones thead,
+        #tabla-historial-consultas-medicaciones tbody,
+        #tabla-historial-consultas-medicaciones tr,
+        #tabla-historial-consultas-medicaciones th,
+        #tabla-historial-consultas-medicaciones td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas tr,
+        #tabla-historial-consultas-estudios tr,
+        #tabla-historial-consultas-medicaciones tr
+    ){
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas td,
+        #tabla-historial-consultas-estudios td,
+        #tabla-historial-consultas-medicaciones td
+    ){
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas td:last-child,
+        #tabla-historial-consultas-estudios td:last-child,
+        #tabla-historial-consultas-medicaciones td:last-child
+    ){
+        border-bottom: 0;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) #tabla-historial-consultas td::before,
+    body:has(.sidebar:not(.minimizado)) #tabla-historial-consultas-estudios td::before,
+    body:has(.sidebar:not(.minimizado)) #tabla-historial-consultas-medicaciones td::before
+    {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas thead,
+        #tabla-historial-consultas-estudios thead,
+        #tabla-historial-consultas-medicaciones thead
+    ){
+        display: none;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-historial-consultas .empty-message,
+        #tabla-historial-consultas-estudios .empty-message,
+        #tabla-historial-consultas-medicaciones .empty-message
+    ){
+        justify-content: center;
+    }
+}
+
+
+/* Fin Parte de el Historial Clinico */
+
+
+
+/* Parte de Seleccionar tipo de turno  */
+
+.container-tipo-turno{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.box-seleccionar-tipo-turno{
+    background-color: #fff;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    text-align: center;
+    outline: 2px solid #ccc;
+}
+
+.box-link-turno {
+    display: block;
+    padding: 20px;
+    background-color: var(--color-primario);
+    text-decoration: none;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: background-color 0.5s ease;
+    font-size: clamp(.9rem,3dvw,1.1rem);
+}
+
+.box-link-turno:hover {
+    background-color: var(--color-hover);
+}
+
+/* Fin Parte de Seleccionar tipo de turno  */
+
+
+
+/* Parte de Sacar turno medico */
+
+.container-sacarTurno{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 10px 0 ;
+    height: 95dvh;
+}
+
+.box-form-seleccionar-especialidad{
+    display: flex;
+    background-color: #fff;
+    border-radius: 10px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;    
+    padding: 15px;
+    width: 310px;
+    min-width: 310px;
+    outline: 2px solid #ccc;
+}
+
+.box-form-seleccionar-especialidad .back-link{
+    align-self: flex-start;
+}
+
+.box-form-seleccionar-especialidad h2{
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.box-form-seleccionar-especialidad form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.box-form-seleccionar-especialidad form label, .box-form-seleccionar-especialidad form select{
+    width: 100%;
+}
+
+.box-form-seleccionar-especialidad form select{
+    padding: 10px 0;
+}
+
+.box-form-seleccionar-especialidad form .btn-global{
+    width: 100%;
+    padding: 10px 5px;
+}
+
+.container-profesionales{
+    display: flex;
+    width: clamp(310px, 95%, 1585px);
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px 0;
+    gap: 10px;
+}
+
+
+.box-title-profesionales-disponibles{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.box-title-profesionales-disponibles h2{
+    width: 90%;
+}
+
+.container-profesionales h2{
+    text-align: center;
+}
+
+.box-cards-profesionales{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    width: clamp(310px, 100%, 1585px);
+    gap: 15px; 
+}
+
+
+.box-cards-profesionales .card-profesional {
+    border: 1px solid #aaa;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: clamp(303px, 97%, 380px);
+    transition: border-color 0.2s ease;
+}
+
+.card-profesional:hover{
+    border-color: #555;
+}
+
+.box-cards-profesionales .card-profesional p {
+    font-size: 14px;
+}
+
+.box-cards-profesionales .card-profesional .calendar {
+    gap: 3px;
+}
+
+.box-cards-profesionales .card-profesional .calendar button {
+    padding: 9.4px;
+}
+
+
+.box-cards-profesionales .nav-buttons {
+    display: flex;
+    justify-content: center;
+    padding-top: 2px;
+}
+
+.box-cards-profesionales .nav-buttons button {
+    padding: 5px 15px;
+    margin: 0 10px;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    transition: background-color .5s ease;
+}
+.box-cards-profesionales .nav-buttons button:hover {
+    background-color: var(--color-hover);
+}
+
+.card-profesional .textarea-motivo-turno{
+    width: 100%;
+    resize: vertical;
+    min-height: 50px;
+    padding: 3px;
+}
+
+.card-profesional .btn-global{
+    width: 100%;
+    padding: 10px 5px;
+}
+
+
+/* Fin Parte de Sacar turno medico */
+
+
+/* Sacar turno para ordenes medicas solicitadas  */
+
+.container-sacarTurnoEstudios{
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.box-seleccionarTurnoEstudio{
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 10px;
+    align-items: center;
+    padding: 10px;
+    outline: 2px solid #ccc;
+}
+
+.box-seleccionarTurnoEstudio .back-link{
+    align-self: flex-start;
+}
+
+.ordenes-solicitadas{
+    padding: 5px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.box-estudio{
+    background-color: var(--color-primario);
+    margin: 5px 0;
+    color: #fff;
+    padding: 20px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 3px 4px 9px rgba(0, 0, 0, 0.5);
+    font-size: clamp(.9rem,3dvw,1rem);
+    transition: background-color .5s ease;
+}
+
+.box-estudio:hover{
+    background-color: var(--color-hover);
+}
+
+.box-estudio p{
+    text-align: center;
+
+}
+
+.modal-content.modal-sacarTurnoEstudio{
+    width: clamp(310px,96%,350px);
+    padding: 20px 11px;
+}
+
+.modal-sacarTurnoEstudio p{
+    margin: 5px 0;
+}
+
+.modal-sacarTurnoEstudio .nav-buttons {
+    display: flex;
+    justify-content: center;
+    padding-top: 2px;
+}
+
+.modal-sacarTurnoEstudio .nav-buttons button {
+    padding: 5px 15px;
+    margin: 0 10px;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    transition: background-color .5s ease;    
+}
+.modal-sacarTurnoEstudio .nav-buttons button:hover {
+    background-color: var(--color-hover);
+}
+
+.modal-sacarTurnoEstudio .btn-global{
+    width: 100%;
+    padding: 10px 5px;
+}
+
+
+/* Fin Sacar turno para ordenes medicas solicitadas  */
+
+
+
+/* Turno confirmado */
+
+.container-turno-confirmado{
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmacion {
+    outline: 2px solid #ccc;
+    padding: 20px 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: clamp(.8rem, 3dvw, 1.1rem);
+    width: clamp(300px,90%,535px);
+}
+
+.confirmacion h1{
+    padding: 5px 10px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    color: #fff;
+    margin: 5px 0;
+    text-align: center;
+    width: 100%;
+}
+
+.confirmacion h2 {
+    margin-top: 0;
+}
+
+.confirmacion .box-detalles-confirmarcion{
+    outline: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 5px;
+    margin-top: 10px;
+}
+
+.confirmacion p {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+
+/* Fin Turno confirmado */
+
+
+/* Parte de GestionMenores.html */
+
+.container-gestion-menores{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.registro-link {
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 5px;
+    min-height: 30px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin: 10px 0 10px 8px;
+    transition: background-color .5s ease;
+}
+
+.registro-link:hover {
+    background-color: var(--color-hover);
+}
+
+.estado-activo {
+    color: green;
+    font-weight: bold;
+}
+
+.estado-inactivo {
+    color: red;
+    font-weight: bold;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-evenly;
+}
+
+.card {
+    background-color: #f2f2f2;
+    outline: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 15px;
+    width: 100%;
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    transition: outline-color .5s ease;
+}
+
+.card:hover {
+    outline-color: #444;
+}
+
+.card-datos-menor{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 8px;
+    font-size: clamp(.9rem,3dvw,1.1rem);
+}
+
+.card-datos-menor h3 {
+    color: #333;
+}
+
+.card-datos-menor p {
+    color: #555;
+}
+
+.card-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+}
+
+.card-buttons a,.card-buttons button {
+    text-wrap: nowrap;
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    padding: 8px 12px;
+    min-height: 35px;
+    margin-right: 5px;
+    font-size: clamp(.8rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin-bottom: 2px;
+    color: #fff;
+    background-color: var(--color-primario);
+    transition: background-color .5s ease;
+}
+
+.card-buttons a:hover,.card-buttons button:hover {
+    background-color: var(--color-hover);
+}
+
+
+@media (height <=570px){
+    .modal-gestion-menores{
+        height: 95%;
+        overflow-y: auto;
+    }
+}
+
+/* FinParte de GestionMenores.html */
+
+
+/* Parte Registro de menor de edad */
+
+
+#editForm .campos-modal{ /* Inputs del modal */
+    width: 100%;
+}
+
+.body-detallesPaciente{
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6e6e6;
+}
+
+.container-form-paciente{
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 15px; 
+    width: clamp(300px, 90%, 900px);
+}
+
+.container-form-paciente .title-ficha{
+    text-align: center;
+    margin: 10px 0;
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.container-form-paciente h2{
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+
+.container-form-paciente form{
+    margin-top: 15px;
+}
+
+.container-form-paciente form .secciones{
+    margin-top: 20px;
+}
+
+.container-form-paciente form .titulo{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+
+.container-form-paciente form .campos{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+form .campos .campo-input{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% / 3 - 15px);
+    margin: 4px 0;
+}
+
+.campo-input label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+}
+
+.campo-input input,.campo-input select,.campo-input textarea{
+    padding: 0 15px;
+    outline: none;
+    border: 1px solid #000;
+    border-radius: 5px;
+    height: 42px;
+    margin: 8px 0;
+}
+
+.campo-input textarea{
+    resize: vertical;
+    height: 150px;
+}
+
+.campo-input input:is(:focus, :valid),.campo-input select:is(:focus, :valid),.campo-input textarea:is(:focus, :valid){
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
+}
+
+
+@media (width <750px) {
+    form .campos .campo-input{
+        width: calc(100% / 2 - 15px);
+    }
+}
+
+/*  Fin parte de registro de menor de edad*/
+
+
+
+
+/* Seccion Mi cuenta  */
+
+.main-form-paciente{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 91dvh;
+}
+
+.container-form-paciente .btn-global{
+    padding: 10px;
+}
+
+/* Fin seccion Mi cuenta */
+
+
+
+
+
+

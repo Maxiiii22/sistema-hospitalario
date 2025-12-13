@@ -1,0 +1,40 @@
+{% extends 'base_index.html' %}
+{% load static %}
+
+    {% block title %}
+    <title>Servicios de Diagnostico</title>
+    {% endblock %}
+
+    {% block content_main %}
+    <div class="container">
+        <h1>Servicios de Diagnostico</h1>
+        <p class="intro">
+            Los estudios diagnósticos son una parte esencial del cuidado de la salud, permitiendo evaluar, 
+            confirmar y monitorear diferentes condiciones médicas. A continuación, encontrará los servicios 
+            que brindamos.
+        </p> 
+        {% for servicio in allServicios %}
+        <section class="especialidad">
+            <h2 class="nombreEspecialidad"><i class="hgi hgi-stroke hgi-microscope"></i> {{servicio.nombre_servicio}}</h2>
+            <p>{{servicio.descripcion}}</p>
+            <div class="seccion-sec">
+                <h3>Estudios que puede realizar el servicio</h3>
+                <ul class="seccion-ul">
+                    {% for estudio in servicio.estudiosDelServicio.all %}
+                    <li>{{estudio.nombre_estudio}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+    
+        </section>
+    {% endfor %}            
+
+    </div>   
+    {% endblock %}
+
+
+
+
+
+
+

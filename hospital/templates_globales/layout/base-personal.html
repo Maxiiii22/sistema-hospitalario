@@ -1,0 +1,316 @@
+{% load static %} {# Cargamos la carpeta static que contiene el script.js y el css #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/global_styles.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}
+
+    {% block css %}  {% endblock %}
+
+    {% block titulo %} {% endblock %}
+</head>
+<body>
+    <div class="menu-btn sidebar-btn" id="sidebar-btn">
+        <i class="hgi hgi-stroke hgi-menu-01"></i>
+        <i class="hgi hgi-stroke hgi-multiplication-sign"></i>
+    </div>
+    <div class="sidebar minimizado" id="sidebar">
+        <div class="header">
+            <div class="menu-btn" id="menu-btn">
+                <i class="hgi hgi-stroke hgi-arrow-right-double"></i>
+            </div>
+            <div class="logo">
+                <img src="/media/logo-hospital.png" alt="Logo">
+                <span>{{user.usuario.persona.get_full_name}} - {{user.usuario.tipoUsuario.nombre_tipoUsuario}}</span>
+            </div>
+        </div>
+        <div class="menu-container">
+            <ul class="menu">
+                <li class="menu-item menu-item-estatico">
+                    <a href="{% url 'indexPersonal' %}" class="menu-link">
+                        <i class="hgi hgi-stroke hgi-home-03"></i>
+                        <span class="span-main">Inicio</span>
+                    </a>
+                </li>
+                {% if user.usuario.tipoUsuario.id == 1 %} {# Superadmin #}
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'gestionDelPersonal' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-add-male"></i>
+                            <span class="span-main">Gestión del Personal</span>
+                        </a> 
+                    </li>
+                    <li class="menu-item menu-item-desplegable">
+                        <div class="menu-link">
+                            <i class="hgi hgi-stroke hgi-building-05"></i>
+                            <span class="span-main">Áreas Médicas</span>
+                            <i class="hgi hgi-stroke hgi-arrow-down-01 arrowDesplegable"></i>
+                        </div>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="{% url 'gestionDeEspecialidades' %}" class="sub-menu-link">
+                                    <i class="hgi hgi-stroke hgi-doctor-01"></i>
+                                    <span>Gestión de Especialidades</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'gestionDeServiciosDiagnostico' %}" class="sub-menu-link">
+                                    <i class="hgi hgi-stroke hgi-labs"></i>
+                                    <span>Gestión de Servicios de Diagnostico</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="menu-item menu-item-desplegable">
+                        <div class="menu-link">
+                            <i class="hgi hgi-stroke hgi-microscope"></i>
+                            <span class="span-main">Estudios</span>
+                            <i class="hgi hgi-stroke hgi-arrow-down-01 arrowDesplegable"></i>
+                        </div>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="{% url 'gestionDeEstudiosDiagnostico' %}" class="sub-menu-link">
+                                    <i class="hgi hgi-stroke hgi-medical-file"></i>
+                                    <span>Gestión de Estudios de Diagnostico</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'gestionDePlantillasEstudios' %}" class="sub-menu-link">
+                                    <i class="hgi hgi-stroke hgi-file-01"></i>
+                                    <span>Gestión de Plantillas de Estudios</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'gestionDeLugares' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-office"></i>
+                            <span class="span-main">Gestión de Lugares</span>
+                        </a> 
+                    </li>
+
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'gestionDeDepartamentos' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-user-group-02"></i>
+                            <span class="span-main">Gestión de Departamentos</span>
+                        </a> 
+                    </li>
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'gestionDeRoles' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-identity-card"></i>
+                            <span class="span-main">Gestión de Identidades y Roles</span>
+                        </a> 
+                    </li>
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'listaPacientes' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-user-list"></i>
+                            <span class="span-main">Lista de Pacientes</span>
+                        </a> 
+                    </li> 
+                {% elif user.usuario.tipoUsuario.id == 2 %} {# Administrador #}
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'administrador-gestionDelPersonal' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-user-list"></i>
+                            <span class="span-main">Gestión del Personal</span>
+                        </a> 
+                    </li>             
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'administrador-gestion-agendas' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-calendar-user"></i>
+                            <span class="span-main">Gestión de Agendas de Médicos</span>
+                        </a> 
+                    </li> 
+                    <li class="menu-item menu-item-desplegable">
+                        <div class="menu-link">
+                            <i class="hgi hgi-stroke hgi-transaction-history"></i>
+                            <span class="span-main">Historial de Reportes</span>
+                            <i class="hgi hgi-stroke hgi-arrow-down-01 arrowDesplegable"></i>
+                        </div>
+                        <ul class="sub-menu">
+                            <li>
+                                <a href="{% url 'administrador-reporte' %}" class="sub-menu-link">
+                                    <i class="hgi hgi-stroke hgi-analytics-02"></i>
+                                    <span>Gestión de Reportes de Consultas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'administrador-reporte-servicio' %}" class="sub-menu-link">
+                                    <i class="hgi hgi-stroke hgi-analytics-02"></i>
+                                    <span>Gestión de Reportes de Servicios</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>             
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'administrador-lista-medicos' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-doctor-01"></i>
+                            <span class="span-main">Lista de Médicos</span>
+                        </a> 
+                    </li>             
+                    {% elif user.usuario.tipoUsuario.id == 3 %} {# Medico de consultorio #}
+                    <li class="menu-item menu-item-desplegable">
+                        <div class="menu-link">
+                            <i class="hgi hgi-stroke hgi-exchange-01"></i>
+                            <span class="span-main">Cambiar de especialidad</span>
+                            <i class="hgi hgi-stroke hgi-arrow-down-01 arrowDesplegable"></i>
+                        </div>
+                        <ul class="sub-menu">
+                            {% for usuario in user.usuario.rolesProfesionalesUsuario.all %}
+                                <li>
+                                    <div class="sub-menu-link selectEspecialidad" data-id-especialidad="{{usuario.rol_profesional.especialidad.id}}" >
+                                        <i class="hgi hgi-stroke hgi-arrow-right-03"></i>
+                                        <span>{{usuario.rol_profesional.especialidad.nombre_especialidad}}</span>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li>
+                                    <div class="sub-menu-link selectEspecialidad" >
+                                        <span>No asignado a especialidad</span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'turnosProgramados' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-add-to-list"></i>
+                            <span class="span-main">Ver turnos programados</span>
+                        </a> 
+                    </li>
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'historialConsultas' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-transaction-history"></i>
+                            <span class="span-main">Historial de consultas</span>
+                        </a> 
+                    </li>
+                {% elif user.usuario.tipoUsuario.id == 4 %} {# Enfermero #}
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'pacientes-enfermero' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-user-list"></i>
+                            <span class="span-main">Mis Pacientes</span>
+                        </a> 
+                    </li>                     
+                {% elif user.usuario.tipoUsuario.id == 6 %} {# Operador de resultados #}
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'verEstudios' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-task-done-01"></i>
+                            <span class="span-main">Ver estudios realizados</span>
+                        </a> 
+                    </li>
+                {% elif user.usuario.tipoUsuario.id == 7 %} {# Jefe de enfermeria #}
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'pacientes-jefe-enfermeria' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-user-list"></i>
+                            <span class="span-main">Lista de Pacientes</span>
+                        </a> 
+                    </li>  
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'enfermeros-jefe-enfermeria' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-doctor-02"></i>
+                            <span class="span-main">Enfermeros de la unidad</span>
+                        </a> 
+                    </li>  
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'medicos-jefe-enfermeria' %}" class="menu-link">                            
+                            <i class="hgi hgi-stroke hgi-doctor-01"></i>                            
+                            <span class="span-main">Medicos de la unidad</span>
+                        </a> 
+                    </li>  
+                {% elif user.usuario.tipoUsuario.id == 8 %} {# Medico Hospitalario #}
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'pacientes-medico-hospitalario' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-user-list"></i>
+                            <span class="span-main">Mis Pacientes</span>
+                        </a> 
+                    </li> 
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'enfermeros-medico-hospitalario' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-doctor-02"></i>
+                            <span class="span-main">Mis Enfermeros a Cargo</span>
+                        </a> 
+                    </li> 
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="menu-footer">           
+            <ul class="menu">   
+                {% if user.usuario.tipoUsuario.id == 3 %} {# Medico de consultorio #}
+                    <li class="menu-item menu-item-estatico">
+                        <div class="especialidadActual">
+                            <h3>{% if especialidad_actual_nombre %}{{especialidad_actual_nombre}}{% else %}No asignado a especialidad{% endif %}</h3>
+                        </div>
+                    </li>
+                {% endif %}
+                <li class="menu-item menu-item-estatico">
+                    <a href="{% url 'logout' %}" class="menu-link">
+                        <i class="hgi hgi-stroke hgi-login-02"></i>
+                        <span class="span-main">Cerrar sesion</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main>
+        {% block contenido %}
+
+        {% endblock %}
+    </main>
+
+
+    <script src="{% static 'js/scripts_main.js' %}"></script>
+    {% block scripts_js %}  {% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "10000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+</body>
+</html>

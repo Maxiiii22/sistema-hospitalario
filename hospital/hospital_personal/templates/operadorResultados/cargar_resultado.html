@@ -1,0 +1,122 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargar resultados</title>
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_cargador.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}
+
+</head>
+<body class="body-cargaResultado">
+    <main class="container-carga-resultado">
+        <div class="container-form-resultado">
+            <a id="back-link-solo" href="{% url 'verEstudios' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a> 
+            <h3 class="title-sec">Paciente: {{ turno.orden.consulta.turno.paciente.persona.get_full_name }} - <strong>DNI:</strong> {{ turno.orden.consulta.turno.paciente.persona.dni }}</h3>
+            <h3 class="title-sec">N° Orden: {{ turno.orden.id }} - Estudio: {{ turno.orden.tipo_estudio.nombre_estudio }}</h3>
+            <div class="seccion-datos">
+                <form method="post" id="form-cargar-resultados" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if turno.orden.tipo_estudio.tipo_resultado == "lab" %}
+                        <h2 class="title-pri">Datos de Laboratorio</h2>
+                        {% for field in form %}
+                            {% if field.name != "informe" %}
+                                <div class="box-inputs">
+                                <label>{{ field.label }}:</label>
+                                {{ field }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                    {% elif turno.orden.tipo_estudio.tipo_resultado == "fisio" %}
+                        <h2 class="title-pri" >Datos Fisiológicos</h2>
+                        {% for field in form %}
+                            {% if field.name != "informe" %}
+                                <div class="box-inputs">
+                                <label>{{ field.label }}:</label>
+                                {{ field }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                    {% elif turno.orden.tipo_estudio.tipo_resultado == "img" %}
+                        <h2 class="title-pri">Subir Imágenes</h2>
+                        {{ formset.management_form }}
+                        {% for f in formset %}
+                            <div class="box-inputs">
+                                {{ f.imagen.label }}: {{ f.imagen }}
+                                {% if f.DELETE %} Cancelar: {{ f.DELETE }} {% endif %}
+                            </div>
+                        {% endfor %}
+
+                    {% elif turno.orden.tipo_estudio.tipo_resultado == "eval" %}
+                        <h2 class="title-pri">Informe de Evaluación Clínica</h2>
+                        {# Solo muestra el textarea de informe #}
+                    {% endif %}
+
+                    <div class="box-inputs">
+                        <label for="{{ form.informe.id_for_label }}">Informe:</label>
+                        {{ form.informe }}
+                    </div>
+
+                    <button type="submit" class="btn-masDetalles">{% if turno.orden.tipo_estudio.tipo_resultado == "img"  %}Guardar y generar PDF{% else %}Guardar{% endif%}</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+</body>
+</html>
+
+

@@ -1,0 +1,116 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Gestion de especialidades</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-superadmin">
+        <h1>Gestionar Especialidades</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="newEspecialidad"><i class="hgi hgi-stroke hgi-plus-sign"></i> Añadir nueva especialidad</button>
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-superadmin" id="box-tabla-general">
+            {% include 'superadmin/tablasDinamicas/_tabla_especialidades.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal {% if abrir_modal_por_error %}show errorModal{% endif %}">
+        <div class="modal-content">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Editar especialidad</h2>
+            <div id="seccion-form-filter">
+                <form id="filtro-form" method="get">
+                    <div class="campo-input">
+                        {{filtro.form.nombre_especialidad.label_tag}}
+                        {{filtro.form.nombre_especialidad}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.permite_turno.label_tag}}
+                        {{filtro.form.permite_turno}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.departamento.label_tag}}
+                        {{filtro.form.departamento}}
+                    </div>
+                </form>
+            </div>
+            <div id="seccion-edit">
+                <form id="editForm" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" id="id_especialidad" name="id_especialidad" value="{{ form.id_especialidad.value }}">
+                    
+                    <div class="campo-input">
+                        {{ form.nombre_especialidad.label_tag }}
+                        {{ form.nombre_especialidad }}
+                        {% if form.nombre_especialidad.errors %}
+                            <div id="error_nombre_especialidad" class="error-message">
+                                {% for error in form.nombre_especialidad.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        {{ form.descripcion.label_tag }}
+                        {{ form.descripcion }}
+                        {% if form.descripcion.errors %}
+                            <div id="error_descripcion" class="error-message">
+                                {% for error in form.descripcion.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="campo-input">
+                        {{ form.permite_turno.label_tag }}
+                        {{ form.permite_turno }}
+                        {% if form.permite_turno.errors %}
+                            <div id="error_permite_turno" class="error-message">
+                                {% for error in form.permite_turno.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="campo-input">
+                        {{ form.capacidad_diaria.label_tag }}
+                        {{ form.capacidad_diaria }}
+                        {% if form.capacidad_diaria.errors %}
+                            <div class="error-message">
+                                {% for error in form.capacidad_diaria.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <div class="campo-input">
+                        <label for="id_departamento">Ubicado en el departamento de:</label>
+                        {{ form.departamento }}
+                        {% if form.departamento.errors %}
+                            <div id="error_departamento" class="error-message">
+                                {% for error in form.departamento.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+        
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/superadmin.js' %}"></script>
+{% endblock %}

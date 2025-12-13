@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/styles_enfermero.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}    
+    <title>Ficha de paciente</title>
+</head>
+<body>
+    <main class="container-detalles-usuario">
+        <div class="box-form-detalles-usuario">
+            <a  id="back-link-solo" href="{% url 'pacientes-enfermero' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+            <h2 class="title-ficha">Ficha del paciente {{habitacionAsignada.paciente.persona.get_full_name}} - DNI: {{habitacionAsignada.paciente.persona.dni}} {% if habitacionAsignada.paciente.responsable %} a cargo de {{habitacionAsignada.paciente.responsable.adulto.persona.get_full_name}} con el DNI: {{habitacionAsignada.paciente.responsable.adulto.persona.dni}} - Parentesco con el menor: {{habitacionAsignada.paciente.responsable.get_parentesco_display}} {% endif %}</h2>  
+            <div class="box-datos">
+                <div class="secciones">
+                    <div class="datos-personales">
+                        <span class="titulo">Datos personales</span>
+                        <div class="campos">
+                            <div class="campo-input">
+                                <label>DNI:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.dni}}" readonly>
+                            </div>
+                                
+                            <div class="campo-input">
+                                <label>Nombre:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.first_name}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Apellido:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.last_name}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Sexo:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.get_sexo_display}}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Telefono{% if habitacionAsignada.paciente.responsable %} del responsable{% endif%}:</label>
+                                <input type="text" value="{% if habitacionAsignada.paciente.responsable %}{{habitacionAsignada.paciente.responsable.adulto.persona.telefono}}{% else %}{{habitacionAsignada.paciente.persona.telefono}}{% endif%}" readonly>
+                            </div>
+
+                            <div class="campo-input">
+                                <label>Fecha nacimiento:</label>
+                                <input type="text" value="{{habitacionAsignada.paciente.persona.fecha_nacimiento|date:'d-m-Y'}}" readonly>
+                            </div>
+                                
+                    </div>
+                </div>
+            </div>
+    
+            <div class="secciones">
+                <div class="datos-personales">
+                    <div class="box-header-datos">
+                        <span class="titulo">Información de la asignacion del paciente:</span>   
+                    </div>                           
+                    <div class="box-asignacion">
+                        <div class="asignacion-header">
+                            <div class="asignacion-item">
+                                <span><strong>{% if not alta %}Ubicado en:{% else %}Durante su estancia, ocupó:{% endif %} {{habitacionAsignada.lugar.nombre}} - Piso: {{habitacionAsignada.lugar.piso}} - N° Sala: {{habitacionAsignada.lugar.sala}}</strong></span>
+                            </div>
+                            <div class="asignacion-item">
+                                <span><strong>Fecha de Ingreso: </strong>{{habitacionAsignada.fecha_ingreso|date:"d-m-Y"}}</span>
+                            </div>
+                            {% if alta %}
+                                <div class="asignacion-item">
+                                    <span><strong>Fecha de Alta Médica: </strong>{{alta.fecha_alta|date:"d-m-Y"}}</span>
+                                </div>                                
+                            {% endif %}
+                            <div class="asignacion-item">
+                                <span><strong>Médico Hospitalario Encargado: {% for medico in habitacionAsignada.medicoAsignado.all %}{{medico.medico.persona.get_full_name}} - Matricula: {{medico.medico.numero_matricula}}{% endfor %}</strong></span>
+                            </div>
+                            <div class="asignacion-item">
+                                <span><strong>Historial de Notas de Enfermería:</strong></span>
+                                <a href="{% url 'notasEnfermeria-enfermero' habitacionAsignada.id %} "class="btn-masDetalles" id=""><i class="hgi hgi-stroke hgi-file-view"></i> Ver Notas de Enfermería</a>
+                            </div>
+                            <div class="asignacion-item box-evaluacion-clinica">
+                                <div class="asignacion-evaluacion-clinica">
+                                    <span><strong>Evaluación Médica:</strong></span>
+                                </div>
+                                {% if formReadOnly %}
+                                    <div class="form-evaluaciones-clinicas">
+                                        <div class="campo-evaluaciones-clinicas"> 
+                                            <label>Última actualización:</label>
+                                            <textarea id="textarea_fechayhorario" readonly>{{formReadOnly.instance.fecha_y_horario}}</textarea>                                                                                                                                             
+                                        </div>
+                                        <div class="campo-evaluaciones-clinicas">                                               
+                                            {{formReadOnly.motivo.label_tag}}   
+                                            {{formReadOnly.motivo}}   
+                                        </div>
+                                        <div class="campo-evaluaciones-clinicas">
+                                            {{formReadOnly.diagnostico.label_tag}}   
+                                            {{formReadOnly.diagnostico}}   
+                                        </div>
+                                        <div class="campo-evaluaciones-clinicas">
+                                            {{formReadOnly.evolucion_clinica.label_tag}}   
+                                            {{formReadOnly.evolucion_clinica}}   
+                                        </div>
+                                        <div class="campo-evaluaciones-clinicas">
+                                            {{formReadOnly.indicaciones.label_tag}}   
+                                                {{formReadOnly.indicaciones}}   
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>                                
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if request.session.sinAsignacion %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("No se ha registrado ninguna asignación para este usuario. Por favor, contacta con administración para resolverlo.");
+    </script>    
+    {% elif request.session.dia_no_laborable %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Advertencia: La fecha actual no corresponde a su dia laborable asignado.");
+    </script>    
+    {% elif request.session.fuera_de_turno %}
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "timeOut": "0",   // Mensaje persistente
+            "extendedTimeOut": "0",
+            "tapToDismiss": false
+        };
+        toastr.info("Finalizó su horario. Cierre sesión para finalizar el día.");
+    </script>
+    {% endif %}
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "5000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+
+</body>
+</html>

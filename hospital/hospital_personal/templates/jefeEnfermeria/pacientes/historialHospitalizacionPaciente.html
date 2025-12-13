@@ -1,0 +1,26 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_jefeEnfermeria.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Hospitalizaciones del paciente</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-jefe-enfermeria">
+        <h1>Hospitalizaciones del paciente: {{paciente.persona.get_full_name}} - {{paciente.persona.dni}}</h1>
+        <div class="box-tablas-jefe-enfermeria" id="box-tabla-general">
+            {% include 'jefeEnfermeria/pacientes/tablasDinamicas/_tabla_hospitalizaciones_paciente.html' %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/jefeEnfermeria.js' %}" ></script>
+{% endblock %}
+
+

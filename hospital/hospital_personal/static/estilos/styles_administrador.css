@@ -1,0 +1,1392 @@
+:root{
+    --color-primario: #025;
+    --color-secundario: #013;
+    --color-hover: #34A;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+
+/* Clases globales */
+
+.seccionesDelForm{
+    display: none;
+}
+
+.p-cancelar-cita{
+    text-align: center;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+#seccion-form-filter,#seccion-edit{
+    display: none;
+}
+
+#back-link-solo{
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color .3s ease;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+
+}
+
+#back-link-solo:hover{
+    background-color: var(--color-hover);
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin: 5px 0;
+}
+
+.error-message p{
+    margin: 0;
+}
+
+.error-message-main{
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.btn-global{
+    background-color: var(--color-primario);
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+.btn-global:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-masDetalles{
+    background-color: var(--color-primario);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: clamp(0.8rem, 3vw, .9rem);
+    font-weight: normal;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color .5s ease;
+}
+
+.btn-masDetalles:hover{
+    background-color: var(--color-hover);
+}
+
+.btn-accion {
+    all: unset; /* Resetea TODOS los estilos por defecto del navegador */
+    display: inline-block;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 0 3px;
+    min-height: 30px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+    font-family: inherit;
+    font-weight: 500; /* o normal, según tu diseño */
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+    box-sizing: border-box;
+    align-content: center;
+    margin-bottom: 2px;
+    transition: background-color .5s ease;
+}
+
+.btn-accion:hover {
+    background-color: var(--color-hover);
+}
+
+.container-global-administrador{
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.fila{
+    background-color: #f4f4f1;
+    border-radius: 5px;
+}
+
+.fila:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+}
+
+.scroll-wrapper-multipleCheck {
+    position: relative;
+}
+
+.box-multipleCheck{
+    height: 200px;
+    overflow: auto;
+    outline: 1px solid #ccc;
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
+
+.box-multipleCheck label{
+    cursor: pointer;
+}
+
+.fade-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    margin-bottom: 5px;
+}
+
+
+.seccion-form-filter #filtro-form{
+    flex-direction: column;
+}
+
+#filtro-form .campo-input{ 
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* Fin clases globales */
+
+/* Modal global */
+
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center; 
+}
+
+.modal.show {
+    display: flex; 
+    
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px 10px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    max-height: 95%;
+    overflow-y: auto;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.close {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+#modal-title {
+    text-align: center;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+}
+
+.btn-guardar {
+    padding: 0.7rem 1.5rem;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color .5s ease;
+}
+
+.btn-guardar:hover{
+    background-color: var(--color-hover);
+}
+
+.form-error-modal {
+    background-color: red;
+    padding: 8px;
+    color: white;
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    display: none;
+}
+
+#inputFeedback {
+    color: red;
+    text-align: center;
+}
+
+#seccion-asignaciones,#seccion-lugarTrabajo,#seccion-editarLugarTrabajo{
+    display: none;
+}
+
+/* Fin modal global*/
+
+/* Tabla global */
+
+.tabla-global{
+    width: 100%;
+    border-radius: 5px;
+}
+
+.tabla-global thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.tabla-global th{
+    padding: 12px 0;
+    text-align: center;
+}
+
+.tabla-global td{
+    padding: 5px;
+    text-align: center;
+    height: 45px;
+    font-size: clamp(.8rem, 3vw, 1rem);
+}
+
+.box-btn-add{
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.empty-message {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+}
+
+/* Fin tabla global */
+
+
+/* Seccion "Gestion del Personal" */
+.columna-ultimoAcceso{
+    text-wrap: nowrap;
+}
+
+@media (width <= 900px ){
+    body:has(.sidebar.minimizado) :is(
+        #tabla-gestion-personal,
+        #tabla-gestion-personal thead,
+        #tabla-gestion-personal tbody,
+        #tabla-gestion-personal tr,
+        #tabla-gestion-personal th,
+        #tabla-gestion-personal td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-gestion-personal tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-gestion-personal td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-gestion-personal td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-gestion-personal td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-gestion-personal thead {
+        display: none;
+    }   
+
+    body:has(.sidebar.minimizado) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar.minimizado) #tabla-gestion-personal .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 1030px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-gestion-personal,
+        #tabla-gestion-personal thead,
+        #tabla-gestion-personal tbody,
+        #tabla-gestion-personal tr,
+        #tabla-gestion-personal th,
+        #tabla-gestion-personal td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-personal tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-personal td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-personal td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-personal td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-personal thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-personal .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/* Fin Seccion "Gestion del Personal" */
+
+
+/* ######## Seccion de alta y detalles de usuario/personal ##########*/
+#id_input-mostrar-dato{
+    display: none;
+}
+
+.campos-modal{ /* Inputs del modal */
+    width: 100%;
+}
+
+.container-detalles-usuario{
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e6e6e6;
+}
+
+.box-form-detalles-usuario{
+    position: relative;
+    width: clamp(314px,98%,900px);
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 10px; 
+    margin: 10px 0;
+}
+
+.box-form-detalles-usuario h2{
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.box-form-detalles-usuario h2::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 3px;
+    width: 27px;
+    background-color: var(--color-primario);
+    border-radius: 8px;
+}
+
+.box-form-detalles-usuario form{
+    position: relative;
+    outline: 2px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.box-form-detalles-usuario .secciones{
+    margin-bottom: 15px;
+}
+
+.box-form-detalles-usuario form .titulo{
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 6px 0;
+    color: #333;
+}
+
+.box-form-detalles-usuario form .campos{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+form .campos .campo-input{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% / 3 - 15px);
+    margin: 4px 0;
+}
+
+.campo-input label{
+    font-size: 12px;
+    font-weight: 500;
+    color: #2e2e2e;
+}
+
+.campo-input input,.campo-input select,.campo-input textarea{
+    padding: 0 15px;
+    outline: none;
+    border: 1px solid #000;
+    border-radius: 5px;
+    height: 42px;
+    margin: 8px 0;
+}
+
+.campo-input textarea{
+    resize: vertical;
+    height: 150px;
+}
+
+.campo-input input:is(:focus, :valid),.campo-input select:is(:focus, :valid),.campo-input textarea:is(:focus, :valid){
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.13);
+}
+
+.box-lugar {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 0 0 5px 5px;
+    transition: background-color 0.5s ease;
+    background-color: #fff;
+}
+
+.box-lugar:hover {
+    background-color: #dddddd;
+}
+
+.box-header-datos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    padding: 5px 0;
+}
+
+.lugar-header {
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+}
+
+.hgi.hgi-stroke.hgi-arrow-down-01{
+    cursor: pointer;
+}
+
+.lugar-items{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity .8s ease;
+    interpolate-size: allow-keywords;   /* Esto permite que se pueda hacer la transition de un height fijo a un auto/max-content/fit-content,etc.  */
+    padding: 5px;
+    gap: 5px;
+}
+
+.item-lugar{
+    margin: 0;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    outline: 1px solid grey;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    text-wrap: wrap;
+    width: clamp(253px, 100%, 810px);
+    transition: background-color .3s ease;
+}
+
+
+.item-lugar form{
+    display: initial;
+}
+
+.item-noLugar{
+    margin: 0;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    outline: 1px solid grey;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    text-wrap: wrap;
+    /* width: clamp(253px, 100%, 810px); */
+    transition: background-color .3s ease;
+}
+
+.item-usuarioInhabilitado{
+    margin-top: 10px;
+}
+
+.item-noLugar form{
+    display: initial;
+} 
+
+
+.visible-linea .item-lugar:hover{
+    background-color: #fff;
+}
+
+
+.darVuelta{
+    transform: rotate(180deg);
+}
+
+.hidden {
+    display: none !important; 
+}
+
+.hidden-linea{
+    max-height: 0;
+    opacity: 0;
+}
+
+.visible-box { 
+    background-color: #dddddd;
+}
+
+.visible-linea { 
+    max-height: fit-content; 
+    opacity: 1;
+    transition: max-height 0.6s ease, opacity .8s ease;
+}
+
+.visible{
+    display: block;
+}
+
+.roles-profesionales{
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.roles-profesionales ul{
+    width: 100%;
+}
+
+.item-noRol{
+    margin: 0;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    outline: 1px solid grey;
+    border-radius: 10px;
+    padding: 5px;
+    text-align: center;
+    text-wrap: wrap;
+    /* width: clamp(253px, 100%, 810px); */
+    transition: background-color .3s ease;
+}
+
+.item-noRol form{
+    display: initial;
+}    
+
+.rol-profesional-item{
+    display: flex;
+    justify-content: space-between;
+    transition: background-color .3s ease;
+    align-items: center;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.rol-profesional-item:hover{
+    background-color: #aaa;
+}
+
+.box-p-rol-profesional{
+    width: clamp(175px,75%,750px);
+}
+
+.box-p-rol-profesional p{
+    word-wrap: break-word;       
+    overflow-wrap: break-word;  
+    white-space: normal;         
+}
+
+.rol-profesional-btns-acciones{
+    display: flex;
+}
+
+.rol-profesional-btns-acciones button{
+    display: flex;
+    align-content: center;
+}
+
+.rol-profesional-btns-acciones form{
+    position: initial;
+    margin: 0;
+}
+
+
+.box-form-detalles-usuario form .btn-global{
+    padding: 10px;
+}
+
+.modal-content.modal-detalles-usuario{
+    width: clamp(300px,90%,700px);
+}
+
+.modal-content.modal-detalles-usuario input[type="checkbox"] {
+    height: auto;
+}
+
+
+@media (width <=750px) {
+    form .campos .campo-input{
+        width: calc(100% / 2 - 15px);
+    }
+}
+
+/* ######## Fin seccion de alta y detalles de usuario/personal ##########*/
+
+
+
+.seccion-tipo-usuario,.seccion-rol-profesional{
+    display: none;
+}
+
+
+/*  #### Seccion "Gestion agenda de medicos" #### */
+
+.modal-content.modal-filtro-agenda-medico{
+    width: fit-content;
+}
+
+@media (width >= 700px ) and (width <= 830px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-gestion-agenda-medicos,
+        #tabla-gestion-agenda-medicos thead,
+        #tabla-gestion-agenda-medicos tbody,
+        #tabla-gestion-agenda-medicos tr,
+        #tabla-gestion-agenda-medicos th,
+        #tabla-gestion-agenda-medicos td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 530px ){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-gestion-agenda-medicos,
+        #tabla-gestion-agenda-medicos thead,
+        #tabla-gestion-agenda-medicos tbody,
+        #tabla-gestion-agenda-medicos tr,
+        #tabla-gestion-agenda-medicos th,
+        #tabla-gestion-agenda-medicos td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-gestion-agenda-medicos .empty-message{
+        justify-content: center;
+    }
+}
+
+
+/*  #### Fin Seccion "Gestion agenda de medicos" ####*/
+
+
+/*  #### Seccion "Agenda de medico" #### */
+
+.title-especialidad{
+    padding: 5px;
+    background-color: var(--color-primario);
+    border-radius: 10px;
+    color: #fff;
+    width: fit-content ;
+    font-size: 1.5rem;
+    margin: 5px 0;
+}
+
+#title-agenda{
+    width: fit-content;
+    text-align: center;
+}
+
+.container-tabla-medico-global{
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.container-tabla-medico-global h1{
+    font-size: clamp( 1.5rem,3dvw,2rem);
+}
+
+.turnos-section {
+    margin-top: 20px;
+    outline: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 5px
+}
+
+.turnos-section h2 {
+    font-size: 20px;
+    padding: 5px;
+    background-color: var(--color-primario);
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.turnos-section table{
+    width: 100%;
+}
+
+.turnos-section thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.turnos-section th{
+    padding: 12px 0;
+    text-align: center;
+}
+.turnos-section td{
+    padding: 5px;
+    text-align: center;
+    height: 60px;
+    font-size: clamp(.9rem, 3dvw, 1rem);
+}
+
+.fila-turnos.estado-atendido {
+    background-color: #d1f7d1; 
+}
+
+.fila-turnos.estado-pendiente {
+    background-color: #f4f4f1; 
+}
+
+.fila-turnos.estado-cancelado {
+    background-color: #f8d7da; 
+}
+
+.fila-turnos.estado-reprogramado {
+    background-color: #d1ecf1; 
+}
+
+.fila-turnos.estado-noAsistio {
+    background-color: #e2e3e5; 
+}
+
+.fila-turnos{
+    min-height: 60px;
+}
+
+.fila-turnos:hover{
+    background-color: #f4f4f1;
+    outline: 1px solid #aaa;
+    border-radius: 5px;
+}
+
+
+.modal-reprogramar-turno{
+    background-color: #fff;
+    border: 1px solid #aaa;
+    padding: 20px 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    width: clamp(300px, 90%, 350px);
+    transition: border-color 0.2s ease;
+}
+
+.modal-reprogramar-turno #closeEditModal{
+    align-self: flex-end;
+}
+
+.modal-reprogramar-turno h2{
+    margin-bottom: 5px;
+}
+
+.modal-reprogramar-turno .btn-global{
+    padding: 10px;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    max-width: 300px;
+    margin: 10px auto;
+}
+
+.calendar button {
+    padding: 9.4px;
+    text-align: center;
+    cursor: pointer;
+    background-color: white;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: color,border-color,background-color .3s;
+}
+
+.calendar button:disabled {
+    background-color: #ddd;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.calendar button.valid {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.calendar button:hover:not([disabled]) {
+    background-color: #f0f0f0;
+    color: #000;
+    border-color: #000;
+}
+
+.calendar button.seleccionado {
+    background-color: #000;
+    color: white;
+    font-weight: bold;
+    border-color: #000;
+}
+
+.header {
+    grid-column: span 7;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-reprogramar-turno .nav-buttons button{
+    padding: 5px 15px;
+    margin: 3px 10px 0;
+    cursor: pointer;
+    background-color: var(--color-primario);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: background-color .5s ease;
+}
+
+.modal-reprogramar-turno .nav-buttons button:hover{
+    background-color: var(--color-hover);
+}
+
+
+
+@media (width <= 400px){
+    .turnos-section,
+    .turnos-section thead,
+    .turnos-section tbody,
+    .turnos-section tr,
+    .turnos-section th,
+    .turnos-section td {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    .turnos-section tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    .turnos-section td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .turnos-section td:last-child{
+        border-bottom: 0;
+    }
+
+    .turnos-section td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    .turnos-section thead {
+        display: none;
+    }   
+
+    .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .turnos-section .empty-message{
+        justify-content: center;
+    }
+
+}
+
+/*  #### Fin Seccion "Agenda de medico" ####*/
+
+
+/*  #### Seccion "Reportes (especialidades,servicios,medicos)" ####  */
+
+.body-reportes{
+    background-color: #ccc;
+    display: flex;
+    justify-content: center;
+
+}
+
+.container-reporte{
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    margin-bottom: 30px;
+    padding: 20px 10px;
+    border-radius: 5px;
+    gap: 20px;
+    width: clamp(300px, 100%, 1700px);
+}
+
+.title-reporte {
+    color: var(--color-primario);
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center  ;
+}
+
+#form-reporte {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,1.1);
+    align-items: center;
+    gap: 5px;
+}
+
+
+.campos-form-reportes{
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+#form-reporte .campo-input{
+    width: clamp(250px, 3dvw, 300px);
+}
+
+#form-reporte .campo-input select,#form-reporte .campo-input input{
+    display: flex;
+    width: 100%;
+    margin: 0;
+}
+
+
+#form-reporte button {
+    background-color: var(--color-primario);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color .5s ease;
+}
+#form-reporte button:hover {
+    background-color: var(--color-hover);
+}
+
+.tarjetas {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.tarjeta {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 1.1);
+    width: clamp(132px, 39dvw, 284px);
+}
+
+.tarjeta h3 {
+    margin: 0;
+    font-size: 16px;
+}
+.tarjeta p {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--color-primario);
+}
+
+.tabla-reportes-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,1.1);
+}
+.tabla-reportes {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tabla-reportes th {
+    background: var(--color-primario);
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+.tabla-reportes td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.grafica-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,1.1);
+    height: 400px;
+}
+
+/*  #### Fin Seccion "Reportes" ####*/
+
+
+
+/* ##### Seccion "Lista de medicos" #### */
+
+
+@media (width >= 700px) and (width <= 800px){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-lista-medicos,
+        #tabla-lista-medicos thead,
+        #tabla-lista-medicos tbody,
+        #tabla-lista-medicos tr,
+        #tabla-lista-medicos th,
+        #tabla-lista-medicos td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos .empty-message{
+        justify-content: center;
+    }
+}
+
+@media (width <= 500px){
+    body:has(.sidebar:not(.minimizado)) :is(
+        #tabla-lista-medicos,
+        #tabla-lista-medicos thead,
+        #tabla-lista-medicos tbody,
+        #tabla-lista-medicos tr,
+        #tabla-lista-medicos th,
+        #tabla-lista-medicos td
+    ){
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td:last-child{
+        border-bottom: 0;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos thead {
+        display: none;
+    }   
+
+    body:has(.sidebar:not(.minimizado)) .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    body:has(.sidebar:not(.minimizado)) #tabla-lista-medicos .empty-message{
+        justify-content: center;
+    }
+}
+
+/* ##### Fin Seccion "Lista de medicos" #### */
+
+

@@ -1,0 +1,191 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_administrador.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+    
+{% block titulo %}
+    <title>Reportes de Estudios del hospital</title>
+{% endblock %}
+
+{% block contenido %}
+<div class="body-reportes">
+    <div class="container-reporte">
+        <a id="back-link-solo" href="{% url 'indexPersonal' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver al inicio</a>
+        <h1 class="title-reporte">Reportes de Estudios del hospital</h1>
+
+        <form id="form-reporte" method="get">
+            <div class="campos-form-reportes">
+                <div class="campo-input">
+                    <label>Tipo:</label>
+                    <select name="tipo" id="tipo_reporte">
+                        <option value="diario" {% if tipo_reporte == "diario" %}selected{% endif %}>Diario</option>
+                        <option value="mensual" {% if tipo_reporte == "mensual" %}selected{% endif %}>Mensual</option>
+                    </select>
+                </div>
+
+                <div class="campo-input">
+                    <label>Año:</label>
+                    <input type="number" name="anio" value="{{fecha_inicio.year}}" min="2000" max="2100" required>
+                </div>
+
+                <div class="campo-input">
+                    <label>Mes:</label>
+                    <input type="number" name="mes" value="{{fecha_inicio.month}}" min="1" max="12" required>
+                </div>
+                
+                <div class="campo-input" id="campo-input-dia">
+                    <label id="label-dia">Día:</label>
+                    <input type="number" name="dia" id="input-dia" value="{{fecha_inicio.day}}" min="1" max="31" {% if tipo_reporte == "mensual" %}disabled style="display:none"{% endif %}>
+                </div>
+            </div>
+
+            <div class="btn-form-reportes">
+                <button type="submit">Generar reporte</button>
+            </div>
+
+        </form>
+
+        <div class="tarjetas" id="tarjetas"></div>
+
+        <div class="tabla-reportes-container">
+            <table class="tabla-reportes">
+                <thead>
+                    <tr>
+                        <th>Estudio</th>
+                        <th>Cantidad</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla"></tbody>
+            </table>
+        </div>
+
+        <div class="grafica-container">
+            <canvas id="grafica"></canvas>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script>
+        const tipoSelect = document.getElementById("tipo_reporte");
+        const campoDia = document.getElementById("campo-input-dia");
+        const inputDia = document.getElementById("input-dia");
+
+        function comprobar(){
+            if (tipoSelect.value === "mensual") {
+                campoDia.style.display = "none";
+                inputDia.disabled = true;
+            } else {
+                campoDia.style.display = "block";
+                inputDia.style.display = "block";
+                inputDia.disabled = false;
+            }        
+        }
+        tipoSelect.addEventListener("change", comprobar)
+        comprobar();
+
+        const diario = {
+            totalSolicitados: {{ diario.totalSolicitados|default:0  }},
+            totalRealizados: {{ diario.totalRealizados|default:0  }},
+            nuevos: {{ diario.nuevos_pacientes|default:0  }},
+            cancelaron: {{ diario.cancelaron|default:0  }},
+            noAsistieron: {{ diario.noAsistieron|default:0  }},
+            detalle: [
+                {% if diario.detalle %}
+                    {% for s in diario.detalle %}
+                        { servicio: "{{ s.orden__tipo_estudio__nombre_estudio }}", cant: {{ s.total }} }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            ]
+        };
+        
+        const mensual = {
+            totalSolicitados: {{ mensual.totalSolicitados|default:0  }},
+            totalRealizados: {{ mensual.totalRealizados|default:0  }},
+            nuevos: {{ mensual.nuevos_pacientes|default:0  }},
+            cancelaron: {{ mensual.cancelaron|default:0  }},
+            noAsistieron: {{ mensual.noAsistieron|default:0 }},
+            detalle: [
+                {% if mensual.detalle %}
+                    {% for s in mensual.detalle %}
+                        { servicio: '{{ s.orden__tipo_estudio__nombre_estudio }}', cant: {{ s.total }} }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            ]
+        };
+
+        let chart = null;
+
+        function mostrar(data) {
+            
+            let filas = "";
+            if(data.detalle.length === 0){
+                document.querySelector(".grafica-container").style.display = "none";
+
+                filas = `
+                <tr class="empty-message">
+                    <td colspan="2">No hay estudios en este período</td>
+                </tr>
+                `;                    
+                        
+            }
+            else{
+                document.getElementById("tarjetas").innerHTML = `
+                <div class="tarjeta"><h3>Total de estudios solicitados</h3><p>${data.totalSolicitados}</p></div>
+                <div class="tarjeta"><h3>Total de estudios realizados </h3><p>${data.totalRealizados}</p></div>
+                <div class="tarjeta"><h3>Pacientes nuevos</h3><p>${data.nuevos}</p></div>
+                <div class="tarjeta"><h3>Pacientes que no asistieron</h3><p>${data.noAsistieron}</p></div>
+                <div class="tarjeta"><h3>Estudios canceladas</h3><p>${data.cancelaron}</p></div>                    
+                `;    
+                
+                data.detalle.forEach(x => {
+                    filas += `<tr><td>${x.servicio}</td><td>${x.cant}</td></tr>`;
+                });
+
+                document.querySelector(".grafica-container").style.display = "block";
+                const ctx = document.getElementById("grafica");
+
+                if (chart) chart.destroy();
+
+                chart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: data.detalle.map(x => x.servicio),
+                        datasets: [{
+                            label: "Estudios",
+                            data: data.detalle.map(x => x.cant),
+                            backgroundColor: "#025"
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });           
+            }
+
+            document.getElementById("tabla").innerHTML = filas;
+
+
+        }
+
+        function tieneDatos(data) {
+            return data.total > 0 || (data.detalle && data.detalle.length > 0);
+        }
+        
+
+        mostrar(diario);
+        if (tieneDatos(diario)) {
+            mostrar(diario);
+        } else if (tieneDatos(mensual)) {
+            mostrar(mensual);
+        }
+    </script>
+{% endblock %}
+
+

@@ -1,0 +1,34 @@
+<table class="tabla-global" id="tabla-gestion-plantilla-estudio">
+    <thead>
+        {% if allPlantillas %}
+        <tr>
+            <th>ID</th>
+            <th>Estudio</th>
+            <th></th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="3" class="empty-message">No hay plantillas registradas.</td>
+            </tr>        
+        {% elif allPlantillas.count == 0 %}
+            <tr>
+                <td colspan="3" class="empty-message">No hay plantillas que coincidan con los filtros.</td>
+            </tr>        
+        {% else %}
+            {% for plantilla in allPlantillas %}
+            <tr class="fila">
+                <td data-label="ID:">{{plantilla.id}}</td>
+                <td data-label="Estudio:">{{plantilla.estudio.nombre_estudio}}</td>
+                <td data-label="Acciones:">
+                    <div class="box-btns-td-acciones">
+                        <button class="btn-masDetalles" data-id-plantilla-estudio="{{ plantilla.id }}">Mas detalles</button>
+                    </div>                     
+                </td>  
+            </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

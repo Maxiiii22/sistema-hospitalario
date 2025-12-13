@@ -1,0 +1,40 @@
+<table class="tabla-global" id="tabla-lista-pacientes">
+    <thead>
+        {% if asignacionesMedico %}
+        <tr>
+            <th>DNI</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th class="columna-ubicado">Ubicado</th>
+            <th class="columna-estado">Estado</th>
+            <th>Acciones</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="9" class="empty-message">No tienes pacientes asignados.</td>
+            </tr>  
+        {% elif asignacionesMedico.count == 0 %}
+            <tr>
+                <td colspan="9" class="empty-message">No hay pacientes que coincidan con los filtros.</td>
+            </tr>
+        {% else %}  
+            {% for asignacion in asignacionesMedico %}
+                <tr class="fila">
+                    <td data-label="DNI:">{{asignacion.asignacion_habitacion.paciente.persona.dni}}</td>
+                    <td data-label="Nombre:">{{asignacion.asignacion_habitacion.paciente.persona.first_name}}</td>
+                    <td data-label="Apellido:">{{asignacion.asignacion_habitacion.paciente.persona.last_name}}</td>
+                    <td data-label="Ubicado:" class="columna-ubicado">{{asignacion.asignacion_habitacion.lugar}}</td>
+                    <td data-label="Estado:" class="columna-estado">{{asignacion.asignacion_habitacion.get_estado_display}}</td>
+                    <td data-label="Acciones:">
+                        <div class="box-btns-td-acciones">
+                            <a class="btn-accion" href="{% url 'fichaPaciente-medico-hospitalario' asignacion.asignacion_habitacion.id %}">Ver ficha del paciente</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

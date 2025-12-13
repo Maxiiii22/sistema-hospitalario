@@ -1,0 +1,56 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %} 
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_cargador.css' %}">
+{% endblock %}
+
+{% block titulo %}<title> Estudios Disponibles para Carga de Resultados</title>{% endblock %}
+
+{% block contenido %}
+    <div class="container-lista-estudios">
+        <h1>Estudios realizados</h1>
+        <div class="box-tabla-estudios">
+            <table class="tabla-global" id="tabla-estudios-realizados">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha turno</th>
+                        <th>N° orden</th>
+                        <th>Tipo estudio</th>
+                        <th>Servicio de diagnostico</th>
+                        <th>Accion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for estudio in estudios %}
+                        <tr class="fila">
+                            <td data-label="ID:">{{ estudio.id }}</td>
+                            <td data-label="Fecha turno:" class="td-fecha">{{ estudio.fecha_turno|date:"d-m-Y"}}</td>
+                            <td data-label="N° Orden:">{{ estudio.orden.id }}</td>
+                            <td data-label="Tipo estudio:">{{ estudio.orden.tipo_estudio.get_tipo_resultado_display }}</td>
+                            <td data-label="Servicio de diagostico:">{{estudio.servicio_diagnostico.nombre_servicio}}</td>
+                            <td data-label="Accion:">
+                                <div class="box-btns-td-acciones">
+                                    <a href="{% url 'cargar_resultado' estudio.id %}" class="btn-accion">Cargar resultados</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="empty-message">No hay estudios disponibles para cargar resultados.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+
+{% block scripts_js %} 
+
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_superadmin.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Turnos de paciente</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="box-container-turnos">
+        <a href="{% url 'listaPacientes' %}" id="back-link-solo" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a> <br>
+        <h1 class="title-solitario">Turnos del paciente {{paciente.persona.get_full_name}}</h1>
+        <div class="container-turno-paciente">
+            <h2>Turnos de especialidades medicas</h2>   
+            <div class="box-tablas-superadmin">
+                <table id="tabla-turnos-especialidades" class="tabla-global">
+                    <thead>
+                        {% if turnosDelPaciente %}
+                        <tr>
+                            <th>ID</th>
+                            <th>Especialidad</th>
+                            <th>Profesional</th>
+                            <th>Fecha y horario</th>
+                            <th class="columna-estado">Estado</th>
+                            <th class="columna-asistio">Asistio</th>
+                        </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% if turnosDelPaciente %}
+                            {% for turno in turnosDelPaciente %}
+                            <tr class="fila">
+                                <td data-label="ID:">{{turno.id}}</td>
+                                <td data-label="Especialidad:">{{turno.especialidad.nombre_especialidad}}</td>
+                                <td data-label="Profesional:">{{turno.profesional.persona.get_full_name}} - N° Matricula: {{turno.profesional.numero_matricula}}</td>
+                                <td data-label="Fecha y horario:">{{turno.fecha_turno|date:"d-m-Y"}} | {% if turno.horario_turno == "dia" %} 7:00 a 15:00 {% elif turno.horario_turno == "tarde" %} 15:00 a 23:00 {% endif %}</td>
+                                <td data-label="Estado:" class="columna-estado">{{turno.get_estado_display}}</td>
+                                <td data-label="Asistio:" class="columna-asistio">{% if turno.asistio %} Si {% else %} No {% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="fila">
+                                <td colspan="6" class="empty-message">No hay turnos</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container-turno-paciente">
+            <h2>Turnos de estudios</h2>
+            <div class="box-tablas-superadmin">
+                <table id="tabla-turnos-estudios" class="tabla-global">
+                    <thead>
+                        {% if turnosEstudiosDelPaciente %}
+                        <tr>
+                            <th>ID</th>
+                            <th>N° Orden</th>
+                            <th>Servicio</th>
+                            <th>Lugar</th>
+                            <th class="columna-fecha">Fecha y horario</th>
+                            <th class="columna-estado">Estado</th>
+                            <th class="columna-asistio">Asistio</th>
+                        </tr>
+                        {% endif %}
+                    </thead>
+                    <tbody>
+                        {% if turnosEstudiosDelPaciente %}
+                            {% for turno in turnosEstudiosDelPaciente %}
+                            <tr class="fila">
+                                <td data-label="ID:">{{turno.id}}</td>
+                                <td data-label="N° Orden:">{{turno.orden.id}}</td>
+                                <td data-label="Servicio de diagnostico:">{{turno.servicio_diagnostico.nombre_servicio}}</td>
+                                <td data-label="Lugar:">{{turno.lugar.nombre}}</td>
+                                <td data-label="Fecha y horario:" class="columna-fecha">{{turno.fecha_turno|date:"d-m-Y"}} | {% if turno.horario_turno == "dia" %} 7:00 a 15:00 {% elif turno.horario_turno == "tarde" %} 15:00 a 23:00 {% endif %}</td>
+                                <td data-label="Estado:" class="columna-estado">{{turno.get_estado_display}}</td>
+                                <td data-label="Asistio:" class="columna-asistio">{% if turno.asistio %} Si {% else %} No {% endif %}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="fila">
+                                <td colspan="7" class="empty-message">No hay turno</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+{% endblock %}
+
+{% block scripts_js %} 
+{% endblock %}
+
+
