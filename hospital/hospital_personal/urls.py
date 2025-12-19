@@ -36,6 +36,7 @@ urlpatterns = [
     path("administrador/productividad-medica-<int:id_medico>/", administrador_views.productividadMedica, name="administrador-productividad-medica"),
     path('administrador/productividad-medica-<int:id_medico>/<int:anio>/<int:mes>/', administrador_views.productividadMedica, name='administrador-productividad-medica_mes'),  
     path('administrador/productividad-medica-<int:id_medico>/<int:anio>/<int:mes>/<int:dia>/', administrador_views.productividadMedica, name='administrador-productividad-medica_dia'), 
+    path("administrador/lista-solicitudes/", administrador_views.solicitudesReactivacion, name="administrador-solicitudes-reactivacion"),
     # # Medico de consultorio:
     path("medico-consultorio/turnos/", medico_views.turnosProgramados, name="turnosProgramados"),
     path("medico-consultorio/turnos/reprogramar/<int:turno_id>/", medico_views.reprogramarTurno, name="reprogramarTurno-medico"),

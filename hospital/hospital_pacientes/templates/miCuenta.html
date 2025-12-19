@@ -12,10 +12,11 @@
 {% block contenido %}
     <div class="main-form-paciente">
         <div class="container-form-paciente">    
-            <h2 class="title-ficha">Mis datos personales</h2>
+            <h2 class="title-ficha">Mis Datos Personales</h2>
 
             <form action="" method="POST">
                 {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="formMiCuenta">
                 <div class="secciones">
                     <div class="datos-paciente">
                         <div class="campos">
@@ -33,7 +34,10 @@
 
                             <div class="campo-input">
                                 <label for="id_login_id">Contraseña:</label>
-                                {{ form.password }}
+                                <div class="campo-con-toggle">
+                                    {{ form.password }}
+                                    <button type="button" onclick="verPassword(this)" class="toggle-password" data-target="{{ form.password.id_for_label }}"><i class="hgi hgi-stroke hgi-eye"></i></button>
+                                </div>                                
                                 {% if form.password.errors %}
                                     <div id="error_password" class="error-message">
                                         {% for error in form.password.errors %}
@@ -130,14 +134,37 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn-global">Guardar</button>
+                <div class="box-btn-mi-cuenta">
+                    <button type="submit" class="btn-global">Guardar</button>
+                    <button type="button" class="btn-global" onclick="cancelarPagoMiCuenta(this)">Cancelar servicios</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <div id="editModal" class="modal {% if error %}show errorModal{% endif %}">
+        <div class="modal-content">
+            <span id="closeEditModal" class="close">&times;</span>
+            <h2 id="modal-title">Cancelar Servicios</h2>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="formCancelarPago">
+                <input type="hidden" name="id_paciente_persona" value="{{request.user.id}}">
+                <p class="p-cancelar-cita"><strong>¿Está seguro/a de que desea cancelar su cuota hospitalaria?</strong><br>
+                    Esta acción también cancelará las cuotas de los menores a su cargo.<br>
+                    Recuerde su número de paciente <strong>"PAC1"</strong> para facilitar la reactivación futura de los servicios.
+                </p>
+                <button type="submit"  class="btn-global">Confirmar</button>
+            </form>            
+        </div>
+    </div>
+
+
 {% endblock %}
 
-{% block scripts_js %}  {% endblock %}
+{% block scripts_js %}
+    <script src="{% static 'js/pacientes.js' %}"></script>
+{% endblock %}
 
 
 

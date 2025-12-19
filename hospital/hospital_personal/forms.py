@@ -397,9 +397,9 @@ class FormularioEditarLugarTrabajo(forms.ModelForm):
         tipo_usuario = self.usuario.tipoUsuario.id
         
         if tipo_usuario == 1:  # Superadmin
-            pass
+            self.fields['lugar'].queryset = Lugar.objects.filter(tipo="area_apoyo",activo=True)  
         elif tipo_usuario == 2:  # Admin
-            pass
+            self.fields['lugar'].queryset = Lugar.objects.filter(tipo="area_apoyo",activo=True)  
         elif tipo_usuario == 3: # Medicos
             self.fields['lugar'].queryset = Lugar.objects.filter(tipo__in=["cons","qui","proc"],activo=True) #Los médicos trabajan en consultorios, quirófanos y pueden realizar procedimientos ambulatorios no quirúrgicos
         elif tipo_usuario == 4: # Enfermeros

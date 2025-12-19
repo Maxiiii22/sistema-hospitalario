@@ -1,24 +1,35 @@
+{% load static %} {# Cargamos la carpeta static que contiene el script.js y el css #}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/global_styles.css' %}">
     <title>Error 403</title>
 </head>
 <body>
-    <h1>🚫 Acceso denegado</h1>
-    {% if mensaje %}
-        <p>{{mensaje}}</p>
-    {% else %}
-        <p>No tenés permiso para acceder a esta página o realizar esta acción.</p>
-    {% endif %}
+    <main class="main-noAcceso">
+        <div class="box-noAcceso">
+            <i class="hgi hgi-stroke hgi-lock-computer icon-noAcceso"></i>            
+            <h1>Acceso denegado</h1>
+            {% if mensaje %}
+                <p>{{mensaje}}</p>
+            {% else %}
+                <p>No tenés permiso para acceder a esta página o realizar esta acción.</p>
+            {% endif %}
 
-    <button onclick="window.history.back()">Volver a atrás</button>
-    {% if user.usuario %}
-        <a href="{% url 'indexPersonal' %}">Volver al inicio</a>
-    {% elif user.paciente %}
-        <a href="{% url 'indexPaciente' %}">Volver al inicio</a>
-    {% endif %}
+            <div class="btns-box-no-acceso">
+                <button onclick="window.history.back()" class="btn-global">Volver a atrás</button>
+                {% if user.usuario %}
+                    <a href="{% url 'indexPersonal' %}" class="btn-global">Volver al inicio</a>
+                {% elif user.paciente %}
+                    <a href="{% url 'indexPaciente' %}" class="btn-global">Volver al inicio</a>
+                {% endif %}
+            </div>
+        </div>
+    </main>
     
 </body>
 </html>

@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/autenticacion.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}     
+    <title>Estado de la solicitud</title>
+</head>
+<body>
+    <main>
+        <div class="box-autenticacion">
+            <h2>Estado de la solicitud</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="confirmacion-solicitud">
+                    <div class="box-campos-autenticacion">
+                        <label for="cod_seguimiento">Ingrese el código de seguimiento:</label>
+                        <input type="text" name="codigo_seguimiento" placeholder="Ej: E432F32"  required id="cod_seguimiento" {% if codigo %}value="{{codigo}}"{% endif %}>                                         
+                    </div>    
+                </div>
+
+                <button class="btn-global" type="submit" >Ver estado de solicitud</button>
+            </form>
+
+            
+            {% if solicitud.estado == "pendiente" %}
+                <div class="resultado {{solicitud.estado}}">            
+                    <h2>{{solicitud.get_estado_display}}</h2>
+                    <p>Su solicitud se encuentra actualmente en estado pendiente de revisión. Le solicitamos aguardar mientras es evaluada por un operador.</p>
+                </div>
+            {% elif solicitud.estado == "rechazada" %}
+                <div class="resultado {{solicitud.estado}}">                
+                    <h2>{{solicitud.get_estado_display}}</h2>
+                    <p>Su solicitud ha sido rechazada. Puede volver a intentarlo o comunicarse con el establecimiento para obtener mayor información.</p>
+                </div>                    
+            {% elif solicitud.estado == "aprobada" %}
+                <div class="resultado {{solicitud.estado}}">
+                    <h2>{{solicitud.get_estado_display}}</h2>
+                    <p>Su solicitud ha sido aprobada. Para completar la reactivación de su cuenta, deberá crear una nueva contraseña.</p>
+                    <a href="{% url 'nuevaContra' %}" class="btn-global" >Crear nueva contraseña</a>                   
+                </div>                    
+            {% elif solicitud.estado == "finalizado" %}
+                <div class="resultado {{solicitud.estado}}">            
+                    <h2>{{solicitud.get_estado_display}}</h2>
+                    <p>Esta solicitud ya ha sido procesada y se encuentra finalizada.</p>
+                </div>                
+            {% elif error %}
+                <div class="resultado error-solicitud">            
+                    <h2>Error</h2>
+                    <p>{{error}}</p>
+                </div>
+            {% endif %}                
+        </div>
+    </main>
+    <script src="{% static 'js/autenticacion.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "10000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}     
+</body>
+</html>

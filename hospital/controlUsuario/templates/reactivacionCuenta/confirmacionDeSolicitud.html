@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/autenticacion.css' %}">
+    <title>Confirmación de solicitud</title>
+</head>
+<body>
+    <main>
+        <div class="confirmacion-solicitud">
+            <h2>Confirmación de Solicitud</h2>
+            <p>
+                Su solicitud de reactivación de cuenta ha sido enviada correctamente
+                y se encuentra registrada en nuestro sistema.
+            </p>
+            <p>
+                La misma será evaluada por un operador autorizado.
+                Una vez finalizado el proceso, se le informará el resultado
+                por los canales correspondientes.
+            </p>            
+            <div class="codigo-seguimiento">
+                <p><strong>Código de seguimiento:</strong></p>
+                <p class="codigo">#{{solicitud.codigo_seguimiento}}</p>
+            </div>
+        
+            <p class="advertencia">
+                <strong>Importante:</strong> Guarde este código de seguimiento.
+                Por razones de seguridad, esta pantalla se mostrará una sola vez
+                y no podrá volver a acceder a ella.
+                El código será necesario para consultar el estado de su solicitud
+                desde la opción <em>“Seguimiento de solicitud”</em>
+                disponible en la pantalla de inicio de sesion.
+            </p>
+            <a href="{% url 'seguimientoSolicitud' %}" class="btn-global">Ver estado de solicitud</a>
+
+        </div>
+    </main>
+    <script src="{% static 'js/autenticacion.js' %}"></script>
+</body>
+</html>

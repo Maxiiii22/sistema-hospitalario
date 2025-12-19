@@ -1,12 +1,20 @@
+{% load static %} <!-- Cargamos la carpeta static que contiene el script.js y el css-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/global_styles.css' %}">  
     <title>Sin autorizacion</title>
 </head>
 <body>
-    <h1>No tienes permisos de acceder a esta vista</h1>
-    <a href="javascript:history.back()">Volver atrás</a>
+    <main class="main-noAcceso">
+        <div class="box-noAcceso">
+            <i class="hgi hgi-stroke hgi-lock-computer icon-noAcceso"></i>            
+            <h1>No tienes permisos de acceder a esta vista</h1>
+            <a href="javascript:history.back()" class="btn-global">Volver atrás</a>
+        </div>
+    </main>
 </body>
 </html>

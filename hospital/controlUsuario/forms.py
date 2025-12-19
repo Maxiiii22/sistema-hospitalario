@@ -10,7 +10,7 @@ from controlUsuario.models import TiposUsuarios
 
 class FormularioLoginPersonalizado(AuthenticationForm):   # Personalizamos el AuthenticationForm para poder agregarle clases a los inputs
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'autofocus': 'autofocus','placeholder': 'Ingrese su email o legajo'}))  # <-- usar "username" aquí aunque sea login_id internamente
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Ingrese su contraseña'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Ingrese su contraseña'}),label="Contraseña")
 
     def clean(self):
         username = self.cleaned_data.get('username')
@@ -24,7 +24,10 @@ class FormularioLoginPersonalizado(AuthenticationForm):   # Personalizamos el Au
             
             # Verificamos si la cuenta está activa
             if not user.is_active:
-                raise ValidationError("Esta cuenta está inactiva. Contacte al administrador.")
+                if hasattr(user, 'usuario'):
+                    raise ValidationError("Esta cuenta está inactiva. Contacte al administrador.")
+                if hasattr(user, 'paciente'):
+                    raise ValidationError("Se detectó una cuenta previamente registrada con esta información. Debe reactivarla para continuar.")
 
             user = authenticate(self.request, username=username, password=password)
 
@@ -147,7 +150,12 @@ class FormularioRegistroPersonalizado(forms.ModelForm):
         password = self.cleaned_data.get('password')
         if not password:
             return None
-        return password
+        
+        if password and len(password) < 8:
+            self.add_error('password', "La contraseña debe tener al menos 8 caracteres.")   
+            
+        return password  
+    
     
     def clean_login_id(self):
         login_id = self.cleaned_data.get('login_id')
@@ -455,6 +463,61 @@ class FormularioActualizarPassword(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+
+class FormularioNuevaPassword(forms.ModelForm):
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Nueva contraseña'}),
+        label='Contraseña'
+    )
+    confirmar_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar contraseña'}),
+        label='Confirmar Contraseña'
+    )
+    login_id = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Ej. jose@gmail.com"
+        })
+    )    
+
+    class Meta:
+        model = Persona
+        fields = ["login_id",'password'] 
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirmar_password = cleaned_data.get('confirmar_password')
+
+        if password and confirmar_password and password != confirmar_password:
+            self.add_error('confirmar_password', "Las contraseñas no coinciden.")
+
+        if password and len(password) < 8:
+            self.add_error('password', "La contraseña debe tener al menos 8 caracteres.")
+
+        return cleaned_data
+    
+    def clean_login_id(self):
+        login_id = self.cleaned_data.get('login_id')
+        persona = Persona.objects.filter(login_id=login_id)
+
+        # Si estamos editando una instancia, la excluimos del filtro
+        if self.instance.pk:
+            persona = persona.exclude(pk=self.instance.pk)
+
+        if persona.exists():
+            raise ValidationError("Ya existe un usuario registrado con este identificador. Por favor, elige otro.")
+        return login_id
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.set_password(self.cleaned_data['password'])
+        instance.email = self.cleaned_data['login_id']
+        instance.is_active = True
+        if commit:
+            instance.save()
+        return instance
+    
 
 
 

@@ -1,4 +1,4 @@
-{% load static %} <!-- Cargamos la carpeta static que contiene el script.js y el css-->
+{% load static %} {# Cargamos la carpeta static que contiene el script.js y el css #}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
     <link rel="stylesheet" href="{% static 'estilos/global_styles.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}    
 
     {% block css %}  {% endblock %}
 
@@ -96,7 +98,22 @@
     </main>
 
 
-    <script src="{% static 'js/scripts_main.js' %}"></script>
+    <script src="{% static 'js/scripts_main_paciente.js' %}"></script>
+
     {% block scripts_js %}  {% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "10000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}    
 </body>
 </html>

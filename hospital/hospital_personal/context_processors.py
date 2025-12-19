@@ -34,3 +34,16 @@ def especialidad_actual(request):
         'especialidad_actual_id': None,
         'especialidad_actual_nombre': None
     }
+
+
+def asignacionActual(request):
+    if request.user.is_authenticated and hasattr(request.user, 'usuario'):
+        usuario = request.user.usuario
+        asignacionActual = usuario.get_asignacionActual()
+        return {
+            "asignacionActual": asignacionActual
+        }
+
+    return {
+        "asignacionActual": None
+    }

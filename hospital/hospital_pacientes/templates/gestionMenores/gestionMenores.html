@@ -31,11 +31,16 @@
                         </p>
                     </div>
                     <div class="card-buttons">
-                        <a href="{% url 'susTurnos' paciente.menor.id %}" class="btn-ver-turno">Sus turnos</a>
-                        <a href="{% url 'suHistorial' paciente.menor.id %}" class="btn-ver-consultas">Historial clinico</a>
-                        <a href="{% url 'seleccionarTurno' paciente.menor.id %}" class="btn-turno">Sacar turno</a>
-                        <button class="btn-modal" data-id-menor="{{paciente.menor.id}}">Editar datos del menor</button>
-                        <a href="#" class="btn-cancelar">Cancelar pago</a>
+                        {% if paciente.menor.persona.is_active %}
+                            <a href="{% url 'susTurnos' paciente.menor.id %}" class="btn-ver-turno">Sus turnos</a>
+                            <a href="{% url 'suHistorial' paciente.menor.id %}" class="btn-ver-consultas">Historial clinico</a>
+                            <a href="{% url 'seleccionarTurno' paciente.menor.id %}" class="btn-turno">Sacar turno</a>
+                            <button type="button" onclick="editarDatosDelMenor(this)" data-id-menor="{{paciente.menor.id}}">Editar datos del menor</button>
+                            <button type="button" onclick="cancelarPago(this)" data-id-paciente-persona="{{paciente.menor.persona.id}}">Cancelar pago</button>
+                        {% else %}
+                            <a href="{% url 'suHistorial' paciente.menor.id %}" class="btn-ver-consultas">Historial clinico</a>
+                            <button type="button" onclick="reescribirMenor(this)" data-id-paciente-persona="{{paciente.menor.persona.id}}">Reescribir menor</button>                        
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
@@ -46,83 +51,104 @@
     <div id="editModal" class="modal {% if error %}show errorModal{% endif %}">
         <div class="modal-content modal-gestion-menores">
         <span id="closeEditModal" class="close">&times;</span>
-        <h2 id="modal-title">Editar datos del menor</h2>
-        <form id="editForm" method="POST" action="">
-            {% csrf_token %}
-            <input type="hidden" id="id_menor" name="id_menor" value="{% if error %}{{id_paciente}}{% endif %}">
-            <div class="campo-input">
-                {{ form.dni.label_tag }}
-                {{ form.dni }}
-                {% if form.dni.errors %}
-                    <div id="error_dni" class="error-message">
-                        {% for error in form.dni.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="campo-input">
-                <label for="id_first_name">Nombre:</label>
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                    <div id="error_first_name" class="error-message">
-                        {% for error in form.first_name.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="campo-input">
-                <label for="id_last_name">Apellido:</label>
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
-                    <div id="error_last_name" class="error-message">
-                        {% for error in form.last_name.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+        <h2 id="modal-title">{{titleModal}}</h2>
+        <div class="seccionesDelForm" id="seccion-edit-menor" {% if error %}style="display:block;"{% endif %}>
+            <form id="editForm" method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="formEditMenor">
+                <input type="hidden" id="id_menor" name="id_menor" value="{% if error %}{{id_paciente}}{% endif %}">
+                <div class="campo-input">
+                    {{ form.dni.label_tag }}
+                    {{ form.dni }}
+                    {% if form.dni.errors %}
+                        <div id="error_dni" class="error-message">
+                            {% for error in form.dni.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
                 
-            <div class="campo-input">
-                {{ form.sexo.label_tag }}
-                {{ form.sexo }}
-                {% if form.sexo.errors %}
-                    <div id="error_sexo" class="error-message">
-                        {% for error in form.sexo.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="campo-input">
-                {{ form.fecha_nacimiento.label_tag }}
-                {{ form.fecha_nacimiento }}
-                {% if form.fecha_nacimiento.errors %}
-                    <div id="error_fecha_nacimiento" class="error-message">
-                        {% for error in form.fecha_nacimiento.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="campo-input">
-                {{ form.parentesco.label_tag }}
-                {{ form.parentesco }}
-                {% if form.parentesco.errors %}
-                    <div id="error_parentesco" class="error-message">
-                        {% for error in form.parentesco.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>           
-            <button type="submit" class="btn-accion">Guardar</button>
-        </form>
+                <div class="campo-input">
+                    <label for="id_first_name">Nombre:</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div id="error_first_name" class="error-message">
+                            {% for error in form.first_name.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="campo-input">
+                    <label for="id_last_name">Apellido:</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div id="error_last_name" class="error-message">
+                            {% for error in form.last_name.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                    
+                <div class="campo-input">
+                    {{ form.sexo.label_tag }}
+                    {{ form.sexo }}
+                    {% if form.sexo.errors %}
+                        <div id="error_sexo" class="error-message">
+                            {% for error in form.sexo.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="campo-input">
+                    {{ form.fecha_nacimiento.label_tag }}
+                    {{ form.fecha_nacimiento }}
+                    {% if form.fecha_nacimiento.errors %}
+                        <div id="error_fecha_nacimiento" class="error-message">
+                            {% for error in form.fecha_nacimiento.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="campo-input">
+                    {{ form.parentesco.label_tag }}
+                    {{ form.parentesco }}
+                    {% if form.parentesco.errors %}
+                        <div id="error_parentesco" class="error-message">
+                            {% for error in form.parentesco.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>           
+                <button type="submit" class="btn-accion">Guardar</button>
+            </form>
+        </div>
+        <div class="seccionesDelForm" id="seccion-confirmacion">
+            <form id="formCancelarPago" method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="formCancelarPago">
+                <input type="hidden" name="id_paciente_persona" id="id_menor_persona">
+                <p class="p-cancelar-cita">¿Está seguro/a de que desea cancelar la cuota hospitalaria correspondiente a este menor a su cargo?</p>
+                <button type="submit"  class="btn-global">Confirmar</button>
+            </form>            
+        </div>
+        <div class="seccionesDelForm" id="seccion-reescribirMenor">
+            <form id="formReescribirMenor" method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_form" value="formReescribirMenor">
+                <input type="hidden" name="id_paciente_persona" id="id_menor_persona_reescribir">
+                <p class="p-cancelar-cita">¿Está seguro/a de que desea volver a realizar el pago de la cuota hospitalaria de este menor a su cargo?</p>
+                <button type="submit"  class="btn-global">Confirmar</button>
+            </form>            
+        </div>
         </div>
     </div>
 {% endblock %}

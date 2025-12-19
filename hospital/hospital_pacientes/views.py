@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from controlUsuario.decorators import paciente_required  # En controlUsuario.decorators creamos decoradores personalizados que verifiquen si el usuario tiene el atributo de paciente o usuario, y redirigirlo a una página de acceso denegado si intenta acceder a una vista que no le corresponde.
 from hospital_personal.models import Especialidades,UsuarioRolProfesionalAsignado,UsuarioLugarTrabajoAsignado,Turno,Consultas,Medicaciones,OrdenEstudio,Jorna_laboral,TurnoEstudio,Lugar,ResultadoEstudio
 from hospital_personal.forms import FormSacarTurno,FormSacarTurnoEstudio
-from controlUsuario.models import Usuario
+from controlUsuario.models import Usuario,Persona
 from controlUsuario.forms import FormularioRegistroPersonalizado
 from .utils import obtener_disponibilidad, obtener_dias_disponibles_servicio
 from .models import Paciente,MenorACargoDePaciente
@@ -28,19 +28,76 @@ def mi_error_403(request, exception=None):
 @paciente_required
 @login_required
 def indexPaciente(request):
-    return render(request, "indexPacientes.html")
+    turnos = Turno.objects.filter(paciente=request.user.paciente,estado="pendiente").count()
+    turnosEstudio = TurnoEstudio.objects.filter(orden__paciente=request.user.paciente,estado="pendiente").count()
+    menores = request.user.paciente.menores_a_cargo.values("menor")
+    turnosMenoresACargo = Turno.objects.filter(paciente__in=menores,estado="pendiente").count()
+    turnosEstudioMenoresACargo = TurnoEstudio.objects.filter(orden__paciente__in=menores,estado="pendiente").count()
+
+    context = {
+        "turnos": turnos,
+        "turnosEstudio": turnosEstudio,
+        "turnosMenoresACargo": turnosMenoresACargo if turnosMenoresACargo else None,
+        "turnosEstudioMenoresACargo": turnosEstudioMenoresACargo if turnosEstudioMenoresACargo else None,
+    }    
+    return render(request, "indexPacientes.html",context)
 
 @paciente_required
 @login_required
 def miCuenta(request):
-    persona = request.user
-    if request.method == "POST":
-        form = FormularioRegistroPersonalizado(request.POST, instance=persona)
-        if form.is_valid():
-            form.save()
-            return redirect("miCuenta") 
-    else:
-        form = FormularioRegistroPersonalizado(instance=persona)
+    persona_actual = request.user
+    form = FormularioRegistroPersonalizado(instance=persona_actual)
+    
+    if request.method == "POST":   
+        tipo_form = request.POST.get("tipo_form") 
+        
+        if tipo_form == "formMiCuenta":
+            form = FormularioRegistroPersonalizado(request.POST, instance=persona_actual)
+            if form.is_valid():
+                form.save()
+                return redirect("miCuenta") 
+        
+        elif tipo_form == "formCancelarPago":
+            id_paciente_persona = request.POST.get("id_paciente_persona")
+
+            if id_paciente_persona:
+                try:
+                    id_paciente_persona = int(id_paciente_persona)
+                except (TypeError, ValueError):
+                    id_paciente_persona = None
+                    messages.error(request,"El campo tiene que ser un entero.")
+                    return redirect("miCuenta")
+            else:
+                messages.error(request,"El campo no debe estar vacio.")
+                return redirect("miCuenta")                       
+
+            if id_paciente_persona is not None:
+                persona = get_object_or_404(Persona, pk=id_paciente_persona)
+                if persona_actual != persona:
+                    response = render(request, "403.html", {
+                        "mensaje": "No tienes acceso a esta persona."
+                    })
+                    response.status_code = 403
+                    return response     
+                    
+                try:
+                    with transaction.atomic(): # with transaction.atomic() → todo lo que está dentro se hace en una sola transacción. Si hay un error en cualquiera de las líneas, todo se revierte, no se guardan cambios parciales.
+                        for menor in persona_actual.paciente.menores_a_cargo.all():
+                            Turno.objects.filter(paciente=menor.menor, estado="pendiente").update(estado="cancelado")
+                            TurnoEstudio.objects.filter(orden__paciente=menor.menor, estado="pendiente").update(estado="cancelado")
+
+                        Turno.objects.filter(paciente=persona_actual.paciente, estado="pendiente").update(estado="cancelado")
+                        TurnoEstudio.objects.filter(orden__paciente=persona_actual.paciente, estado="pendiente").update(estado="cancelado")
+                        Persona.objects.filter(paciente__responsable__adulto=persona_actual.paciente).update(is_active=False)                        
+                        persona_actual.is_active = False
+                        persona_actual.save()
+                        messages.success(request, "Su servicio fue cancelado correctamente. Podrá reactivarlo cuando lo desee.")             
+                        return redirect("logout")                       
+                except Exception as e:
+                    print(e)
+                    messages.error(request, "No fue posible cancelar su cuota hospitalaria ni las cuotas correspondientes a los menores a su cargo. Por favor, intente nuevamente o comuníquese con administración.")             
+                    return redirect("miCuenta")                  
+        
     
     return render(request, "miCuenta.html", {"form":form}) 
 
@@ -493,6 +550,10 @@ def sacarTurnoEstudio(request, paciente_id):
         else:
             menor = menores_a_cargo.get(menor_id=paciente_id)
             parentesco = f"para {menor.menor.persona.get_full_name()} ({menor.get_parentesco_display()})"
+    
+    verificarOrdenes = OrdenEstudio.objects.filter(paciente=paciente_id, estado="pendiente")
+    for orden in verificarOrdenes:
+        orden.marcar_vencida_si_corresponde()    
             
     estudios_solicitados = OrdenEstudio.objects.filter(paciente=paciente_id, estado="pendiente")
     
@@ -569,6 +630,13 @@ def sacarTurnoEstudio(request, paciente_id):
         
         orden = OrdenEstudio.objects.get(pk=orden_form_id)    
         
+        if orden.estado != "pendiente":
+            response = render(request, "403.html", {
+                "mensaje": "Esta orden ya fue programado o vencida."
+            })
+            response.status_code = 403
+            return response      
+            
         if orden.paciente.id != paciente_id:
             response = render(request, "403.html", {
                 "mensaje": "No podés reservar un turno para otro paciente."
@@ -990,6 +1058,9 @@ def registrarMenor(request):
 @paciente_required
 @login_required
 def gestionMenores(request):
+    adulto = request.user.paciente
+    menores_relaciones = adulto.menores_a_cargo.select_related("menor__persona")
+        
     if request.method == "GET" and request.headers.get("x-requested-with") == "XMLHttpRequest":
         id_menor = request.GET.get("id")
         if id_menor:
@@ -1007,21 +1078,106 @@ def gestionMenores(request):
         else:
             return JsonResponse({"error": "ID no proporcionado"}, status=400) 
     
-    adulto = request.user.paciente
-    menores_relaciones = adulto.menores_a_cargo.select_related("menor__persona")
+
     if request.method == "POST":
-        id_menor = request.POST.get("id_menor")  
-        if id_menor:
-            menor = get_object_or_404(MenorACargoDePaciente, menor_id=id_menor)
-            persona = menor.menor.persona  # Obtenemos la persona asociada al menor
-            form = RegistrarMenorForm(request.POST, instance=persona, adulto=request.user.paciente)
-            if form.is_valid():
-                form.save()  
+        tipo_form = request.POST.get("tipo_form")
+        
+        if tipo_form == "formEditMenor":
+            id_menor = request.POST.get("id_menor")  
+            if id_menor:
+                try:
+                    id_menor = int(id_menor)
+                except (TypeError, ValueError):
+                    id_menor = None
+                    messages.error(request,"El campo tiene que ser un entero.")
+                    return redirect("gestionMenores")
+            else:
+                messages.error(request,"El campo no debe estar vacio.")
+                return redirect("gestionMenores")                
+                                
+            if id_menor is not None:
+                menor = get_object_or_404(MenorACargoDePaciente, menor_id=id_menor)
+                if not adulto.menores_a_cargo.filter(menor=menor.menor).exists():
+                    response = render(request, "403.html", {
+                        "mensaje": "No tienes acceso a este menor."
+                    })
+                    response.status_code = 403
+                    return response             
+                
+                form = RegistrarMenorForm(request.POST, instance=menor.menor.persona, adulto=adulto)
+                if form.is_valid():
+                    form.save()  
+                    messages.success(request,"Se editó correctamente los datos del menor.")
+                    return redirect("gestionMenores")
+                else:
+                    return render(request, "gestionMenores/gestionMenores.html",{"menores_relaciones": menores_relaciones,"form":form,"error":True,"titleModal":"Editar Datos del Menor","id_paciente":menor.menor.id})  
+            else:
+                return redirect("gestionMenores")
+            
+        elif tipo_form == "formCancelarPago":
+            id_paciente_persona = request.POST.get("id_paciente_persona")
+
+            if id_paciente_persona:
+                try:
+                    id_paciente_persona = int(id_paciente_persona)
+                except (TypeError, ValueError):
+                    id_paciente_persona = None
+                    messages.error(request,"El campo tiene que ser un entero.")
+                    return redirect("gestionMenores")
+            else:
+                messages.error(request,"El campo no debe estar vacio.")
+                return redirect("gestionMenores")                       
+
+            if id_paciente_persona is not None:
+                menor = get_object_or_404(Persona, pk=id_paciente_persona)
+                if not adulto.menores_a_cargo.filter(menor=menor.paciente).exists():
+                    response = render(request, "403.html", {
+                        "mensaje": "No tienes acceso a este menor."
+                    })
+                    response.status_code = 403
+                    return response    
+            
+                Turno.objects.filter(paciente=menor.paciente, estado="pendiente").update(estado="cancelado")
+                TurnoEstudio.objects.filter(orden__paciente=menor.paciente, estado="pendiente").update(estado="cancelado")                                        
+
+                menor.is_active = False;
+                menor.save()
+                messages.success(request,"La cuota hospitalaria del menor fue cancelada correctamente.")                                
                 return redirect("gestionMenores")
             else:
-                return render(request, "gestionMenores/gestionMenores.html",{"menores_relaciones": menores_relaciones,"form":form,"error":True,"id_paciente":menor.menor.id})  
-        else:
-            return redirect("gestionMenores")
+                messages.error(request,"No fue posible cancelar la cuota hospitalaria del menor. Por favor, intente nuevamente")                
+                return redirect("gestionMenores")
+            
+        elif tipo_form == "formReescribirMenor":
+            id_paciente_persona = request.POST.get("id_paciente_persona")
+
+            if id_paciente_persona:
+                try:
+                    id_paciente_persona = int(id_paciente_persona)
+                except (TypeError, ValueError):
+                    id_paciente_persona = None
+                    messages.error(request,"El campo tiene que ser un entero.")
+                    return redirect("gestionMenores")
+            else:
+                messages.error(request,"El campo no debe estar vacio.")
+                return redirect("gestionMenores")                       
+
+            if id_paciente_persona is not None:
+                menor = get_object_or_404(Persona, pk=id_paciente_persona)
+                if not adulto.menores_a_cargo.filter(menor=menor.paciente).exists():
+                    response = render(request, "403.html", {
+                        "mensaje": "No tienes acceso a este menor."
+                    })
+                    response.status_code = 403
+                    return response    
+            
+                menor.is_active = True;
+                menor.save()
+                messages.success(request,"El pago de la cuota hospitalaria del menor se realizó correctamente.")                                
+                return redirect("gestionMenores")
+            else:
+                messages.error(request,"No fue posible registrar el pago de la cuota hospitalaria del menor. Por favor, intente nuevamente")                
+                return redirect("gestionMenores")
         
     return render(request, "gestionMenores/gestionMenores.html",{"menores_relaciones": menores_relaciones,"form":RegistrarMenorForm()})  
 

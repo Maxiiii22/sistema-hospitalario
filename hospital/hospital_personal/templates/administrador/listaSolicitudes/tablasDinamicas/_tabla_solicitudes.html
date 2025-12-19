@@ -1,0 +1,42 @@
+<table class="tabla-global" id="tabla-lista-solicitudes">
+    <thead>
+        {% if solicitudes %}
+        <tr>
+            <th>ID</th>
+            <th>DNI Paciente</th>
+            <th>Estado</th>
+            <th class="fecha">Fecha solicitud</th>
+            <th class="fecha">Fecha vencimiento</th>
+            <th>Codigo de seguimiento</th>
+            <th>Detalles</th>
+        </tr>
+        {% endif %}
+    </thead>
+    <tbody>
+        {% if cantidad_registros_base == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay solicitudes pendientes.</td>
+            </tr>        
+        {% elif solicitudes.count == 0 %}
+            <tr>
+                <td colspan="6" class="empty-message">No hay solicitudes que coincidan con el filtro.</td>
+            </tr>        
+        {% else %}
+            {% for solicitud in solicitudes %}
+                <tr class="fila">
+                    <td data-label="ID:">{{solicitud.id}}</td>
+                    <td data-label="DNI Paciente:">{{solicitud.paciente.persona.dni}}</td>
+                    <td data-label="Estado:">{{solicitud.get_estado_display}}</td>
+                    <td data-label="Fecha solicitud:">{{solicitud.fecha_solicitud|date:"d-m-Y"}}</td>
+                    <td data-label="Fecha vencimiento:">{{solicitud.fecha_vencimiento|date:"d-m-Y"}}</td>
+                    <td data-label="Codigo de seguimiento:">#{{solicitud.codigo_seguimiento}}</td>
+                    <td data-label="Detalles:">
+                        <div class="box-btns-td-acciones">
+                            <button class="btn-masDetalles" onclick="detallesSolicitud(this)" data-id-solicitud="{{solicitud.id}}">Ver detalles</button>
+                        </div>   
+                    </td>                    
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </tbody>
+</table>

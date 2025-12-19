@@ -26,7 +26,7 @@
             </div>
             <div class="logo">
                 <img src="/media/logo-hospital.png" alt="Logo">
-                <span>{{user.usuario.persona.get_full_name}} - {{user.usuario.tipoUsuario.nombre_tipoUsuario}}</span>
+                <span>{{user.usuario.persona.get_full_name}} - {{user.usuario.tipoUsuario_display}}</span>
             </div>
         </div>
         <div class="menu-container">
@@ -150,7 +150,13 @@
                             <i class="hgi hgi-stroke hgi-doctor-01"></i>
                             <span class="span-main">Lista de Médicos</span>
                         </a> 
-                    </li>             
+                    </li>
+                    <li class="menu-item menu-item-estatico">
+                        <a href="{% url 'administrador-solicitudes-reactivacion' %}" class="menu-link">
+                            <i class="hgi hgi-stroke hgi-calendar-user"></i>
+                            <span class="span-main">Solicitudes de Reactivacion</span>
+                        </a> 
+                    </li>                                  
                     {% elif user.usuario.tipoUsuario.id == 3 %} {# Medico de consultorio #}
                     <li class="menu-item menu-item-desplegable">
                         <div class="menu-link">
@@ -198,7 +204,7 @@
                     <li class="menu-item menu-item-estatico">
                         <a href="{% url 'verEstudios' %}" class="menu-link">
                             <i class="hgi hgi-stroke hgi-task-done-01"></i>
-                            <span class="span-main">Ver estudios realizados</span>
+                            <span class="span-main">Estudios pendientes de carga</span>
                         </a> 
                     </li>
                 {% elif user.usuario.tipoUsuario.id == 7 %} {# Jefe de enfermeria #}
@@ -217,7 +223,7 @@
                     <li class="menu-item menu-item-estatico">
                         <a href="{% url 'medicos-jefe-enfermeria' %}" class="menu-link">                            
                             <i class="hgi hgi-stroke hgi-doctor-01"></i>                            
-                            <span class="span-main">Medicos de la unidad</span>
+                            <span class="span-main">Médicos de la unidad</span>
                         </a> 
                     </li>  
                 {% elif user.usuario.tipoUsuario.id == 8 %} {# Medico Hospitalario #}
@@ -245,6 +251,22 @@
                             <h3>{% if especialidad_actual_nombre %}{{especialidad_actual_nombre}}{% else %}No asignado a especialidad{% endif %}</h3>
                         </div>
                     </li>
+                {% else %}
+                    <li class="menu-item menu-item-estatico">
+                        <div class="especialidadActual">                                                 
+                            {% if asignacionActual.asignacion and asignacionActual.dia_no_laborable and asignacionActual.dentro_del_turno %}
+                                {% if user.usuario.tipoUsuario.id == 4 or user.usuario.tipoUsuario.id == 8 %}<h4>{{asignacionActual.NombreLugarAsignacion}}</h4>{% endif %}
+                                <h3>{{asignacionActual.asignacionActual}}</h3>
+                            {% elif asignacionActual.asignacion and asignacionActual.dia_no_laborable and not asignacionActual.dentro_del_turno %}
+                                {% if user.usuario.tipoUsuario.id == 4 or user.usuario.tipoUsuario.id == 8 %}<h4>{{asignacionActual.NombreLugarAsignacion}}</h4>{% endif %}
+                                <h3>{{asignacionActual.asignacionActual}}</h3>
+                            {% elif asignacionActual.asignacion and not asignacionActual.dia_no_laborable and not asignacionActual.dentro_del_turno %}
+                                <h4>Sin asignaciones en este dia/turno.</h4>
+                            {% elif not asignacionActual.asignacion and not asignacionActual.dia_no_laborable and not asignacionActual.dentro_del_turno %}
+                                <h4>Sin asignaciones</h4>
+                            {% endif %}
+                        </div>
+                    </li>                
                 {% endif %}
                 <li class="menu-item menu-item-estatico">
                     <a href="{% url 'logout' %}" class="menu-link">

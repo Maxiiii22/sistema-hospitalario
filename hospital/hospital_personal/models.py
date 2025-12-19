@@ -3,6 +3,53 @@ from hospital_pacientes.models import Paciente
 from datetime import time
 from django.core.exceptions import ValidationError
 from django.urls import reverse
+import secrets
+import string
+from datetime import timedelta
+from django.utils import timezone
+
+class SolicitudReactivacion(models.Model):
+    def vencimiento_default():
+        return timezone.now() + timedelta(days=7)  
+    
+    dni = models.CharField(max_length=8, null=True, blank=True) # quitar blank y null al finalizar la bd
+    first_name =  models.CharField(max_length=150, null=True, blank=True) # quitar blank y null al finalizar la bd
+    last_name = models.CharField(max_length=150, null=True, blank=True)  # quitar blank y null al finalizar la bd
+    fecha_nacimiento = models.DateField(null=True, blank=True) # quitar blank y null al finalizar la bd
+    
+    login_id = models.CharField(max_length=100, null=True, blank=True) 
+    telefono = models.CharField(max_length=20, blank=True, null=True)
+    numero_paciente = models.CharField(max_length=10, blank=True, null=True)  
+    observaciones = models.TextField(blank=True, null=True)
+    
+    paciente = models.ForeignKey(Paciente, on_delete=models.PROTECT)
+    estado = models.CharField(max_length=10, choices=[('pendiente','Pendiente'), ('aprobada','Aprobada'), ('rechazada','Rechazada'), ('finalizado','Finalizado')], default='pendiente')
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    fecha_vencimiento = models.DateTimeField(default=vencimiento_default)
+    codigo_seguimiento = models.CharField(max_length=10, unique=True)  
+    
+    def marcar_vencida_si_corresponde(self):
+        if self.estado != "finalizado" and self.fecha_vencimiento < timezone.now():
+            self.estado = "finalizado"
+            self.save(update_fields=["estado"])    
+    
+    def generar_codigo_seguro(self, longitud=10):
+        caracteres = string.ascii_uppercase + string.digits
+        return ''.join(secrets.choice(caracteres) for _ in range(longitud)) 
+    
+    def save(self, *args, **kwargs):
+        
+        if not self.codigo_seguimiento:
+            codigo_valido = False
+            while not codigo_valido:
+                codigo = self.generar_codigo_seguro()
+                if not SolicitudReactivacion.objects.filter(codigo_seguimiento=codigo).exists():
+                    self.codigo_seguimiento = codigo
+                    codigo_valido = True
+        
+        self.full_clean()
+        super().save(*args, **kwargs)
+
 
 class Departamento(models.Model):
     nombre_departamento = models.CharField(max_length=255)
@@ -335,10 +382,16 @@ class OrdenEstudio(models.Model):
     motivo_estudio = models.TextField(blank=True, null=True)
     indicaciones = models.TextField(blank=True, null=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True,blank=True, null=True) 
+    fecha_vencimiento = models.DateTimeField(blank=True, null=True)   # Leugo quitar blank y null 
     estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default="pendiente")
     solicitado_por = models.ForeignKey('controlUsuario.Usuario', on_delete=models.CASCADE)
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name="ordenesPaciente")
-
+    
+    def marcar_vencida_si_corresponde(self):
+        if self.estado == "pendiente" and self.fecha_vencimiento < timezone.now():
+            self.estado = "vencida"
+            self.save(update_fields=["estado"])      
+    
     @property
     def estado_detallado(self):
         if self.estado == "programado":
@@ -355,8 +408,14 @@ class OrdenEstudio(models.Model):
         
         return self.get_estado_display()
     
+    
     def __str__(self):
         return f'Solitud pedida en la consulta n°: {self.consulta.id} - N° de orden: {self.id} - Tipo Estudio: "{self.tipo_estudio.nombre_estudio}" - Estado: {self.estado} - Paciente ID: {self.paciente.id}'
+    
+    def save(self, *args, **kwargs):
+        if not self.fecha_vencimiento:
+            self.fecha_vencimiento = self.fecha_solicitud + timedelta(days=60)
+        super().save(*args, **kwargs)
 
 class Medicaciones(models.Model):
     consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, related_name='medicaciones')

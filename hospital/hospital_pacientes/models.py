@@ -3,6 +3,13 @@ from django.db import models
 class Paciente(models.Model):
     persona = models.OneToOneField('controlUsuario.Persona', on_delete=models.CASCADE)
     direccion = models.CharField(max_length=255)
+    numero_paciente = models.CharField(max_length=10, unique=True, blank=True, null=True)  # Quitar el blank=True y el null=True al finalizar la BD
+
+    def save(self, *args, **kwargs):
+        # Generar número de paciente si no existe
+        if not self.numero_paciente:
+            self.numero_paciente = f"PAC{self.id or ''}"
+        super().save(*args, **kwargs)    
     
     @property
     def tutor(self):

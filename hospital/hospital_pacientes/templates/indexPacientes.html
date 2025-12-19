@@ -7,8 +7,30 @@
 {% endblock %}
 
 {% block contenido %}
-    <h1 style="text-align: center;">Bienvenido {% if user.is_authenticated %} {{user.get_full_name}} - DNI: {{user.dni}} {% endif%} </h1>
+    <h1 class="title-bienvenida">Bienvenido {{user.get_full_name}} - DNI: {{user.dni}}</h1>
+    <div class="box-tarjetas-index">
+        <div class="tarjeta">
+            <h3>Citas médicas pendientes</h3>
+            <p>{{turnos}}</p>
+        </div>
+        <div class="tarjeta">
+            <h3>Turnos de estudios pendientes</h3>
+            <p>{{turnosEstudio}}</p>
+        </div>
+        {% if turnosMenoresACargo %}
+            <div class="tarjeta">
+                <h3>Citas médicas pendientes de menores a cargo</h3>
+                <p>{{turnosMenoresACargo}}</p>
+            </div>
+        {% endif %}
+        {% if turnosEstudioMenoresACargo %}
+            <div class="tarjeta">
+                <h3>Turnos de estudios pendientes de menores a cargo</h3>
+                <p>{{turnosEstudioMenoresACargo}}</p>
+            </div>
+        {% endif %}
 
+    </div>
 {% endblock %}
 
 {% block scripts_js %}  {% endblock %}

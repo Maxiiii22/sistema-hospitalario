@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required 
 from controlUsuario.decorators import enfermero_required
-from hospital_personal.models import AsignacionesHabitaciones , AsignacionEnfermero,ObservacionesEnfermero,ObservacionesMedico,AltaMedica
+from hospital_personal.models import AsignacionesHabitaciones , AsignacionEnfermero,ObservacionesEnfermero,ObservacionesMedico,AltaMedica,Jorna_laboral
 from hospital_personal.forms import FormularioEvaluacionMedica, FormularioNotaEnfermo
 from hospital_personal.filters import PacientesAsignadosHabitacionEnfermeroFilter, ObservacionesDeEnfermerosFilter
 from django.shortcuts import get_object_or_404, redirect, render
@@ -9,7 +9,14 @@ from django.http import JsonResponse
 @enfermero_required
 @login_required
 def listaPacientes(request):
-    qs_base = AsignacionEnfermero.objects.filter(enfermero=request.user.usuario,activo=True)
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    id_jornada = asignacionTrabajo.get("idJornadaAsignada")
+    if id_jornada is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los pacientes de su unidad.
+        jornada = get_object_or_404(Jorna_laboral,pk=id_jornada)    
+    
+        qs_base = AsignacionEnfermero.objects.filter(enfermero=request.user.usuario,activo=True,jornada=jornada)    
+    else:
+        qs_base =  AsignacionEnfermero.objects.none() 
     
     filtro = PacientesAsignadosHabitacionEnfermeroFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
     asignacionesEnfermero = filtro.qs

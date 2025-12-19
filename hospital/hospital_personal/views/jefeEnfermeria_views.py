@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required 
 from controlUsuario.decorators import jefeEnfermeria_required
-from hospital_personal.models import Paciente,AsignacionesHabitaciones, AsignacionMedico, AsignacionEnfermero,Jorna_laboral,AltaMedica,AltaAdministrativa,UsuarioLugarTrabajoAsignado,ObservacionesEnfermero,ObservacionesMedico
+from hospital_personal.models import Paciente,AsignacionesHabitaciones, AsignacionMedico, AsignacionEnfermero,Jorna_laboral,AltaMedica,AltaAdministrativa,UsuarioLugarTrabajoAsignado,ObservacionesEnfermero,ObservacionesMedico,Lugar
 from hospital_personal.filters import PacienteFilter,EnfermerosDeLaUnidadFilter, ObservacionesDeEnfermeroFilter,EvaluacionesDelMedicoFilter, ObservacionesDeEnfermerosFilter
 from hospital_personal.forms import FormularioAltaAdministrativa, FormularioCancelarAsignacionHabitacion, FormularioNotaEnfermo, FormularioEvaluacionMedica
 from controlUsuario.models import Usuario
@@ -319,8 +319,8 @@ def notasEnfermeria(request,id_hospitalizacion):
         return response       
     
     hospitalizacion = AsignacionesHabitaciones.objects.get(pk=id_hospitalizacion)
-    qs_base = ObservacionesEnfermero.objects.filter(asignacion_enfermero__asignacion_habitacion=hospitalizacion).order_by("-id")
     
+    qs_base = ObservacionesEnfermero.objects.filter(asignacion_enfermero__asignacion_habitacion=hospitalizacion).order_by("-id")
     filtro = ObservacionesDeEnfermerosFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
     observacionesEnfermeros = filtro.qs 
     
@@ -397,19 +397,25 @@ def fichaHospitalizacion(request,id_hospitalizacion):
 @jefeEnfermeria_required
 @login_required
 def enfermerosDeLaUnidad(request):
-    unidadDelJefe = request.user.usuario.UsuariosAsignadosAEsteLugar.first()
-    enfermerosDeLaUnidad = (
-        UsuarioLugarTrabajoAsignado.objects
-            .filter(
-                lugar=unidadDelJefe.lugar.unidad,
-                usuario__tipoUsuario_id=4
-            )
-            .values('usuario_id')         # Esto obliga a que los resultados sean diccionarios
-            .annotate(id_min=Min('id'))   # Este es el ID del registro único por usuario
-    )
-    qs_base = UsuarioLugarTrabajoAsignado.objects.filter(
-        id__in=[item['id_min'] for item in enfermerosDeLaUnidad]
-    ) 
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    unidad = asignacionTrabajo.get("idLugarAsignacion")
+    if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
+        lugar = get_object_or_404(Lugar,pk=unidad)   
+        enfermerosDeLaUnidad = (
+            UsuarioLugarTrabajoAsignado.objects
+                .filter(
+                    lugar=lugar.unidad,
+                    usuario__tipoUsuario_id=4,
+                    usuario__persona__is_active=True
+                )
+                .values('usuario_id')         # Esto obliga a que los resultados sean diccionarios
+                .annotate(id_min=Min('id'))   # Este es el ID del registro único por usuario
+        )
+        qs_base = UsuarioLugarTrabajoAsignado.objects.filter(
+            id__in=[item['id_min'] for item in enfermerosDeLaUnidad]
+        ) 
+    else:
+        qs_base = UsuarioLugarTrabajoAsignado.objects.none()
     
     filtro = EnfermerosDeLaUnidadFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
     registroEnfermeros = filtro.qs
@@ -424,15 +430,25 @@ def enfermerosDeLaUnidad(request):
 @jefeEnfermeria_required
 @login_required
 def fichaEnfermero(request,id_enfermero):
-    unidadDelJefe = request.user.usuario.UsuariosAsignadosAEsteLugar.first()
-    if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_enfermero,lugar=unidadDelJefe.lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=4).exists():
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    unidad = asignacionTrabajo.get("idLugarAsignacion")
+    if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
+        lugar = get_object_or_404(Lugar,pk=unidad)
+        
+        if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_enfermero,lugar=lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=4).exists():
+            response = render(request, "403.html", {
+                "mensaje": "No puedes acceder a esta asignacion"
+            })
+            response.status_code = 403
+            return response 
+    
+        enfermero = get_object_or_404(Usuario, pk=id_enfermero)
+    else:
         response = render(request, "403.html", {
             "mensaje": "No puedes acceder a esta asignacion"
         })
         response.status_code = 403
-        return response 
-    
-    enfermero = get_object_or_404(Usuario, pk=id_enfermero)
+        return response         
     
     return render(request, "jefeEnfermeria/enfermeros/fichaEnfermero.html",{"enfermero":enfermero}) 
 
@@ -440,39 +456,50 @@ def fichaEnfermero(request,id_enfermero):
 @jefeEnfermeria_required
 @login_required
 def historialNotasEnfermero(request,id_enfermero):   
-    unidadDelJefe = request.user.usuario.UsuariosAsignadosAEsteLugar.first()
-    if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_enfermero,lugar=unidadDelJefe.lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=4).exists():
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    unidad = asignacionTrabajo.get("idLugarAsignacion")
+    if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
+        lugar = get_object_or_404(Lugar,pk=unidad)    
+
+        if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_enfermero,lugar=lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=4).exists():
+            response = render(request, "403.html", {
+                "mensaje": "No puedes acceder a esta asignacion"
+            })
+            response.status_code = 403
+            return response     
+        
+        enfermero = get_object_or_404(Usuario, pk=id_enfermero)
+        qs_base = ObservacionesEnfermero.objects.filter(asignacion_enfermero__enfermero=enfermero).order_by("-id")
+        
+        filtro = ObservacionesDeEnfermeroFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
+        observacionesEnfermeros = filtro.qs       
+        
+        if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':     
+            if request.GET.get("filtrar") == "1":
+                return render(request,"jefeEnfermeria/enfermeros/tablasDinamicas/_tabla_historial_notas_enfermero.html", {"observacionesEnfermeros": observacionesEnfermeros,"filtro":filtro,"cantidad_registros_base":qs_base.count()}) 
+            
+            id_observacion = request.GET.get("id_observacion")
+            if id_observacion:
+                observacion = get_object_or_404(ObservacionesEnfermero, pk=id_observacion)
+                data = {
+                    "observacion": observacion.observaciones,
+                    "signos_vitales": observacion.signos_vitales,         
+                    "procedimientos_realizados": observacion.procedimientos_realizados if observacion.procedimientos_realizados else "Sin procedimientos realizados" ,          
+                    "medicacion_administrada": observacion.medicacion_administrada if observacion.procedimientos_realizados else "Sin medicacion administrada"         
+                }
+                return JsonResponse(data)
+            else:
+                return JsonResponse({"error": "ID no proporcionado"}, status=400)    
+        
+
+        form = FormularioNotaEnfermo()
+        
+    else:
         response = render(request, "403.html", {
             "mensaje": "No puedes acceder a esta asignacion"
         })
         response.status_code = 403
-        return response     
-    
-    enfermero = get_object_or_404(Usuario, pk=id_enfermero)
-    qs_base = ObservacionesEnfermero.objects.filter(asignacion_enfermero__enfermero=enfermero).order_by("-id")
-    
-    filtro = ObservacionesDeEnfermeroFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
-    observacionesEnfermeros = filtro.qs       
-    
-    if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':     
-        if request.GET.get("filtrar") == "1":
-            return render(request,"jefeEnfermeria/enfermeros/tablasDinamicas/_tabla_historial_notas_enfermero.html", {"observacionesEnfermeros": observacionesEnfermeros,"filtro":filtro,"cantidad_registros_base":qs_base.count()}) 
-        
-        id_observacion = request.GET.get("id_observacion")
-        if id_observacion:
-            observacion = get_object_or_404(ObservacionesEnfermero, pk=id_observacion)
-            data = {
-                "observacion": observacion.observaciones,
-                "signos_vitales": observacion.signos_vitales,         
-                "procedimientos_realizados": observacion.procedimientos_realizados if observacion.procedimientos_realizados else "Sin procedimientos realizados" ,          
-                "medicacion_administrada": observacion.medicacion_administrada if observacion.procedimientos_realizados else "Sin medicacion administrada"         
-            }
-            return JsonResponse(data)
-        else:
-            return JsonResponse({"error": "ID no proporcionado"}, status=400)    
-    
-
-    form = FormularioNotaEnfermo()
+        return response            
 
         
     return render(request, "jefeEnfermeria/enfermeros/historialNotasEnfermero.html", {"enfermero":enfermero,"observacionesEnfermeros":observacionesEnfermeros,"filtro":filtro,"form":form,"cantidad_registros_base":qs_base.count()}) 
@@ -484,42 +511,59 @@ def historialNotasEnfermero(request,id_enfermero):
 @jefeEnfermeria_required
 @login_required
 def medicosDeLaUnidad(request):
-    unidadDelJefe = request.user.usuario.UsuariosAsignadosAEsteLugar.first()
-    medicosDeLaUnidad = (
-        UsuarioLugarTrabajoAsignado.objects
-            .filter(
-                lugar=unidadDelJefe.lugar.unidad,
-                usuario__tipoUsuario_id=8
-            )
-            .values('usuario_id')         # Esto obliga a que los resultados sean diccionarios
-            .annotate(id_min=Min('id'))   # Este es el ID del registro único por usuario
-    )
-    qs_base = UsuarioLugarTrabajoAsignado.objects.filter(
-        id__in=[item['id_min'] for item in medicosDeLaUnidad]
-    ) 
-    
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    unidad = asignacionTrabajo.get("idLugarAsignacion")
+    if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los medicos de su unidad.
+        lugar = get_object_or_404(Lugar,pk=unidad)       
+        medicosDeLaUnidad = (
+            UsuarioLugarTrabajoAsignado.objects
+                .filter(
+                    lugar=lugar.unidad,
+                    usuario__tipoUsuario_id=8,
+                    usuario__persona__is_active=True
+                )
+                .values('usuario_id')         # Esto obliga a que los resultados sean diccionarios
+                .annotate(id_min=Min('id'))   # Este es el ID del registro único por usuario
+        )
+        qs_base = UsuarioLugarTrabajoAsignado.objects.filter(
+            id__in=[item['id_min'] for item in medicosDeLaUnidad]
+        ) 
+    else:
+        qs_base = UsuarioLugarTrabajoAsignado.objects.none()
+                
     filtro = EnfermerosDeLaUnidadFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
     registroMedicos = filtro.qs
-    
+        
     if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         if request.GET.get("filtrar") == "1":
             return render(request,"jefeEnfermeria/medicos/tablasDinamicas/_tabla_medicos.html", {"medicosDeLaUnidad": registroMedicos,"filtro":filtro,"cantidad_registros_base":qs_base.count()})
-    
+        
+        
         
     return render(request, "jefeEnfermeria/medicos/medicosDeLaUnidad.html", {"medicosDeLaUnidad":registroMedicos,"filtro":filtro,"cantidad_registros_base":qs_base.count()}) 
 
 @jefeEnfermeria_required
 @login_required
 def fichaMedico(request,id_medico):
-    unidadDelJefe = request.user.usuario.UsuariosAsignadosAEsteLugar.first()
-    if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_medico,lugar=unidadDelJefe.lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=8).exists():
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    unidad = asignacionTrabajo.get("idLugarAsignacion")
+    if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
+        lugar = get_object_or_404(Lugar,pk=unidad)
+        
+        if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_medico,lugar=lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=8).exists():
+            response = render(request, "403.html", {
+                "mensaje": "No puedes acceder a esta asignacion"
+            })
+            response.status_code = 403
+            return response 
+    
+        medico = get_object_or_404(Usuario, pk=id_medico)
+    else:
         response = render(request, "403.html", {
             "mensaje": "No puedes acceder a esta asignacion"
         })
         response.status_code = 403
-        return response 
-    
-    medico = get_object_or_404(Usuario, pk=id_medico)
+        return response         
     
     return render(request, "jefeEnfermeria/medicos/fichaMedico.html",{"medico":medico}) 
 
@@ -527,41 +571,50 @@ def fichaMedico(request,id_medico):
 @jefeEnfermeria_required
 @login_required
 def historialEvaluacionesMedicas(request,id_medico):   
-    unidadDelJefe = request.user.usuario.UsuariosAsignadosAEsteLugar.first()
-    if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_medico,lugar=unidadDelJefe.lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=8).exists():
+    asignacionTrabajo = request.user.usuario.get_asignacionActual()
+    unidad = asignacionTrabajo.get("idLugarAsignacion")
+    if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
+        lugar = get_object_or_404(Lugar,pk=unidad)
+        
+        if not UsuarioLugarTrabajoAsignado.objects.filter(usuario_id=id_medico,lugar=lugar.unidad,usuario__persona__is_active=True,usuario__tipoUsuario_id=8).exists():
+            response = render(request, "403.html", {
+                "mensaje": "No puedes acceder a esta asignacion"
+            })
+            response.status_code = 403
+            return response     
+    
+        medico = get_object_or_404(Usuario, pk=id_medico)
+        qs_base = ObservacionesMedico.objects.filter(asignacion_medico__medico=medico).order_by("-id")
+    
+        filtro = EvaluacionesDelMedicoFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
+        evaluacionesMedico = filtro.qs       
+        
+        if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':     
+            if request.GET.get("filtrar") == "1":
+                return render(request,"jefeEnfermeria/medicos/tablasDinamicas/_tabla_historial_evaluaciones_medicas.html", {"evaluacionesMedico": evaluacionesMedico,"filtro":filtro,"cantidad_registros_base":qs_base.count()})    
+                            
+            id_observacion = request.GET.get("id_observacion")
+            if id_observacion:
+                observacion = get_object_or_404(ObservacionesMedico, pk=id_observacion)
+                data = {
+                    "motivo": observacion.motivo,
+                    "diagnostico": observacion.diagnostico,         
+                    "evolucion_clinica": observacion.evolucion_clinica ,          
+                    "indicaciones": observacion.indicaciones         
+                }
+                return JsonResponse(data)
+            else:
+                return JsonResponse({"error": "ID no proporcionado"}, status=400)
+            
+        form = FormularioEvaluacionMedica
+    else:
         response = render(request, "403.html", {
             "mensaje": "No puedes acceder a esta asignacion"
         })
         response.status_code = 403
-        return response     
+        return response             
     
-    medico = get_object_or_404(Usuario, pk=id_medico)
-    qs_base = ObservacionesMedico.objects.filter(asignacion_medico__medico=medico).order_by("-id")
     
-    filtro = EvaluacionesDelMedicoFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
-    evaluacionesMedico = filtro.qs       
-    
-    if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':     
-        if request.GET.get("filtrar") == "1":
-            return render(request,"jefeEnfermeria/medicos/tablasDinamicas/_tabla_historial_evaluaciones_medicas.html", {"evaluacionesMedico": evaluacionesMedico,"filtro":filtro,"cantidad_registros_base":qs_base.count()})    
-                        
-        id_observacion = request.GET.get("id_observacion")
-        if id_observacion:
-            observacion = get_object_or_404(ObservacionesMedico, pk=id_observacion)
-            data = {
-                "motivo": observacion.motivo,
-                "diagnostico": observacion.diagnostico,         
-                "evolucion_clinica": observacion.evolucion_clinica ,          
-                "indicaciones": observacion.indicaciones         
-            }
-            return JsonResponse(data)
-        else:
-            return JsonResponse({"error": "ID no proporcionado"}, status=400)    
-    
-
-    form = FormularioEvaluacionMedica
-
-        
     return render(request, "jefeEnfermeria/medicos/historialEvaluacionesMedicas.html", {"medico":medico,"evaluacionesMedico":evaluacionesMedico,"filtro":filtro,"form":form,"cantidad_registros_base":qs_base.count()}) 
 
 

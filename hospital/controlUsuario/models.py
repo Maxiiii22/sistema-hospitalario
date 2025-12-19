@@ -86,8 +86,7 @@ class Persona(AbstractUser):
     
     SEXO_CHOICES = [
         ('M', 'Masculino'),
-        ('F', 'Femenino'),
-        ('O', 'Otro'),
+        ('F', 'Femenino')
     ]    
     
     username = None   # Eliminamos username porque usamos login_id en su lugar
@@ -134,6 +133,41 @@ class Usuario(models.Model):
             if qs.exists():
                 raise ValidationError({'numero_matricula': "Este número de matrícula ya está en uso."})
     
+
+    def tipoUsuario_display(self):
+        """
+        Devuelve el nombre del rol adaptado al sexo del usuario.
+        """
+        EXCEPCIONES_FEMENINAS = {
+            "Superadministrador": "Superadministradora",
+            "Administrador": "Administradora",
+            "Enfermero": "Enfermera",
+            "Jefe de Enfermería": "Jefa de Enfermería",
+        }        
+        
+        nombre = self.tipoUsuario.nombre_tipoUsuario
+
+        if getattr(self.persona, 'sexo', 'M') != 'F':
+            return nombre  
+
+        # Primero revisar excepciones
+        if nombre in EXCEPCIONES_FEMENINAS:
+            return EXCEPCIONES_FEMENINAS[nombre]
+
+        # Separar palabras
+        palabras = nombre.split(" ")
+        resultado = []
+
+        for palabra in palabras:
+            if palabra.endswith("o"):  # Médico → Médica
+                resultado.append(palabra[:-1] + "a")
+            elif palabra.endswith("or"):  # Operador → Operadora
+                resultado.append(palabra + "a")
+            else:
+                resultado.append(palabra)  # No cambia
+
+        return " ".join(resultado)
+    
     def get_rolesProfesionales(self):
         roles = self.rolesProfesionalesUsuario.select_related('rol_profesional').all()
         nombres_roles = [r.rol_profesional.nombre_rol_profesional for r in roles]
@@ -164,8 +198,11 @@ class Usuario(models.Model):
                 "dia_no_laborable": False,
                 "dentro_del_turno": False,
                 "rango": None,
+                "idJornadaAsignada": None,                
                 "asignacionActualId": None,              
-                "asignacionActual": None              
+                "asignacionActual": None,
+                "idLugarAsignacion": None,              
+                "NombreLugarAsignacion": None              
             }           
         
         for asignacion in asignacionTrabajo:
@@ -177,8 +214,12 @@ class Usuario(models.Model):
                     "dia_no_laborable": True,                    
                     "dentro_del_turno": dentro_del_turno,
                     "rango": (horaInicio, horaFinal),
+                    "idJornadaAsignada": asignacion.jornada.id,
                     "asignacionActualId": asignacion.rolProfesionalAsignado.rol_profesional.id,
-                    "asignacionActual": asignacion.rolProfesionalAsignado.rol_profesional.nombre_rol_profesional
+                    "asignacionActual": asignacion.rolProfesionalAsignado.rol_profesional.nombre_rol_profesional,
+                    "idLugarAsignacion": asignacion.lugar.id,
+                    "NombreLugarAsignacion": asignacion.lugar.nombre                     
+                    
                 }
         
         return {
@@ -186,8 +227,11 @@ class Usuario(models.Model):
                 "dia_no_laborable": False,                                    
                 "dentro_del_turno": False,
                 "rango": None,
+                "idJornadaAsignada": None,                                
                 "asignacionActualId": None,  
-                "asignacionActual": None  
+                "asignacionActual": None,
+                "idLugarAsignacion": None,  
+                "NombreLugarAsignacion": None              
         }        
                 
     

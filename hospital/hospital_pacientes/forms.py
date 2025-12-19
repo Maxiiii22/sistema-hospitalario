@@ -1,6 +1,7 @@
 from django import forms
 from .models import Paciente,MenorACargoDePaciente
 from controlUsuario.models import Persona
+from hospital_personal.models import SolicitudReactivacion
 from django.core.validators import RegexValidator  # Para permitir símbolos comunes en el campo de teléfono.
 
 solo_letras_validator = RegexValidator(
@@ -122,6 +123,146 @@ class RegistrarMenorForm(forms.ModelForm):
                 print(f"Error al guardar paciente o crear registro del menor: {e}")
 
         return persona
+
+
+solo_letras_validator = RegexValidator(
+    regex=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{2,}$',
+    message='Este campo debe tener al menos 2 letras y solo contener letras.',
+    code='invalid_letters'
+)
+# Creamos un form para los campos del modelo/tabla Persona :
+class FormularioRegistroPersonalizado(forms.ModelForm): 
+    telefono = forms.CharField(
+        max_length=8,
+        validators=[
+            RegexValidator(
+                regex=r'^\d+$',  # Permite solo números
+                message="El teléfono solo puede contener números.",
+                code='invalid_telefono'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',  # Solo permite números 
+            "placeholder" : "Ej. 25489032",
+            'required':""
+        })
+    )  
+    dni = forms.CharField(
+        max_length=8,
+        validators=[
+            RegexValidator(
+                regex=r'^\d+$',  # Permite solo números
+                message="El DNI solo puede contener números.",
+                code='invalid_dni'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',  # Solo permite números 
+            "placeholder" : "DNI",
+        })
+    )  
+    
+    first_name = forms.CharField(
+        max_length=30,
+        validators=[solo_letras_validator],
+        widget=forms.TextInput(attrs={
+            'required': "",
+            'placeholder': "Ej. Roberto"
+        })
+    )
+    
+    
+    last_name = forms.CharField(
+        max_length=30,
+        validators=[solo_letras_validator],
+        widget=forms.TextInput(attrs={
+            'required': "",
+            'placeholder': "Ej. López"
+        })
+    )
+    
+    login_id = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Ej. jose@gmail.com"
+        })
+    )
+
+    
+class SolicitudReactivacionForm(forms.ModelForm):
+    dni = forms.CharField(
+        required=True,
+        label="DNI",
+        max_length=8,
+        validators=[
+            RegexValidator(
+                regex=r'^\d+$',  # Permite solo números
+                message="El DNI solo puede contener números.",
+                code='invalid_dni'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',  # Solo permite números 
+            "placeholder" : "DNI",
+        })
+    )      
+    first_name = forms.CharField(
+        required=True,
+        label="Nombre",
+        max_length=30,
+        validators=[solo_letras_validator],
+        widget=forms.TextInput(attrs={
+            'required': "",
+            'placeholder': "Ej. Roberto"
+        })
+    )    
+    last_name = forms.CharField(
+        required=True,
+        label="Apellido",
+        max_length=30,
+        validators=[solo_letras_validator],
+        widget=forms.TextInput(attrs={
+            'required': "",
+            'placeholder': "Ej. López"
+        })
+    )    
+    fecha_nacimiento = forms.DateField(required=True, label="Fecha de nacimiento", widget=forms.DateInput(attrs={'type': 'date'}))
+
+    login_id = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Opcional: Ej. jose@gmail.com"
+        }),
+        required=False,
+        label="Email"
+        
+    )
+    telefono = forms.CharField(
+        required=False,
+        label="Teléfono",
+        max_length=8,
+        validators=[
+            RegexValidator(
+                regex=r'^\d+$',  # Permite solo números
+                message="El teléfono solo puede contener números.",
+                code='invalid_telefono'
+            )
+        ],
+        widget=forms.TextInput(attrs={
+            'inputmode': 'numeric',  # Solo permite números 
+            "placeholder" : "Opcional: Ej. 25489032",
+        })
+    )      
+    numero_paciente = forms.CharField(required=False, label="Número de paciente",widget=forms.TextInput(attrs={"placeholder":"Opcional"}))
+    observaciones = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'placeholder': 'Agregue información adicional para ayudar al operador (Opcional)'}),
+        label="Observaciones"
+    )
+
+    class Meta:
+        model = SolicitudReactivacion
+        fields = ['observaciones']  
+        
+
 
 
 

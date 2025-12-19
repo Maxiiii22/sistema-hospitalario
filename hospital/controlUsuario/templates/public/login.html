@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
     <link rel="stylesheet" href="{% static 'estilos/autenticacion.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}     
     <title>Iniciar sesion</title>
 </head>
 <body>
@@ -49,10 +51,35 @@
             
                 <button type="submit" class="btn-global">Ingresar</button>
             </form>
-            <p id="p-login">Registrate como paciente <a class="link-perso" href="{% url 'signup' %}">¡Aqui!</a></p>
+            <p class="login-opcion">
+                ¿No posee una cuenta? <a class="link-perso" href="{% url 'signup' %}">Registrarse como paciente</a>
+            </p>
+            <p class="login-opcion">
+                ¿Tiene una cuenta inactiva? <a class="link-perso" href="{% url 'reactivarCuenta' %}">Solicitar reactivación</a>
+            </p>
+            <p class="login-opcion">
+                <a class="link-perso" href="{% url 'seguimientoSolicitud' %}">
+                    Consultar estado de solicitud de reactivación
+                </a>
+            </p>
+            
         </div>
     </main>
 
     <script src="{% static 'js/autenticacion.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "10000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}      
 </body>
 </html>

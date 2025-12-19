@@ -5,8 +5,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required 
 from controlUsuario.models import Usuario,RolesProfesionales
 from controlUsuario.forms import FormularioRegistroDePersonal
-from hospital_personal.models import UsuarioLugarTrabajoAsignado,UsuarioRolProfesionalAsignado,Especialidades,Turno,Consultas,TurnoEstudio
-from hospital_personal.filters import MedicosConCitasFilter,UsuariosNoAdministracionFilter, MedicosFilter
+from hospital_personal.models import UsuarioLugarTrabajoAsignado,UsuarioRolProfesionalAsignado,Especialidades,Turno,Consultas,TurnoEstudio,SolicitudReactivacion
+from hospital_personal.filters import MedicosConCitasFilter,UsuariosNoAdministracionFilter, MedicosFilter, SolicitudesReactivacionFilter
 from django.db.models import Q
 from django.utils import timezone
 from hospital_pacientes.utils import obtener_disponibilidad
@@ -544,3 +544,97 @@ def productividadMedica(request,id_medico, anio=None, mes=None, dia=None, especi
     }
 
     return render(request, "administrador/listaMedicos/productividadMedica.html",contexto)
+
+
+@administrador_required
+@login_required
+def solicitudesReactivacion(request):  
+    verificarSolicitudes = SolicitudReactivacion.objects.all()
+    for solicitud in verificarSolicitudes:
+        solicitud.marcar_vencida_si_corresponde()
+        
+    mostrar_todas = request.GET.get("todas_las_solicitudes")
+
+    if mostrar_todas:
+        qs_base = SolicitudReactivacion.objects.all()
+    else:
+        qs_base = SolicitudReactivacion.objects.filter(estado="pendiente")
+
+    filtro = SolicitudesReactivacionFilter(
+        request.GET or None,
+        queryset=qs_base
+    )
+    solicitudes = filtro.qs
+    
+    if request.method == "GET" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if request.GET.get("filtrar") == "1":
+            return render(request,"administrador/listaSolicitudes/tablasDinamicas/_tabla_solicitudes.html", {"solicitudes": solicitudes,"filtro":filtro,"cantidad_registros_base":qs_base.count()})
+        
+        id_solicitud = request.GET.get('id_solicitud')
+        if id_solicitud:
+            solicitud = get_object_or_404(SolicitudReactivacion, pk=id_solicitud)
+            paciente = {
+                "dni": solicitud.paciente.persona.dni,
+                "nombre":solicitud.paciente.persona.first_name,
+                "apellido":solicitud.paciente.persona.last_name,
+                "fecha_nacimiento":solicitud.paciente.persona.fecha_nacimiento.strftime("%d-%m-%Y"),
+                "email":solicitud.paciente.persona.login_id,
+                "telefono":solicitud.paciente.persona.telefono,
+                "numero_paciente":solicitud.paciente.numero_paciente
+            }
+            data = {
+                "paciente": paciente,
+                "id_solicitud": solicitud.id,
+                "dni": solicitud.dni,
+                "nombre": solicitud.first_name,
+                "apellido": solicitud.last_name,
+                "nacimiento": solicitud.fecha_nacimiento.strftime("%d-%m-%Y"),
+                "email": solicitud.login_id if solicitud.login_id else "No completo este campo",
+                "telefono": solicitud.telefono if solicitud.telefono else "No completo este campo",
+                "numero_paciente": solicitud.numero_paciente if solicitud.numero_paciente else "No completo este campo",
+                "observaciones": solicitud.observaciones if solicitud.observaciones else "No completo este campo"
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse({"error": "ID no proporcionado"}, status=400)     
+    
+    if request.method == "POST":
+        accion = request.POST.get("accion")
+        id_solicitud = request.POST.get("id_solicitud")
+        
+        if id_solicitud:
+            try:
+                id_solicitud = int(id_solicitud)
+            except (TypeError, ValueError):
+                messages.error(request,"El campo tiene que ser un entero.")
+                return redirect("administrador-solicitudes-reactivacion")
+        else:
+            messages.error(request,"El campo no debe estar vacio.")
+            return redirect("administrador-solicitudes-reactivacion")           
+        
+        try:
+            solicitud = SolicitudReactivacion.objects.get(pk=id_solicitud)  
+        except SolicitudReactivacion.DoesNotExist:
+            messages.error(request, "No se encontró ningúna solicitud con los datos proporcionados.")
+            return redirect("administrador-solicitudes-reactivacion")           
+
+        if solicitud.estado != "pendiente":
+            messages.error(request, "Esta solicitud ya fue respondida.")
+            return redirect("administrador-solicitudes-reactivacion")           
+        
+        if accion == "aceptar":
+            solicitud.estado = "aprobada"
+        elif accion == "rechazar":
+            solicitud.estado = "rechazada"
+        else:
+            response = render(request, "403.html", {
+                "mensaje": "No tienes acceso a esta pagina"
+            })
+            response.status_code = 403
+            return response 
+        
+        solicitud.save()
+        messages.success(request,f"La solicitud fue {solicitud.estado} correctamente.")
+        return redirect("administrador-solicitudes-reactivacion")           
+        
+    return render(request, "administrador/listaSolicitudes/listaSolicitudes.html", {"solicitudes":solicitudes,"filtro":filtro,"cantidad_registros_base":qs_base.count()}) 

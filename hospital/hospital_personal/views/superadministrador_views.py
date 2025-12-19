@@ -597,7 +597,7 @@ def gestionDeDepartamentos(request):
             
         if formDepartamentos.is_valid():
             formDepartamentos.save()
-            messages.succes(request, mensaje)             
+            messages.success(request, mensaje)             
             return redirect("gestionDeDepartamentos")  
         else:
             messages.error(request, f"Ocurrio un error: {formDepartamentos.errors}")             
@@ -648,7 +648,7 @@ def gestionDeEspecialidades(request):
 
         if formEspecialidades.is_valid():
             formEspecialidades.save()
-            messages.succes(request,mensaje)
+            messages.success(request,mensaje)
             return redirect("gestionDeEspecialidades")  
         else:
             messages.error(request,"Ocurrió un error. Intentelo de nuevo.")            
@@ -698,7 +698,7 @@ def gestionDeServiciosDiagnostico(request):
             
         if formServicios.is_valid():
             formServicios.save()
-            messages.succes(request,mensaje)
+            messages.success(request,mensaje)
             return redirect("gestionDeServiciosDiagnostico")  
         else:
             messages.error(request,"Ocurrió un error. Intentelo de nuevo")
@@ -747,7 +747,7 @@ def gestionDeEstudiosDiagnostico(request):
 
         if formEstudiosDiagnostico.is_valid():
             formEstudiosDiagnostico.save()
-            messages.succes(request,mensaje)
+            messages.success(request,mensaje)
             return redirect("gestionDeEstudiosDiagnostico")  
         else:
             messages.error(request,"Ocurrió un error. Intentelo de nuevo.")
@@ -803,7 +803,7 @@ def gestionDeLugares(request):
 
         if formLugar.is_valid():
             formLugar.save()
-            messages.succes(request,mensaje)
+            messages.success(request,mensaje)
             return redirect("gestionDeLugares")  
         else:
             messages.error(request,f"Ocurrió un error. Intenelo de nuevo. ({formLugar.errors})")
@@ -850,7 +850,7 @@ def gestionDePlantillasEstudios(request):
 
         if formPlantillaEstudio.is_valid():
             formPlantillaEstudio.save()
-            messages.succes(request,mensaje)
+            messages.success(request,mensaje)
             return redirect("gestionDePlantillasEstudios")  
         else:
             messages.error(request,"Ocurrió un error. Intentelo de nuevo.")            
@@ -918,7 +918,7 @@ def gestionDeRoles(request):
 
             if formRolesProfesionales.is_valid():
                 formRolesProfesionales.save()
-                messages.succes(request,mensaje)
+                messages.success(request,mensaje)
                 return redirect("gestionDeRoles")
             else:
                 messages.error(request,"Ocurrió un error. Intentelo de nuevo.")
@@ -950,7 +950,7 @@ def gestionDeRoles(request):
             
             if formTipoUsuario.is_valid():
                 formTipoUsuario.save()
-                messages.succes(request,mensaje)                
+                messages.success(request,mensaje)                
                 return redirect("gestionDeRoles")
             else:
                 messages.error(request,"Ocurrió un error. Intentelo de nuevo.")                

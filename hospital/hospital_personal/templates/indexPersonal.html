@@ -7,8 +7,125 @@
 {% endblock %}
 
 {% block contenido %}
-    <h1>Bienvenido {% if user.is_authenticated %} {{user.usuario.tipoUsuario.nombre_tipoUsuario}} {{user.get_full_name}} - N° Legajo: {{user.login_id}} {% endif%} </h1>
+    <h1 class="title-bienvenida">Bienvenido/a {{user.get_full_name}} - Legajo N.° {{user.login_id}}</h1>
 
+    <div class="box-tarjetas-index">
+        {% if user.usuario.tipoUsuario.id == 1 %}
+            <div class="tarjeta">
+                <h3>Usuarios activos</h3>
+                <p>{{usuarios_activos}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Pacientes activos</h3>
+                <p>{{pacientes}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Especialidades registradas</h3>
+                <p>{{especialidades}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Departamentos registrados</h3>
+                <p>{{departamentos}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Estudios registrados</h3>
+                <p>{{estudios}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Lugares activos</h3>
+                <p>{{lugares}}</p>
+            </div>
+        {% elif user.usuario.tipoUsuario.id == 2 %}
+            <div class="tarjeta">
+                <h3>Personal activo</h3>
+                <p>{{usuarios_activos}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Médicos activos</h3>
+                <p>{{medicos}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Total citas médicas programadas hoy</h3>
+                <p>{{turnos_hoy}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Total citas médicas programadas a futuro</h3>
+                <p>{{turnos_futuros}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Solicitudes de reactivación completadas</h3>
+                <p>{{solicitudes_completadas}}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Solicitudes de reactivación pendientes</h3>
+                <p>{{solicitudes_pendientes}}</p>
+            </div>
+        {% elif user.usuario.tipoUsuario.id == 3 %}
+            {% for turnosEspecialidad in turnos_especialidad %}
+                <div class="tarjeta">
+                    <h3>Citas médicas programadas hoy de {{turnosEspecialidad.especialidad}}</h3>
+                    <p>{{turnosEspecialidad.cant}}</p>
+                </div>
+                <div class="tarjeta">
+                    <h3>Citas médicas programadas a futuro de {{turnosEspecialidad.especialidad}}</h3>
+                    <p>{{turnosEspecialidad.cantFuturos}}</p>            
+                </div>                
+            {% endfor %}
+        {% elif user.usuario.tipoUsuario.id == 4 %}
+            <div class="tarjeta">
+                <h3>Pacientes a cargo</h3>
+                <p>{{pacientesACargo}}</p>
+            </div>
+        {% elif user.usuario.tipoUsuario.id == 6 %}
+            <div class="tarjeta">
+                <h3>Estudios totales pendientes de carga</h3>
+                <p>{{ estudiosPendientesDeCarga }}</p>
+            </div>
+        
+            {% for estudio in estudiosUsuario %}
+                <div class="tarjeta">
+                    <h3>{{ estudio.titulo }}</h3>
+                    <p>{{ estudio.cantidad }}</p>
+                </div>
+            {% endfor %}
+        {% elif user.usuario.tipoUsuario.id == 7 %}
+            <div class="tarjeta">
+                <h3>Pacientes activos</h3>
+                <p>{{ pacientes }}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Pacientes hospitalizados</h3>
+                <p>{{ pacientesHospitalizados }}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Enfermeros activos en la unidad</h3>
+                <p>{{ enfermerosDeLaUnidad }}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Médicos hospitalarios activos en la unidad</h3>
+                <p>{{ medicosDeLaUnidad }}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Habitaciones en la unidad</h3>
+                <p>{{ habitaciones }}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Habitaciones disponibles en la unidad</h3>
+                <p>{{ habitaciones }}</p>
+            </div>
+        {% elif user.usuario.tipoUsuario.id == 8 %}
+
+            <div class="tarjeta">
+                <h3>Total pacientes asignados</h3>
+                <p>{{ pacienteAsignados }}</p>
+            </div>
+            <div class="tarjeta">
+                <h3>Enfermeros en la unidad</h3>
+                <p>{{ enfermerosDeLaUnidad }}</p>
+            </div>
+
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block scripts_js %}  {% endblock %}

@@ -1,0 +1,129 @@
+{% extends 'layout/base-personal.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'estilos/styles_administrador.css' %}">
+{% endblock %}
+
+{% block titulo %}
+    <title>Lista de Solicitudes de Reactivación</title>
+{% endblock %}
+
+{% block contenido %}
+    <div class="container-global-administrador">
+        <h1>Lista de Solicitudes</h1>
+        <div class="box-btn-add">
+            <button class="btn-masDetalles" id="btnformFilter"><i class="hgi hgi-stroke hgi-search-02"></i> Busqueda avanzada</button>
+        </div>
+        <div class="box-tablas-administrador" id="box-tabla-general">
+            {% include 'administrador/listaSolicitudes/tablasDinamicas/_tabla_solicitudes.html' %}
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+        <span id="closeEditModal" class="close">&times;</span>      
+        <h2 id="modal-title">Buscar por</h2>            
+            <div class="seccionesDelForm" id="seccion-form-filter">
+                <form id="filtro-form" method="get">                
+                    <div class="campo-input">
+                        {{filtro.form.paciente__persona__dni.label_tag}}
+                        {{filtro.form.paciente__persona__dni}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.estado.label_tag}}
+                        {{filtro.form.estado}}
+                    </div>
+                    <div class="campo-input">
+                        {{filtro.form.fecha_solicitud.label_tag}}
+                        {{filtro.form.fecha_solicitud}}
+                    </div>
+                    <div class="campo-input">
+                        <div class="campo-input">
+                            <label for="id_todas_las_solicitudes">Mostrar historial de solicitudes:</label>
+                            <input type="checkbox" name="todas_las_solicitudes" id="id_todas_las_solicitudes" {% if request.GET.todas_las_solicitudes %}checked{% endif %}>
+                        </div>                        
+                    </div>
+
+                </form>
+            </div>
+            <div class="seccionesDelForm" id="seccion-detalles-solicitud">   
+                <p class="p-comparacion">Comparación entre los datos ingresados en la solicitud y el registro del paciente encontrado.</p>
+                <table id="tabla-coincidencias">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Datos ingresados</th>
+                            <th>Datos del paciente</th>
+                            <th>Coincide</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="fila">
+                            <td>DNI</td>
+                            <td id="id_dni"></td>
+                            <td id="id_dni-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-dni"></td>
+                        </tr>
+                        <tr class="fila">
+                            <td>Nombre</td>
+                            <td id="id_nombre"></td>
+                            <td id="id_nombre-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-nombre"></td>
+                        </tr>
+                        <tr class="fila">
+                            <td>Apellido</td>
+                            <td id="id_apellido"></td>
+                            <td id="id_apellido-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-apellido"></td>
+                        </tr>
+                        <tr class="fila">
+                            <td>Fecha nacimiento</td>
+                            <td id="id_fecha_nacimiento"></td>
+                            <td id="id_fecha_nacimiento-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-fecha_nacimiento"></td>
+                        </tr>
+                        <tr class="fila">
+                            <td>Email</td>
+                            <td id="id_email"></td>
+                            <td id="id_email-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-email"></td>
+                        </tr>
+                        <tr class="fila">
+                            <td>Telefono</td>
+                            <td id="id_telefono"></td>
+                            <td id="id_telefono-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-telefono"></td>
+                        </tr>
+                        <tr class="fila">
+                            <td>Numero paciente</td>
+                            <td id="id_numero_paciente"></td>
+                            <td id="id_numero_paciente-coincidencia">{{solicitud.paciente.persona.dni}}</td>
+                            <td id="coincidencia-numero_paciente"></td>
+                        </tr>
+                    </tbody>
+                </table>                                 
+                <div class="campo-input">
+                    <label for="id_observaciones">Observaciones:</label>
+                    <textarea name="observaciones" cols="40" rows="10" id="id_observaciones" readonly ></textarea>
+                </div>
+                <form method="POST">
+                    <div class="box-btns-solicitudes">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_solicitud" id="id_solicitud">                    
+                        <button class="btn-global" type="submit" name="accion" value="aceptar">Aceptar</button>
+                        <button class="btn-global" type="submit" name="accion" value="rechazar">Rechazar</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>    
+
+{% endblock %}
+
+{% block scripts_js %} 
+    <script src="{% static 'js/administrador.js' %}" ></script>
+{% endblock %}
+
+

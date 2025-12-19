@@ -1,5 +1,5 @@
 import django_filters
-from .models import Lugar,Departamento,Especialidades,ServicioDiagnostico,EstudiosDiagnosticos,PlantillaEstudio,AsignacionMedico,AsignacionEnfermero,ObservacionesEnfermero,Jorna_laboral,UsuarioLugarTrabajoAsignado,ObservacionesMedico,UsuarioRolProfesionalAsignado,Consultas
+from .models import Lugar,Departamento,Especialidades,ServicioDiagnostico,EstudiosDiagnosticos,PlantillaEstudio,AsignacionMedico,AsignacionEnfermero,ObservacionesEnfermero,Jorna_laboral,UsuarioLugarTrabajoAsignado,ObservacionesMedico,UsuarioRolProfesionalAsignado,Consultas,SolicitudReactivacion
 from hospital_pacientes.models import Paciente
 from controlUsuario.models import Usuario,TiposUsuarios,RolesProfesionales
 from django import forms
@@ -780,4 +780,40 @@ class ConsultasDelMedicoFilter(django_filters.FilterSet):
             fin = datetime.combine(value, time.max)
             return queryset.filter(fecha__range=(inicio, fin))
         return queryset
+
+class SolicitudesReactivacionFilter(django_filters.FilterSet):
+    paciente__persona__dni = django_filters.CharFilter(
+        field_name='paciente__persona__dni',
+        lookup_expr='icontains',  # icontains:  buscar texto parcial  .  # exact : opción exacta
+        label='DNI:',
+        widget=forms.NumberInput(attrs={'placeholder': 'Buscar por el DNI del paciente...'})
+    )    
+    estado = django_filters.ChoiceFilter(
+        field_name="estado",
+        label="Estado:",
+        choices=SolicitudReactivacion._meta.get_field("estado").choices,
+        widget=forms.Select(choices=[("", "-- Todos --")] + list(SolicitudReactivacion._meta.get_field("estado").choices)) 
+    )
+    fecha_solicitud = django_filters.DateFilter(
+        method='filtrar_por_fecha',
+        label='Fecha solicitud:',
+        widget=forms.DateInput(attrs={'type': 'date'})
+    )
+    
+    
+    class Meta:
+        model = SolicitudReactivacion
+        fields = [
+            'paciente__persona__dni',  
+            'estado',  
+            'fecha_solicitud',  
+            'codigo_seguimiento' 
+        ]
+        
+    def filtrar_por_fecha(self, queryset, name, value):  # Agregamos este metodo porque Django trata los campos con auto_now_add como: solo de creación, no editables y no filtrables directamente a menos que lo fuerces. Por eso este metodo resuelve el problema
+        if value:
+            inicio = datetime.combine(value, time.min)
+            fin = datetime.combine(value, time.max)
+            return queryset.filter(fecha_solicitud__range=(inicio, fin))
+        return queryset       
 

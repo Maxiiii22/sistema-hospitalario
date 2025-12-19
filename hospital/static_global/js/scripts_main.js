@@ -4,11 +4,21 @@ const btnSidebar = document.getElementById("menu-btn");
 const sidebarBtn = document.getElementById("sidebar-btn");
 
 sidebarBtn.addEventListener("click",()=>{
-  document.body.classList.toggle("sidebar-hidden");
+  if(!document.body.classList.contains("sidebar-hidden")){
+    document.body.classList.add("sidebar-hidden");  
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+  }
+  else{
+    document.body.classList.remove("sidebar-hidden");  
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";    
+  }
 })
 
 btnSidebar.addEventListener("click",()=>{
   sidebar.classList.toggle("minimizado")
+  
 })
 
 
@@ -46,6 +56,14 @@ menuItemsDesplegables.forEach(menuItem => {
 function checkWindowsSize() {
   if (window.matchMedia("(max-width: 700px), (max-height: 683px)").matches) {
       sidebar.classList.remove("minimizado");
+      document.body.classList.remove("sidebar-hidden");  
+      document.body.style.overflow = "auto";
+      document.documentElement.style.overflow = "auto";       
+  }
+  else{
+    document.body.classList.remove("sidebar-hidden");  
+    document.body.style.overflow = "auto";
+    document.documentElement.style.overflow = "auto";       
   }
 }
 checkWindowsSize();

@@ -6,39 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
     <link rel="stylesheet" href="{% static 'estilos/autenticacion.css' %}">
-    <title>Registro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}      
+    <title>Reactivación de Cuenta</title>
 </head>
 <body>
     <main>
         <div class="box-autenticacion">
-            <h2>Registro</h2>
+            <h2>Reactivación de Cuenta</h2>
             <form method="POST">
                 {% csrf_token %}
-                <div class="box-campos-autenticacion">
-                    <label for="id_login_id">Email:</label>
-                    {{ form.login_id }}
-                    {% if form.login_id.errors %}
-                        <div class="error-message">
-                            {% for error in form.login_id.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}                 
-                </div>
-                <div class="box-campos-autenticacion">
-                    {{ form.password.label_tag }}
-                    <div class="campo-con-toggle">
-                        {{ form.password }}
-                        <button type="button" class="toggle-password" data-target="{{ form.password.id_for_label }}"><i class="hgi hgi-stroke hgi-eye"></i></button>
+                {% if form.non_field_errors %}
+                    <div class="error-message-main">
+                        {{ form.non_field_errors.0 }}
                     </div>
-                    {% if form.password.errors %}
-                        <div class="error-message">
-                            {% for error in form.password.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}                 
-                </div>
+                {% endif %}                
                 <div class="box-campos-autenticacion">
                     {{ form.dni.label_tag }}
                     {{ form.dni }}
@@ -51,7 +33,7 @@
                     {% endif %}                 
                 </div>
                 <div class="box-campos-autenticacion">
-                    <label for="id_first_name">Nombre:</label>
+                    {{ form.first_name.label_tag }}
                     {{ form.first_name }}
                     {% if form.first_name.errors %}
                         <div class="error-message">
@@ -62,33 +44,11 @@
                     {% endif %}                 
                 </div>
                 <div class="box-campos-autenticacion">
-                    <label for="id_last_name">Apellido:</label>
+                    {{ form.last_name.label_tag }}
                     {{ form.last_name }}
                     {% if form.last_name.errors %}
                         <div class="error-message">
                             {% for error in form.last_name.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}                 
-                </div>
-                <div class="box-campos-autenticacion">
-                    {{ form.sexo.label_tag }}
-                    {{ form.sexo }}
-                    {% if form.sexo.errors %}
-                        <div class="error-message">
-                            {% for error in form.sexo.errors %}
-                                <p>{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endif %}                 
-                </div>
-                <div class="box-campos-autenticacion">
-                    {{ form.telefono.label_tag }}
-                    {{ form.telefono }}
-                    {% if form.telefono.errors %}
-                        <div class="error-message">
-                            {% for error in form.telefono.errors %}
                                 <p>{{ error }}</p>
                             {% endfor %}
                         </div>
@@ -106,22 +66,72 @@
                     {% endif %}                 
                 </div>
                 <div class="box-campos-autenticacion">
-                    {{ form.direccion.label_tag }}
-                    {{ form.direccion }}
-                    {% if form.direccion.errors %}
+                    {{ form.login_id.label_tag }}
+                    {{ form.login_id }}
+                    {% if form.login_id.errors %}
                         <div class="error-message">
-                            {% for error in form.direccion.errors %}
+                            {% for error in form.login_id.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}                 
+                </div>
+                <div class="box-campos-autenticacion">
+                    {{ form.telefono.label_tag }}
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <div class="error-message">
+                            {% for error in form.telefono.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}                 
+                </div>
+                <div class="box-campos-autenticacion">
+                    {{ form.numero_paciente.label_tag }}
+                    {{ form.numero_paciente }}
+                    {% if form.numero_paciente.errors %}
+                        <div class="error-message">
+                            {% for error in form.numero_paciente.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}                 
+                </div>
+                <div class="box-campos-autenticacion">
+                    {{ form.observaciones.label_tag }}
+                    {{ form.observaciones }}
+                    {% if form.observaciones.errors %}
+                        <div class="error-message">
+                            {% for error in form.observaciones.errors %}
                                 <p>{{ error }}</p>
                             {% endfor %}
                         </div>
                     {% endif %}                 
                 </div>
 
-                <button class="btn-global" type="submit" >Registrar cuenta</button>
-                <p id="p-login">¿Ya tienes una cuenta? <a class="link-perso" href="{% url 'login' %}">Inicia sesión aquí</a>.</p>
+                <button class="btn-global" type="submit" >Enviar solicitud</button>
+                <p class="login-opcion">¿Ya tienes una cuenta? <a class="link-perso" href="{% url 'login' %}">Inicia sesión aquí</a>.</p>
+                <p class="login-opcion">
+                    ¿No posee una cuenta? <a class="link-perso" href="{% url 'signup' %}">Registrarse como paciente</a>
+                </p>             
             </form>
         </div>
     </main>
     <script src="{% static 'js/autenticacion.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>  {# Toastr JS: Biblioteca para mostrar notificaciones tipo toast #}
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "timeOut": "10000"
+                };
+                toastr["{{ message.tags|default:'info' }}"]("{{ message|escapejs }}");
+            {% endfor %}
+        </script>
+    {% endif %}     
 </body>
 </html>

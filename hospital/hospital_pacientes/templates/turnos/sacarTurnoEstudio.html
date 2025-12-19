@@ -21,9 +21,14 @@
                 <h3>Ordenes solicitadas:</h3>
                 {% for estudio in estudios %}
                     <div class="box-estudio" data-id-orden="{{estudio.id}}" data-id-paciente="{{estudio.consulta.turno.paciente.id}}">
-                        <p><strong>N° de orden:</strong> {{estudio.id}} - <strong>Estudio:</strong> {{estudio.tipo_estudio.nombre_estudio}} - <strong>Estado:</strong> {{estudio.get_estado_display}}</p>
+                        <p><strong>N° de orden:</strong> {{estudio.id}} - <strong>Estudio:</strong> {{estudio.tipo_estudio.nombre_estudio}} - <strong>Vencimiento:</strong> {{estudio.fecha_vencimiento}} - <strong>Estado:</strong> {{estudio.get_estado_display}}</p>
                     </div>
+                {% empty %}
+                    <div class="box-estudio" data-id-orden="{{estudio.id}}" data-id-paciente="{{estudio.consulta.turno.paciente.id}}">
+                        <p>No hay ordenes solicitadas</p>
+                    </div>                
                 {% endfor %}
+
             </div>
         </div>
     </main>

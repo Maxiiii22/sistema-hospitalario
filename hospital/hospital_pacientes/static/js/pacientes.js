@@ -68,6 +68,7 @@ function abrirDetalleEstudios(btn) {
     document.getElementById("modalEstado").innerHTML = btn.dataset.estado;
 }
 
+
 function abrirDetalleMedicamento(btn) {
     btnVolverConsulta.style.display = "block";
     btnVolverConsulta.dataset.idConsulta = btn.dataset.idConsulta;
@@ -488,13 +489,101 @@ function modalCancelarCitaEstudio(btn){
     document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
     document.getElementById("seccion-form-cancelar-cita-estudio").style.display = "block";   
     document.getElementById("modal-title").textContent = "Cancelar Turno del Estudio";
-    document.getElementById("formCancelarCitaEstudio").action = urlCancelarTurnoEstudio; 
-;
+    document.getElementById("formCancelarCitaEstudio").action = urlCancelarTurnoEstudio; ;
     modal.classList.add("show");
     document.body.style.overflow = "hidden"; 
     document.documentElement.style.overflow = "hidden";
 }
 
+async function editarDatosDelMenor(btn) {
+    document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+    document.getElementById("seccion-edit-menor").style.display ="block";
+    const id_menor = btn.dataset.idMenor; 
+
+    document.querySelectorAll('.error-message').forEach(errorDiv => {
+        errorDiv.remove();
+    });                  
+
+    if (id_menor){
+        const url = new URL(window.location.href);
+        url.searchParams.set("id", id_menor);
+        
+        document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+        document.getElementById("seccion-edit-menor").style.display ="block"; 
+        document.getElementById("modal-title").textContent = "Editar Datos del Menor"
+
+
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+    
+            if (!response.ok) throw new Error("Error al obtener datos");
+    
+            const data = await response.json();                
+
+            document.getElementById("id_menor").value = data.id;
+            document.getElementById("id_dni").value = data.dni;
+            document.getElementById("id_first_name").value = data.nombre;
+            document.getElementById("id_last_name").value = data.apellido;
+            document.getElementById("id_sexo").value = data.sexo;
+            document.getElementById("id_fecha_nacimiento").value = data.fecha_nacimiento;
+            document.getElementById("id_parentesco").value = data.parentesco;
+
+            modal.classList.add("show");
+            document.body.style.overflow = "hidden"; 
+            document.documentElement.style.overflow = "hidden";
+        } 
+        catch (err) {
+            alert("Error al cargar los datos");
+            console.error(err);
+        }
+    }
+}
+
+function cancelarPagoMiCuenta(btn) {
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden"; 
+    document.documentElement.style.overflow = "hidden";
+}
+
+function cancelarPago(btn) {
+    document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+    document.getElementById("seccion-confirmacion").style.display ="block";
+    id_menor_persona = btn.dataset.idPacientePersona;
+    document.getElementById("id_menor_persona").value = id_menor_persona;
+    document.getElementById("modal-title").textContent = "Cancelar Cuotas"
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden"; 
+    document.documentElement.style.overflow = "hidden";
+}
+
+function reescribirMenor(btn) {
+    document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+    document.getElementById("seccion-reescribirMenor").style.display ="block";
+    id_menor_persona = btn.dataset.idPacientePersona;
+    document.getElementById("id_menor_persona_reescribir").value = id_menor_persona;
+    document.getElementById("modal-title").textContent = "Reescribir Menor"
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden"; 
+    document.documentElement.style.overflow = "hidden";
+}
+
+function verPassword(btn){
+    const inputId = btn.dataset.target;
+    const input = document.getElementById(inputId);
+    if (input) {
+        if (input.type === 'password') {
+            input.type = 'text';
+            btn.innerHTML = '<i class="hgi hgi-stroke hgi-view"></i>';
+        } else {
+            input.type = 'password';
+            btn.innerHTML = '<i class="hgi hgi-stroke hgi-eye"></i>';
+        }
+    }
+}
 
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -522,51 +611,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
-
-    document.querySelectorAll('.btn-modal').forEach(btn => {
-        btn.addEventListener("click", async () => {
-            const id_menor = btn.dataset.idMenor; 
-            const id_paciente = btn.dataset.idPaciente; 
-
-            document.querySelectorAll('.error-message').forEach(errorDiv => {
-                errorDiv.remove();
-            });                  
-
-            if (id_menor){
-                const url = new URL(window.location.href);
-                url.searchParams.set("id", id_menor);
-    
-                try {
-                    const response = await fetch(url, {
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    });
-            
-                    if (!response.ok) throw new Error("Error al obtener datos");
-            
-                    const data = await response.json();                
-        
-                    document.getElementById("id_menor").value = data.id;
-                    document.getElementById("id_dni").value = data.dni;
-                    document.getElementById("id_first_name").value = data.nombre;
-                    document.getElementById("id_last_name").value = data.apellido;
-                    document.getElementById("id_sexo").value = data.sexo;
-                    document.getElementById("id_fecha_nacimiento").value = data.fecha_nacimiento;
-                    document.getElementById("id_parentesco").value = data.parentesco;
-        
-                    modal.classList.add("show");
-                    document.body.style.overflow = "hidden"; 
-                    document.documentElement.style.overflow = "hidden";
-                } 
-                catch (err) {
-                    alert("Error al cargar los datos");
-                    console.error(err);
-                }
-            }
-        });
-    })
 
     document.querySelectorAll('.box-estudio').forEach(box => {
         box.addEventListener("click", async () => {

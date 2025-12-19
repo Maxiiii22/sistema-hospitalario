@@ -168,6 +168,104 @@ function modalCancelarCita(btn){
 
 }
 
+async function detallesSolicitud(btn){
+    const id_solicitud = btn.dataset.idSolicitud; 
+    document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+    document.getElementById("seccion-detalles-solicitud").style.display = "block";   
+    document.getElementById("modal-title").textContent = "Detalles de la solicitud"
+    modal.querySelector(".modal-content").style.width = "clamp(320px, 90%, 800px)";
+
+    if(id_solicitud){
+        const url = new URL(window.location.href);
+        url.searchParams.set("id_solicitud", id_solicitud);    
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });  
+
+            if (!response.ok) throw new Error("Error al obtener datos");
+
+            const data = await response.json();
+            document.getElementById("id_solicitud").value=data.id_solicitud
+            const dni = document.getElementById("id_dni").textContent = data.dni;
+            const dni_coincidencia = document.getElementById("id_dni-coincidencia").textContent = data.paciente.dni;
+            if (dni === dni_coincidencia){
+                document.getElementById("coincidencia-dni").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-dni").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
+            }
+
+            const nombre = document.getElementById("id_nombre").textContent = data.nombre;
+            const nombre_coincidencia = document.getElementById("id_nombre-coincidencia").textContent = data.paciente.nombre;
+            if (nombre === nombre_coincidencia){
+                document.getElementById("coincidencia-nombre").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-apellido").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle" icon-cross></i>`
+            }
+            
+            const apellido = document.getElementById("id_apellido").textContent = data.apellido;
+            const apellido_coincidencia = document.getElementById("id_apellido-coincidencia").textContent = data.paciente.apellido;
+            if (apellido === apellido_coincidencia){
+                document.getElementById("coincidencia-apellido").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-apellido").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
+            }
+
+            const fecha_nacimiento = document.getElementById("id_fecha_nacimiento").textContent = data.nacimiento;
+            const fecha_nacimiento_coincidencia = document.getElementById("id_fecha_nacimiento-coincidencia").textContent = data.paciente.fecha_nacimiento;
+            if (fecha_nacimiento === fecha_nacimiento_coincidencia){
+                document.getElementById("coincidencia-fecha_nacimiento").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-fecha_nacimiento").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
+            }
+
+            const email = document.getElementById("id_email").textContent = data.email;
+            const email_coincidencia = document.getElementById("id_email-coincidencia").textContent = data.paciente.email;
+            if (email === email_coincidencia){
+                document.getElementById("coincidencia-email").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-email").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
+            }
+
+            const telefono = document.getElementById("id_telefono").textContent = data.telefono;
+            const telefono_coincidencia = document.getElementById("id_telefono-coincidencia").textContent = data.paciente.telefono;
+            if (telefono === telefono_coincidencia){
+                document.getElementById("coincidencia-telefono").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-telefono").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
+            }
+
+            const numero_paciente = document.getElementById("id_numero_paciente").textContent = data.numero_paciente;
+            const numero_paciente_coincidencia = document.getElementById("id_numero_paciente-coincidencia").textContent = data.paciente.numero_paciente;
+            if (numero_paciente === numero_paciente_coincidencia){
+                document.getElementById("coincidencia-numero_paciente").innerHTML = `<i class="hgi hgi-stroke hgi-checkmark-circle-01 icon-check"></i>`
+            }
+            else{
+                document.getElementById("coincidencia-numero_paciente").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
+            }
+
+            document.getElementById("id_observaciones").value = data.observaciones;
+
+        }
+        catch (err) {
+                alert("Error al cargar los datos");
+                console.error(err);
+        }
+    }
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden"; 
+    document.documentElement.style.overflow = "hidden";
+
+}
+
 
 document.addEventListener("DOMContentLoaded", function () {
     if (document.querySelector(".errorModal")){
@@ -181,6 +279,8 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(".error-message-main")?.remove()
             document.querySelectorAll(".error-message").forEach(elemento => elemento.remove());
             document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+            modal.querySelector(".modal-content").style.width = "";
+            
             const seccionEdit = document.getElementById("seccion-edit");
             if(seccionEdit){
                 seccionEdit.style.display ="none";

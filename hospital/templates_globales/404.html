@@ -1,19 +1,28 @@
+{% load static %} <!-- Cargamos la carpeta static que contiene el script.js y el css-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/global_styles.css' %}">    
     <title>404 - Página no encontrada</title>
 </head>
 <body>
-    <h1>404</h1>
-    <h2>Página no encontrada</h2>
-    <p>Lo sentimos, la página que estás buscando no existe o ha sido movida.</p>
-    {% if user.usuario %}
-        <a href="{% url 'indexPersonal' %}">Volver al inicio</a>
-    {% elif user.paciente %}
-        <a href="{% url 'indexPaciente' %}">Volver al inicio</a>
-    {% endif %}
-
+    <main class="main-noAcceso">
+        <div class="box-noAcceso">
+            <i class="hgi hgi-stroke hgi-file-unknown icon-noAcceso"></i>
+            <h1>Página no encontrada</h1>
+            <p>Lo sentimos, la página que estás buscando no existe o ha sido movida.</p>
+            <div class="btns-box-no-acceso">
+                <button onclick="window.history.back()" class="btn-global">Volver a atrás</button>
+                {% if user.usuario %}
+                    <a href="{% url 'indexPersonal' %}" class="btn-global">Volver al inicio</a>
+                {% elif user.paciente %}
+                    <a href="{% url 'indexPaciente' %}">Volver al inicio</a>
+                {% endif %}
+            </div>
+        </div>
+    </main>
 </body>
 </html>

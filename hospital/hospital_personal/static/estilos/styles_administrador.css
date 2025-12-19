@@ -183,7 +183,7 @@
     flex-direction: column;
 }
 
-#filtro-form .campo-input{ 
+#filtro-form .campo-input,#seccion-detalles-solicitud .campo-input{ 
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -1388,5 +1388,125 @@ form .campos .campo-input{
 }
 
 /* ##### Fin Seccion "Lista de medicos" #### */
+
+
+/* #####  Seccion "Lista de solicitudes" #### */
+
+.p-comparacion{
+    text-align: center;
+    font-size: 1rem;
+    font-style: italic;
+    margin: 5px 0;
+}
+
+#tabla-coincidencias{
+    width: 100%;
+    border-radius: 5px;
+
+}
+
+#tabla-coincidencias thead{
+    background-color: var(--color-primario);
+    color: white;
+}
+
+#tabla-coincidencias th{
+    padding: 10px 5px;
+    text-align: center;
+    font-size: clamp(.75rem, 3vw, 1rem);
+}
+
+#tabla-coincidencias td{
+    padding: 5px;
+    text-align: center;
+    height: 45px;
+    font-size: clamp(.75rem, 3vw, 1rem);
+}
+
+.icon-check{
+    font-size: x-large;
+    color: green;
+}
+
+.icon-cross{
+    font-size: x-large;
+    color: red;
+}
+
+
+.box-btns-solicitudes{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.box-btns-solicitudes button{
+    padding: 10px;
+    margin: 0;
+    font-size: 1rem;
+}
+
+#tabla-lista-solicitudes .fecha{
+    text-wrap: nowrap;
+}
+
+@media (width <= 1000px){
+    #tabla-lista-solicitudes,
+    #tabla-lista-solicitudes thead,
+    #tabla-lista-solicitudes tbody,
+    #tabla-lista-solicitudes tr,
+    #tabla-lista-solicitudes th,
+    #tabla-lista-solicitudes td
+    {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        width: 100%;
+    }
+
+    #tabla-lista-solicitudes tr {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+    }
+
+    #tabla-lista-solicitudes td {
+        padding: 7px;
+        height: fit-content;
+        border-bottom: 2px dotted #000;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    #tabla-lista-solicitudes td:last-child{
+        border-bottom: 0;
+    }
+
+    #tabla-lista-solicitudes td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 4px;
+        color: #000;
+    }
+
+    #tabla-lista-solicitudes thead {
+        display: none;
+    }   
+
+    .box-btns-td-acciones{
+        display: flex;
+        flex-direction: column;
+    }
+
+    #tabla-lista-solicitudes .empty-message{
+        justify-content: center;
+    }
+}
+
+/* ##### Fin Seccion "Lista de solicitudes" #### */
 
 

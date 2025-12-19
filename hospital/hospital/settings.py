@@ -78,6 +78,7 @@ TEMPLATES = [
             'context_processors': [
                 'hospital_pacientes.context_processors.enlace_info',  # Variable global | info en context_processors.py
                 'hospital_personal.context_processors.especialidad_actual',  # Variable global | info en context_processors.py
+                'hospital_personal.context_processors.asignacionActual',  # Variable global | info en context_processors.py
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
