@@ -62,6 +62,13 @@ Rol encargado de la atención médica de los pacientes que solicitan turnos para
 - **Historial de atención:**
   - Consultar el historial de las consultas médicas realizadas.
   - Acceder a registros de citas médicas previamente atendidas.
+- **Acceso a registros médicos:**
+  - Acceder a los registros médicos de los pacientes que tienen turno asignado y que se encuentran bajo su atención.
+- **Gestión de informes y diagnósticos:**
+  - Crear, modificar y visualizar informes médicos.
+  - Realizar diagnósticos.
+  - Solicitar estudios médicos.
+  - Prescribir medicamentos.
 
 ![Vista previa](imagenes%20previas/hospital-5.jpg)
 
