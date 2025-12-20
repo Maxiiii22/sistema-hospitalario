@@ -8,6 +8,7 @@ Sistema Hospitalario desarrollado en Django con MySQL, HTML, CSS y JavaScript, p
 - Visualizar historial clínico: consultas, estudios y resultados.
 - Solicitar turnos para citas médicas o estudios con orden médica.
 - Registrar y gestionar menores a cargo, incluyendo turnos y historial.
+![Vista previa](imagenes%20previas/hospital-2.jpg)
 
 ### Módulo del Personal
 - **Superadmin**: gestión completa del sistema, administración de usuarios y configuración general.
