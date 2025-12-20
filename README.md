@@ -14,7 +14,7 @@ Sistema Hospitalario desarrollado en Django con MySQL, HTML, CSS y JavaScript, p
 ![Vista previa](imagenes%20previas/hospital-2.jpg)
 
 ### Módulo del Personal
-- ### Superadmin: Este es el rol más alto en términos de permisos. El administrador tiene acceso a la gestión completa del sistema, administración de usuarios y configuración general.
+#### Superadmin: Este es el rol más alto en términos de permisos. El administrador tiene acceso a la gestión completa del sistema, administración de usuarios y configuración general.
 -- Activar o desactivar usuarios del personal.
 -- Editar información del personal.
 -- Restablecer contraseñas.
