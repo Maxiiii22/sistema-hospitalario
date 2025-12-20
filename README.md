@@ -16,9 +16,21 @@ Sistema Hospitalario desarrollado en Django con MySQL, HTML, CSS y JavaScript, p
 ### Módulo del Personal
 #### Superadmin:
 Este es el rol más alto en términos de permisos. El administrador tiene acceso a la gestión completa del sistema, administración de usuarios y configuración general.
-- Activar o desactivar usuarios del personal.
-- Editar información del personal.
-- Restablecer contraseñas.
+- **Gestión de usuarios:**
+  - Activar y desactivar usuarios del personal.
+  - Editar información del personal.
+  - Restablecer contraseñas.
+  - Asignar y desasignar roles y lugares de trabajo.
+- **Gestión de datos base del sistema:**
+  - Especialidades médicas.
+  - Servicios de diagnóstico.
+  - Estudios.
+  - Lugares del hospital (habitaciones, consultorios, oficinas).
+  - Departamentos.
+  - Identidades y roles.
+
+![Vista previa](imagenes%20previas/hospital-3.jpg)
+
 
 ## Notas
 - Incluye archivo SQL con datos iniciales en `Documentacion/`.  
