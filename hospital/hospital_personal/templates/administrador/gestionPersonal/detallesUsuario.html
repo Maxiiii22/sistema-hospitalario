@@ -185,10 +185,6 @@
                                 <label for="last_login">Ultimo inicio de sesion:</label>
                                 <input type="text" readonly value="{% if usuario.persona.last_login %}{{usuario.persona.last_login|date:'d-m-Y H:i A'}}{% else %}Nunca accedió{% endif %}" id="last_login">
                             </div>
-                            <div class="campo-input">
-                                <label for="id_is_active">Usuario habilitado:</label>
-                                {{ formUsuario.persona_form.is_active }}
-                            </div>
                         </div> 
                     </div>
                 </div>

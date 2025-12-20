@@ -80,7 +80,10 @@ def detalle_usuario(request,id_usuario):
             )
             if formUsuario.is_valid():
                 usuario_guardado = formUsuario.save(commit=True)  
+                messages.success(request,"Se editó correctamente.")
                 return redirect('detalle_usuario', id=usuario_guardado.id) 
+            else:
+                messages.error(request,"Ocurrió un error. Intentelo de nuevo.")
             
 
     return render(request, "administrador/gestionPersonal/detallesUsuario.html",{"usuario":usuario,"rolesProfesionales":rolesProfesionales,"departamentos_con_jornadas": departamentos_con_jornadas,"formUsuario":formUsuario})
