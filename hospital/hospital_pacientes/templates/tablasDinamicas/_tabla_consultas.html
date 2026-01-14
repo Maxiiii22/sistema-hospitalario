@@ -33,8 +33,8 @@
                             data-diagnostico="{{ consulta.diagnostico|default:'-'|escapejs }}"
                             data-observaciones="{{ consulta.observaciones|default:'-'|escapejs }}"
                             data-tratamiento="{% if consulta.tratamiento %}{{ consulta.tratamiento|default:'-'|escapejs }}{% else %}Ninguno{% endif %}"
-                            data-estudios="{% for e in consulta.estudios.all %}<p>• {{ e.tipo_estudio.nombre_estudio }} <button onClick='DetalleEstudio(this)' class='btn-global' type='button' data-id-orden='{{e.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}"
-                            data-medicaciones="{% for m in consulta.medicaciones.all %}<p>• {{ m.medicamento }} <button onClick='DetalleMedicamento(this)' class='btn-global' type='button' data-id-medicamento='{{m.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}">
+                            data-estudios="{% for e in consulta.estudios.all %}<p>• {{ e.tipo_estudio.nombre_estudio }} <button onClick='DetalleEstudio(this)' class='btn-global btn-modal-historial' type='button' data-id-orden='{{e.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}"
+                            data-medicaciones="{% for m in consulta.medicaciones.all %}<p>• {{ m.medicamento }} <button onClick='DetalleMedicamento(this)' class='btn-global btn-modal-historial' type='button' data-id-medicamento='{{m.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}">
                             Mas detalles
                         </button>
                     </td>   

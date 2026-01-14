@@ -44,8 +44,8 @@
                                             data-diagnostico="{{ consultaEspecifica.diagnostico|default:'-'|escapejs }}"
                                             data-observaciones="{{ consultaEspecifica.observaciones|default:'-'|escapejs }}"
                                             data-tratamiento="{% if consultaEspecifica.tratamiento %}{{ consultaEspecifica.tratamiento|default:'-'|escapejs }}{% else %}Ninguno{% endif %}"
-                                            data-estudios="{% for e in consultaEspecifica.estudios.all %}<p>• {{ e.tipo_estudio.nombre_estudio }} <button onClick='DetalleEstudio(this)' class='btn-global' type='button' data-id-orden='{{e.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}"
-                                            data-medicaciones="{% for m in consultaEspecifica.medicaciones.all %}<p>• {{ m.medicamento }} <button onClick='DetalleMedicamento(this)' class='btn-global' type='button' data-id-medicamento='{{m.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}">
+                                            data-estudios="{% for e in consultaEspecifica.estudios.all %}<p>• {{ e.tipo_estudio.nombre_estudio }} <button onClick='DetalleEstudio(this)' class='btn-global btn-modal-historial' type='button' data-id-orden='{{e.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}"
+                                            data-medicaciones="{% for m in consultaEspecifica.medicaciones.all %}<p>• {{ m.medicamento }} <button onClick='DetalleMedicamento(this)' class='btn-global btn-modal-historial' type='button' data-id-medicamento='{{m.id}}'>Ver detalles</button></p>{% empty %}<p>Ninguno</p>{% endfor %}">
                                             Mas detalles
                                             </button>
                                         {% endif %}
@@ -268,8 +268,10 @@
 
     <div id="editModal" class="modal">
         <div class="modal-content modal-detalles-consulta">
-            <span id="closeEditModal" class="close">&times;</span>
-            <button style="display:none;" onClick='DetalleConsulta(this)' class='btn-global btn-volver-consulta' type='button' data-id-consulta=''><i class="hgi hgi-stroke hgi-arrow-left-02"></i>Volver a la consulta</button>            
+            <div style="display:flex; justify-content:space-between; padding-bottom: 5px;">
+                <button style="visibility:hidden;" onClick='DetalleConsulta(this)' class='btn-global btn-volver-consulta' type='button' data-id-consulta=''><i class="hgi hgi-stroke hgi-arrow-left-02"></i>Volver a la consulta</button>            
+                <span id="closeEditModal" class="close">&times;</span>
+            </div>
             <h2 id="modal-title">Detalles de la consulta</h2>
 
             <div id="seccion-form-filter">

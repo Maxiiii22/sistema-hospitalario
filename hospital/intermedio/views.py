@@ -12,8 +12,9 @@ def ver_pdf_estudio(request, resultado_id):
     paciente = resultado.turno_estudio.orden.paciente.persona
     medico = resultado.turno_estudio.orden.solicitado_por.persona
 
-    # Verificar permisos: paciente dueño o médico tratante
-    if persona_actual != paciente and persona_actual != medico:
+
+    # Verificar permisos: paciente dueño o médico 
+    if persona_actual != paciente and persona_actual.usuario.tipoUsuario.id != 3:
         response = render(request, "403.html", {
             "mensaje": "No tienes permiso para acceder a este archivo"
         })

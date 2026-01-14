@@ -6,6 +6,7 @@ urlpatterns = [
     path("error403/", views.mi_error_403, name="mi_error_403"),
     # path('probar-error/', views.probar_404, name="error_404"),
     path("mi-cuenta/", views.miCuenta, name="miCuenta"),
+    path("mi-cuenta/nueva-contraseña/", views.nuevaContraPaciente, name="nuevaContraPaciente"),
     path("turnos/ver-turnos/", views.misTurnos, name="misTurnos"),
     path("turnos/ver-turnos/<int:id_paciente>/", views.susTurnos, name="susTurnos"),
     path("turnos/solicitar/<int:paciente_id>", views.seleccionarTurno, name="seleccionarTurno"),

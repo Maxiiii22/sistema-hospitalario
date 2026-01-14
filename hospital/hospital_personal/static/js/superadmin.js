@@ -400,6 +400,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const tablaLugares = document.getElementById("tabla-gestion-lugares");
     if (tablaLugares) {
+        const campoSala = document.getElementById("id_sala");
+        const campoPiso = document.getElementById("id_piso");
+
+        campoPiso.addEventListener("input", async () =>{
+            const url = new URL(window.location.href);
+
+            if(!campoPiso.value){
+                campoSala.value = "";
+                return;   
+            }
+            url.searchParams.set("campoPiso", campoPiso.value);
+
+
+            try{
+                const response = await fetch(url,{
+                    headers:{
+                        "X-Requested-With":"XMLHttpRequest"
+                    }
+                });
+                if (!response.ok) throw new Error("Error al obtener datos");
+
+                const data = await response.json();
+
+                campoSala.value = data.numero_sala;
+            }
+            catch(err){
+                alert("Error al cargar los datos del lugar");
+                console.error(err);                
+            }
+        })
+
         tablaGeneral.addEventListener("click", async (e) => {
             const btn = e.target.closest(".btn-masDetalles");
             if (!btn) return;
@@ -458,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-    const tablaDepartamentos = document.getElementById("tabla-departamentos");
+    const tablaDepartamentos = document.getElementById("tabla-gestion-departamentos");
     if (tablaDepartamentos) {
         tablaGeneral.addEventListener("click", async (e) => {
             const btn = e.target.closest(".btn-masDetalles");
@@ -1142,32 +1173,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnNewAsignacion){
         btnNewAsignacion.addEventListener("click",async () => {
-                document.getElementById("id_asignacion").value = "";
-                document.getElementById("id_rol_profesional").value = "";
-                document.getElementById("label-input-mostrar-dato").style.display = "none";
-                document.getElementById("id_input-mostrar-dato").style.display = "none";
-                document.querySelectorAll(".error-message").forEach(elemento => elemento.remove());
-                document.getElementById("modal-title").textContent = "Asignar nuevo rol profesional";
-                document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
-                document.getElementById("seccion-asignaciones").style.display ="block"
-                modal.classList.add("show");
-                document.body.style.overflow = "hidden"; 
-                document.documentElement.style.overflow = "hidden";
+            document.getElementById("id_asignacion").value = "";
+            document.getElementById("id_rol_profesional").value = "";
+            document.getElementById("label-input-mostrar-dato").style.display = "none";
+            document.getElementById("id_input-mostrar-dato").style.display = "none";
+            document.querySelectorAll(".error-message").forEach(elemento => elemento.remove());
+            document.getElementById("modal-title").textContent = "Asignar nuevo rol profesional";
+            document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
+            document.getElementById("seccion-asignaciones").style.display ="block"
+            modal.classList.add("show");
+            document.body.style.overflow = "hidden"; 
+            document.documentElement.style.overflow = "hidden";
 
         });
 
         document.getElementById("id_rol_profesional").addEventListener('change', async () =>{
             const id_rolProfesional = document.getElementById("id_rol_profesional").value
+            
             if(id_rolProfesional){
-                const url = new URL(window.location.href);
-                url.searchParams.set("id_rol_profesional", id_rolProfesional);
-    
+                let urlGetLugarTrabajoORolProfesional = document.getElementById("url-getLugarTrabajoORolProfesional").value
+                urlGetLugarTrabajoORolProfesional = new URL(urlGetLugarTrabajoORolProfesional, window.location.origin); // Django da una URL relativa → hay que agregarle el origin para que sea una ruta absoluta
+                urlGetLugarTrabajoORolProfesional.searchParams.set("id_rolProfesional", id_rolProfesional);
                 try {
-                    const response = await fetch(url, {
+                    const response = await fetch(urlGetLugarTrabajoORolProfesional, {
                         headers: {
                             "X-Requested-With": "XMLHttpRequest"
                         }
-                    });
+                    });                
             
                     if (!response.ok) throw new Error("Error al obtener datos");
             
@@ -1182,6 +1214,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     else if(data.nombre_servicio){                    
                         document.getElementById("label-input-mostrar-dato").textContent = "Rol profesional asociado al servicio de diagnostico:";
                         document.getElementById("id_input-mostrar-dato").value = data.nombre_servicio;
+                    }
+                    else if(data.nombre_departamento){                    
+                        document.getElementById("label-input-mostrar-dato").textContent = "Rol profesional asociado al departamento de:";
+                        document.getElementById("id_input-mostrar-dato").value = data.nombre_departamento;
+                    }
+                    else{
+                        document.getElementById("label-input-mostrar-dato").style.display = "none";
+                        document.getElementById("id_input-mostrar-dato").style.display = "none";
                     }
     
                 } 
@@ -1348,40 +1388,14 @@ async function modalEditarRolProfesional(id) {
     document.getElementById("modal-title").textContent = "Editar rol profesional";
     document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
     document.getElementById("seccion-asignaciones").style.display ="block";
-    let urlGetLugarTrabajoORolProfesional = document.getElementById("url-getLugarTrabajoORolProfesional").value
+    document.getElementById("id_asignacion").value = id;
+    document.getElementById("id_rol_profesional").value = "";
+    document.getElementById("label-input-mostrar-dato").style.display = "none";
+    document.getElementById("id_input-mostrar-dato").style.display = "none";
 
-    urlGetLugarTrabajoORolProfesional = new URL(urlGetLugarTrabajoORolProfesional, window.location.origin); // Django da una URL relativa → hay que agregarle el origin para que sea una ruta absoluta
-
-    urlGetLugarTrabajoORolProfesional.searchParams.set("id_rolProfesional", id);
-    try {
-        const response = await fetch(urlGetLugarTrabajoORolProfesional, {
-            headers: {
-                "X-Requested-With": "XMLHttpRequest"
-            }
-        });
-
-        if (!response.ok) throw new Error("Error al obtener datos");
-
-        const data = await response.json();        
-
-
-        document.getElementById("id_asignacion").value = data.id_instancia;
-        if(document.getElementById("id_especialidad")){
-            document.getElementById("id_especialidad").value = data.id_especialidad;
-        }
-        if(document.getElementById("id_servicio_diagnostico")){
-            document.getElementById("id_servicio_diagnostico").value = data.id_servicio_diagnostico;
-        }
-        
-        modal.classList.add("show");
-        document.body.style.overflow = "hidden"; 
-        document.documentElement.style.overflow = "hidden";
-        
-    } 
-    catch (err) {
-        alert("Error al cargar los datos");
-        console.error(err);
-    }
+    modal.classList.add("show");
+    document.body.style.overflow = "hidden"; 
+    document.documentElement.style.overflow = "hidden";
 
 }
 
@@ -1405,7 +1419,7 @@ async function modalEditarLugarTrabajo(id) {
 
         const data = await response.json();    
 
-        if (data.sinTurno){
+        if ((data.sinTurno || !data.sinTurno) && data.estado == null){
             document.getElementById("seccion-editarLugarTrabajo").style.display ="block";
         }
         else if(!data.sinTurno && data.fecha && data.estado == "asignado"){

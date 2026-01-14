@@ -81,8 +81,7 @@ def detalle_usuario(request,id):
         return response      
     
     usuario = Usuario.objects.get(pk=id)
-    
-    if usuario != request.user.usuario and not request.user.is_staff: 
+    if not request.user.is_superuser: 
         return HttpResponseForbidden(render(request, "403.html"))
     
     rolesProfesionales = UsuarioRolProfesionalAsignado.objects.filter(usuario_id=id)
@@ -143,7 +142,10 @@ def detalle_usuario(request,id):
             )
             if formUsuario.is_valid():
                 usuario_guardado = formUsuario.save(commit=True)  
+                messages.success(request, f"Se editó correctamente el usuario.")
                 return redirect('detalle_usuario', id=usuario_guardado.id)  
+            else:
+                messages.error(request,"Ocurrió un error. Intentelo de nuevo.")            
             
         elif tipo_form == "form_asignaciones": # Asignacion de roles profesionales
             asignacion_id = request.POST.get("id_instancia") 
@@ -401,10 +403,11 @@ def getLugarTrabajoORolProfesional(request):
             return JsonResponse(data)
         
         elif id_rolProfesional:
-            rolProfesional = get_object_or_404(UsuarioRolProfesionalAsignado, id=id_rolProfesional)
+            rolProfesional = get_object_or_404(RolesProfesionales, id=id_rolProfesional)
             data = {
-                "id_instancia": rolProfesional.id,
-                "id_rolProfesional": getattr(rolProfesional.rol_profesional, 'id', None),            
+                "nombre_especialidad": getattr(rolProfesional.especialidad, 'nombre_especialidad', None),            
+                "nombre_servicio": getattr(rolProfesional.servicio_diagnostico, 'nombre_servicio', None),            
+                "nombre_departamento": getattr(rolProfesional.departamento, 'nombre_departamento', None),            
             }
             return JsonResponse(data)
         else:
@@ -472,7 +475,12 @@ def deleteLugarTrabajo(request,id_lugarTrabajo):
                     data = {
                         "mensaje": mensaje,
                         "estado": estado                        
-                    }                    
+                    }
+            else:
+                data = {
+                    "mensaje": "Está seguro que desea desasignar y eliminar de inmediato el trabajo del usuario en este día? Esta acción se realizará de forma instantánea."
+                }
+            
             
             return JsonResponse(data)
         else:
@@ -536,6 +544,10 @@ def deleteLugarTrabajo(request,id_lugarTrabajo):
                     messages.success(request, "La asignación de trabajo ha sido desasignada y eliminada correctamente.")  
             else:
                 messages.info(request, "Este usuario no trabaja en esa asignacion")  
+        
+        else:
+            lugarTrabajo.delete()
+            messages.success(request, "La asignación de trabajo ha sido desasignada y eliminada correctamente.")  
             
         return redirect('detalle_usuario', id=usuario_id)
 
@@ -769,6 +781,8 @@ def gestionDeLugares(request):
             return render(request,"superadmin/tablasDinamicas/_tabla_lugares.html", {"allLugares": lugares,"filtro":filtro,"cantidad_registros_base":qs_base.count()})
         
         id = request.GET.get('id')
+        campoPiso = request.GET.get('campoPiso')
+        
         if id:
             lugar = get_object_or_404(Lugar, id=id)
             data = {
@@ -784,6 +798,13 @@ def gestionDeLugares(request):
                 "descripcion_lugar": lugar.descripcion,
                 "isCritico_lugar": lugar.es_critico,
                 "isActivo_lugar": lugar.activo,
+            }
+            return JsonResponse(data)
+        elif campoPiso:
+            sala = Lugar.objects.filter(piso=campoPiso).aggregate(Max('sala'))['sala__max'] 
+            sala = sala + 1 if sala else 1
+            data = {
+                "numero_sala": sala
             }
             return JsonResponse(data)
         else:
@@ -806,7 +827,7 @@ def gestionDeLugares(request):
             messages.success(request,mensaje)
             return redirect("gestionDeLugares")  
         else:
-            messages.error(request,f"Ocurrió un error. Intenelo de nuevo. ({formLugar.errors})")
+            messages.error(request,f"Ocurrió un error. Intentelo de nuevo. ({formLugar.errors})")
             return render(request, "superadmin/gestionLugares.html", {"allLugares": lugares,"form": formLugar,"filtro":filtro,'abrir_modal_por_error': True,"cantidad_registros_base":qs_base.count()  })
 
     return render(request, "superadmin/gestionLugares.html", {"allLugares": lugares,"form": formLugar, "filtro":filtro,"cantidad_registros_base":qs_base.count()  })

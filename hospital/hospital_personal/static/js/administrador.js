@@ -173,7 +173,7 @@ async function detallesSolicitud(btn){
     document.querySelectorAll(".seccionesDelForm").forEach(elemento => elemento.style.display="none");
     document.getElementById("seccion-detalles-solicitud").style.display = "block";   
     document.getElementById("modal-title").textContent = "Detalles de la solicitud"
-    modal.querySelector(".modal-content").style.width = "clamp(320px, 90%, 800px)";
+    modal.querySelector(".modal-content").style.width = "clamp(310px, 90%, 800px)";
 
     if(id_solicitud){
         const url = new URL(window.location.href);
@@ -251,8 +251,16 @@ async function detallesSolicitud(btn){
             else{
                 document.getElementById("coincidencia-numero_paciente").innerHTML = `<i class="hgi hgi-stroke hgi-cancel-circle icon-cross"></i>`
             }
+            
 
             document.getElementById("id_observaciones").value = data.observaciones;
+
+            if (data.estado != "pendiente"){
+                document.getElementById("form-solicitud").style.display = "none";
+            }
+            else{
+                document.getElementById("form-solicitud").style.display = "flex";              
+            }
 
         }
         catch (err) {

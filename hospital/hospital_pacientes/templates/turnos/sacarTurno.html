@@ -23,7 +23,7 @@
                 <input type="hidden" name="tipo_form" value="formSeleccionEspecialidad">
                 <div>
                     <label for="especialidad"><strong>Selecciona una especialidad:</strong></label>
-                    <select id="especialidad" name="especialidad">
+                    <select id="especialidad" name="especialidad" required>
                         <option hidden>Seleccione una especialidad</option>
                         {% for especialidad in especialidades %}
                             <option value="{{ especialidad.id }}" {% if especialidadSeleccionada.id == especialidad.id %} selected {% endif %}>{{ especialidad.nombre_especialidad }}</option>
@@ -32,7 +32,7 @@
                 </div>
                 <div>
                     <label for="horario_turno"><strong>Seleccione el horario del turno</strong></label>
-                    <select name="horario" id="horario_turno">
+                    <select name="horario" id="horario_turno" required>
                         <option hidden>Seleccione el horario</option>
                         {% for horario in horariosDeConsultas %}
                             <option value="{{ horario.turno }}" {% if horarioSeleccionado.turno == horario.turno %} selected {% endif %}>{{ horario.get_turno_display }}</option>

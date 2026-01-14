@@ -9,6 +9,7 @@ function decodeNewlines(text) {
     return text
         .replace(/\\u000D\\u000A/g, '\n')   // reemplaza \u000D\u000A por salto de línea
         .replace(/\\n/g, '\n')              // reemplaza \n por salto de línea
+        .replace(/\\u000A/g, '\n')          // LF
         .replace(/\\r/g, '\r')              // reemplaza \r si existiera
         .replace(/\\u002D/g, '-')           // reemplaza \u002D por guion
         .replace(/\\u002E/g, '.')           // (opcional) reemplaza \u002E por punto
@@ -17,7 +18,7 @@ function decodeNewlines(text) {
 
 function abrirDetalle(btn) {
     btnVolverConsulta.dataset.idConsulta = "";
-    btnVolverConsulta.style.display = "none";
+    btnVolverConsulta.style.visibility = "hidden";
     modal.classList.add("show");
     modal.querySelector(".modal-detalles-consulta").style.width = "clamp(310px, 90%, 1100px)";
     document.getElementById("seccion-form-filter").style.display = "none";
@@ -42,10 +43,10 @@ function abrirDetalle(btn) {
 
 function abrirDetalleEstudios(btn) {
     if(btn.dataset.res){
-        btnVolverConsulta.style.display = "none";
+        btnVolverConsulta.style.visibility = "hidden";
     }
     else{
-        btnVolverConsulta.style.display = "block";
+        btnVolverConsulta.style.visibility = "visible";
         btnVolverConsulta.dataset.idConsulta = btn.dataset.idConsulta;
     }
     modal.classList.add("show");
@@ -70,7 +71,7 @@ function abrirDetalleEstudios(btn) {
 
 
 function abrirDetalleMedicamento(btn) {
-    btnVolverConsulta.style.display = "block";
+    btnVolverConsulta.style.visibility = "visible";
     btnVolverConsulta.dataset.idConsulta = btn.dataset.idConsulta;
     modal.classList.add("show");
     modal.querySelector(".modal-detalles-consulta").style.width = "clamp(300px, 90%, 1100px)";
@@ -616,6 +617,10 @@ document.addEventListener("DOMContentLoaded", function () {
         box.addEventListener("click", async () => {
             const id_orden = box.dataset.idOrden; 
 
+            if (!id_orden){
+                return
+            }
+
             const url = new URL(window.location.href);
             url.searchParams.set("id_orden", id_orden);
             try {
@@ -887,7 +892,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnFormFilter){
         btnFormFilter.addEventListener("click",() => {  
-            btnVolverConsulta.style.display = "none";
+            btnVolverConsulta.style.visibility = "hidden";
             modal.querySelector(".modal-detalles-consulta").style.width = "clamp(300px, 90%, 350px)";
             const seccionEdit = document.getElementById("seccion-edit");
             if(seccionEdit){

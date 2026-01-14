@@ -6,7 +6,7 @@ from hospital_pacientes.models import Paciente
 from django.core.exceptions import ValidationError
 import datetime
 from dal import autocomplete
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 class FormEspecialidades(forms.ModelForm): 
@@ -260,7 +260,7 @@ class FormularioLugarTrabajo(forms.Form): # Cambiar el formulario base de ModelF
         elif tipo_usuario == 3: # Medicos de consulta
             self.fields['lugar'].queryset = Lugar.objects.filter(tipo__in=["cons","proc"],activo=True) #Los médicos trabajan en consultorios y pueden realizar procedimientos ambulatorios no quirúrgicos
         elif tipo_usuario == 4: # Enfermeros
-            self.fields['lugar'].queryset = Lugar.objects.filter(tipo__in=["hab","unidad_atenc"],activo=True)  # Los enfermeros se desempeñan principalmente en internación y unidades de atención
+            self.fields['lugar'].queryset = Lugar.objects.filter(tipo__in=["unidad_atenc"],activo=True)  # Los enfermeros se desempeñan principalmente en internación y unidades de atención
         elif tipo_usuario == 5: # Apoyo en Diagnóstico y Tratamiento (Radiologos,ecografista,tecnico en laboratorio , etc  )
             self.fields['lugar'].queryset = Lugar.objects.filter(tipo__in=["lab", "img","diag_func","proc"], activo=True)  # Laboratorios 
         elif tipo_usuario == 6: # Cargador de resultados
@@ -772,7 +772,7 @@ class FormularioAsignarHabitacion(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         lugares = Lugar.objects.filter(tipo="hab").annotate(
-            cantidadActual=Count('asignacioneshabitaciones')
+            cantidadActual=Count('asignacioneshabitaciones',filter=Q(asignacioneshabitaciones__estado='activa'))
         )
         self.fields["lugar"].queryset = lugares
         
@@ -806,7 +806,7 @@ class FormularioAsignarHabitacion(forms.ModelForm):
             return cleaned_data    
         
         if not es_edicion:
-            if AsignacionesHabitaciones.objects.filter(paciente=paciente).exists():
+            if AsignacionesHabitaciones.objects.filter(paciente=paciente,estado="activa").exists():
                 self.add_error(None, 'Este paciente ya esta asignado a una habitación.')
                 return cleaned_data
         

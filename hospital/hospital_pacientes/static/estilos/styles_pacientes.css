@@ -98,6 +98,10 @@ body{
     background-color: var(--color-hover);
 }
 
+.btn-global.btn-modal-historial{
+    text-wrap: nowrap;
+}
+
 button:disabled {
     opacity: 0.6;            
     pointer-events: none;     
@@ -196,8 +200,8 @@ button:disabled {
     z-index: 999;
     left: 0;
     top: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     background-color: rgba(0, 0, 0, 0.4);
     justify-content: center;
     align-items: center; 
@@ -1004,7 +1008,7 @@ button:disabled {
 } 
 
 .modal-content.modal-detalles-consulta .close{
-    align-self: flex-end;
+    align-self: anchor-center;
 } 
 
 .modal-detalles-consulta-item {
@@ -2008,11 +2012,18 @@ button:disabled {
 .container-form-paciente{
     background-color: #fff;
     border-radius: 6px;
-    padding: 15px; 
-    width: clamp(300px, 90%, 900px);
+    padding: 15px 10px; 
+    width: clamp(300px,100%,900px);
 }
 
-.container-form-paciente .title-ficha{
+.container-form-paciente-dos{
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 15px 10px; 
+    width: clamp(300px,90%,900px);
+}
+
+.container-form-paciente .title-ficha,.container-form-paciente-dos .title-ficha{
     text-align: center;
     margin: 10px 0;
     background-color: var(--color-primario);
@@ -2021,22 +2032,22 @@ button:disabled {
     color: #fff;
 }
 
-.container-form-paciente h2{
+.container-form-paciente h2,.container-form-paciente-dos h2{
     font-size: 20px;
     font-weight: 600;
     color: #333;
 }
 
 
-.container-form-paciente form{
+.container-form-paciente form,.container-form-paciente-dos form{
     margin-top: 15px;
 }
 
-.container-form-paciente form .secciones{
+.container-form-paciente form .secciones,.container-form-paciente-dos form .secciones{
     margin-top: 20px;
 }
 
-.container-form-paciente form .titulo{
+.container-form-paciente form .titulo,.container-form-paciente-dos form .titulo{
     display: block;
     margin-bottom: 8px;
     font-size: 16px;
@@ -2045,7 +2056,7 @@ button:disabled {
     color: #333;
 }
 
-.container-form-paciente form .campos{
+.container-form-paciente form .campos,.container-form-paciente-dos form .campos{
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -2086,7 +2097,7 @@ form .campos .campo-input{
 
 @media (width <750px) {
     form .campos .campo-input{
-        width: calc(100% / 2 - 2px);
+        width: calc(100% / 2 - 5px);
     }
 }
 

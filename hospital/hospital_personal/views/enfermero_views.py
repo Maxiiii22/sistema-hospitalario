@@ -11,10 +11,10 @@ from django.http import JsonResponse
 def listaPacientes(request):
     asignacionTrabajo = request.user.usuario.get_asignacionActual()
     id_jornada = asignacionTrabajo.get("idJornadaAsignada")
-    if id_jornada is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los pacientes de su unidad.
+    if id_jornada is not None:    # Si el enfermero accede en un dia/turno que no le corresponde no se le mostraran los pacientes de su unidad.
         jornada = get_object_or_404(Jorna_laboral,pk=id_jornada)    
     
-        qs_base = AsignacionEnfermero.objects.filter(enfermero=request.user.usuario,activo=True,jornada=jornada)    
+        qs_base = AsignacionEnfermero.objects.filter(enfermero=request.user.usuario, activo=True,jornada=jornada)   
     else:
         qs_base =  AsignacionEnfermero.objects.none() 
     

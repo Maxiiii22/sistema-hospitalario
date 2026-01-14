@@ -14,7 +14,7 @@
     <main class="container-detalles-usuario">
         <div class="box-form-detalles-usuario">
             <a id="back-link-solo" href="{% url 'enfermeros-jefe-enfermeria' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
-            <h2 class="title-ficha">Ficha del Médico {{medico.persona.get_full_name}} - N° Matricula: {{medico.numero_matricula}}</h2>  
+            <h2 class="title-ficha">Ficha del Médico/a {{medico.persona.get_full_name}} - N° Matricula: {{medico.numero_matricula}}</h2>  
             <div class="box-datos">
                 <div class="secciones">
                     <div class="datos-personales">
@@ -67,7 +67,7 @@
 
                             <div class="campo-input">
                                 <label>Ultimo Inicio de sesión:</label>
-                                <input type="text" value="{{medico.persona.last_login|date:'d-m-Y H:i A'}}" readonly>
+                                <input type="text" value="{% if medico.persona.last_login %}{{medico.persona.last_login|date:'d-m-Y H:i A'}}{% else %}Nunca accedió{% endif %}" readonly>
                             </div>
 
                                 

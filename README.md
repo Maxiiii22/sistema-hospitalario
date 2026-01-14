@@ -1,8 +1,13 @@
 # Sistema Hospitalario
 
-Sistema Hospitalario desarrollado en Django con MySQL, HTML, CSS y JavaScript, pensado para gestionar pacientes, personal y turnos de manera eficiente.
+Sistema Hospitalario desarrollado con Django y MySQL, con interfaz web en HTML, CSS y JavaScript.
+Diseñado para centralizar y optimizar la gestión hospitalaria, permitiendo administrar turnos, consultas médicas, estudios, hospitalización y el historial clínico de los pacientes de manera eficiente.
+El sistema interactúa con pacientes, personal hospitalario y administradores, ofreciendo un flujo de trabajo claro, seguro y fácil de usar.
 
 ![Vista previa](imagenes%20previas/hospital-1.jpg)
+
+
+---
 
 ## Funcionalidades principales
 
@@ -50,7 +55,7 @@ Segundo rol con mayor nivel de permisos dentro del sistema. Responsable de la ge
   - Evaluar solicitudes de pacientes que desean recuperar su cuenta previamente activa.
   - Aprobar o rechazar solicitudes de reactivación.
 
-![Vista previa](imagenes%20previas/hospital-4.jpg)
+![Vista previa](imagenes%20previas/hos  pital-4.jpg)
 
 ### Médico de consultorio
 Rol encargado de la atención médica de los pacientes que solicitan turnos para consultas médicas.
@@ -71,6 +76,67 @@ Rol encargado de la atención médica de los pacientes que solicitan turnos para
   - Prescribir medicamentos.
 
 ![Vista previa](imagenes%20previas/hospital-5.jpg)
+
+### Enfermero
+Rol asociado a los profesionales de enfermería que brindan atención directa a los pacientes hospitalizados.
+- **Atencion clinica de los pacientes a su cargo:**
+- Registrar signos vitales.
+- Documentar observaciones de evaluaciones diarias.
+- Registrar procedimientos.
+- Registrar medicacion administrada y horarios.
+- **Acceso a información médica:**
+- Consultar notas de enfermería previas de pacientes a su cargo.
+- Visualizar indicaciones del médico hospitalario asignado.
+
+![Vista previa](imagenes%20previas/hospital-6.jpg)
+
+### Operador de resultados:
+Este rol está asociado a las personas encargadas de subir y analizar los resultados de pruebas de laboratio,fisiologicos,imagenes y evaluaciones.
+- **Gestión de resultados de estudios:**
+- Analizar resultados de estudios y evaluaciones.
+- Registrar y subir resultados al sistema para que estén disponibles para médicos y pacientes.
+
+![Vista previa](imagenes%20previas/hospital-7.jpg)
+
+### Jefe de enfermeria:
+Este rol está asociado a las personas encargadas de supervisar los enfermeros y medicos hospitalarios de su unidad asignada.
+- **Gestión de hospitalización:**
+- Asignar habitaciones a pacientes hospitalizados.
+- Asignar y desasignar médicos hospitalarios y enfermeros a pacientes.
+- Supervisar evaluaciones médicas y notas de enfermería de los pacientes.
+- **Supervisión de personal:**
+- Consultar historial de evaluaciones de todos los médicos hospitalarios de la unidad.
+- Consultar historial de notas de observación de todos los enfermeros de la unidad.
+
+
+![Vista previa](imagenes%20previas/hospital-8.jpg)
+
+### Medico Hospitalario:
+Rol asociado a los médicos responsables de la evaluación, diagnóstico, tratamiento y seguimiento clínico de los pacientes hospitalizados. Este rol tiene acceso ampliado a información clínica y herramientas de decisión médica.
+- **Atención integral de pacientes asignados:**
+- Evaluar y registrar la evolución clínica de los pacientes.
+- Registrar diagnósticos y prescribir medicación u órdenes médicas.
+- Acceder a todas las notas de observación de los enfermeros asignados a sus pacientes.
+- **Supervisión y coordinación:**
+- Supervisar enfermeros a cargo de mis pacientes.
+- Coordinar el tratamiento médico del paciente.
+- Indicar alta médica del paciente, que será confirmada posteriormente por administración.
+
+
+![Vista previa](imagenes%20previas/hospital-9.jpg)
+
+---
+
+## Apps del Proyecto
+
+| App          | Propósito                                                                |
+|--------------|--------------------------------------------------------------------------|
+| `controlUsuario`   | Gestiona usuarios, roles y autenticación.                     |
+| `hospital_pacientes`    |  Gestiona las acciones y datos de los pacientes: turnos, historial clínico y menores a cargo.                                   |
+| `hospital_personal`     | Gestiona acciones y datos del personal hospitalario según su rol (superadmin, médicos, enfermeros, etc.).  |
+| `intermedio`     | Permite que pacientes y médicos accedan al mismo estudio según corresponda a cada uno.    |
+
+---
 
 
 ## Notas

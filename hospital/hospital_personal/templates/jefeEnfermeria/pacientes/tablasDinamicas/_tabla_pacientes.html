@@ -36,8 +36,6 @@
                             {% for obj in paciente.habitacionAsignada.all %}
                                 {% if obj.estado == "activa" %}
                                     Sí
-                                {% else %}
-                                    No
                                 {% endif %}
                             {% endfor %}
                         {% else %} 

@@ -34,16 +34,18 @@ class FormularioLoginPersonalizado(AuthenticationForm):   # Personalizamos el Au
             if user is None:
                 raise ValidationError("Usuario y/o contraseña incorrectos.")
     
+            ##### Permitir que el usuario pueda iniciar sesion solo en su horario laboral #######
+            if hasattr(user, 'usuario'):
+                asignacion = user.usuario.get_asignacionActual()
+                if asignacion["asignacion"] is None:
+                    raise ValidationError("No se ha registrado ninguna asignación para tu usuario. Por favor, contacta con administración para resolverlo.")
+                
+                # if not asignacion["dentro_del_turno"]:
+                #     raise ValidationError("No puede iniciar sesión fuera de su horario laboral.")
+            #######################################################################################
             
-            # asignacion = user.usuario.get_asignacionActual()
-            # if asignacion["asignacion"] is None:
-            #     raise ValidationError("No se ha registrado ninguna asignación para tu usuario. Por favor, contacta con administración para resolverlo.")
-            
-            # if not asignacion["dentro_del_turno"]:
-            #     raise ValidationError("No puede iniciar sesión fuera de su horario laboral.")
+            self.user_cache = user # Si todo está bien, guardamos el usuario en el cache
 
-            # Si todo está bien, guardamos el usuario en el cache
-            self.user_cache = user
 
         return self.cleaned_data
 
@@ -136,8 +138,6 @@ class FormularioRegistroPersonalizado(forms.ModelForm):
 
         # Hacer password no requerido si es edición
         if self.instance and self.instance.pk:
-            self.fields['password'].required = False
-
             # Solo cargar dirección si el usuario ya existe
             try:
                 paciente = Paciente.objects.get(persona=self.instance)
@@ -175,13 +175,6 @@ class FormularioRegistroPersonalizado(forms.ModelForm):
         if commit:
             persona.email = self.cleaned_data['login_id']
             
-            nueva_contraseña = self.cleaned_data.get('password')  
-            if nueva_contraseña:
-                persona.set_password(nueva_contraseña) # Si se ingresó una nueva contraseña, la seteo correctamente
-            else:
-                # No modificar la contraseña: mantener la actual
-                persona.password = persona.__class__.objects.get(pk=persona.pk).password # busco la contraseña actual en la base de datos (.objects.get()), y la vuelvo a asignar, sin tocarla. Para que no haya un re-hasheo de la contraseña. Sino hago esto se setearea como None debido a la funcion clean_password(self).
-                
             persona.save()
 
             # Guardar o actualizar paciente
@@ -197,39 +190,6 @@ class FormularioRegistroPersonalizado(forms.ModelForm):
                 print(f"Error al guardar paciente: {e}")
 
         return persona
-    
-    # Validaciones : 
-    # def clean_fecha_nacimiento(self):
-    #     nacimiento = self.cleaned_data.get('fecha_nacimiento')
-    #     if not nacimiento:
-    #         raise ValidationError("Este campo es obligatorio.")
-        
-    #     hoy = date.today()
-    #     edad = hoy.year - nacimiento.year - ((hoy.month, hoy.day) < (nacimiento.month, nacimiento.day))
-    #     if edad < 18:
-    #         raise ValidationError("Debes tener al menos 18 años para registrarte.")
-    #     return nacimiento
-
-    # def clean_password(self):
-    #     password = self.cleaned_data.get('password')
-
-    #     if not re.match(r'^(?=.*[A-Za-zñÑ])(?=.*[A-ZñÑ])(?=.*\d)[A-Za-zñÑ\d._@#$%&*!?-]{6,}$', password):
-    #         raise ValidationError("La contraseña debe tener al menos 6 caracteres, una letra mayúscula, un número, y puede incluir símbolos como . _ @ # $ % & * ! ? -")
-    #     return password
-    
-    # def clean_username(self):
-    #     username = self.cleaned_data['username']
-        
-    #     # if re.search(r'[^a-zA-ZñÑ0-9._-]', username): # Verificar que solo tenga letras,numeros,puntos,guion bajo y medio
-    #     #     raise ValidationError("El nombre de usuario solo puede contener letras, números, puntos, guiones y guiones bajos.")
-
-    #     # if not re.search(r'[a-zA-ZñÑ]', username):  # Verificar que tenga al menos una letra    
-    #     #     raise ValidationError("Tu nombre de usuario debe contener por lo menos una letra.")
-
-    #     if Persona.objects.filter(username=username).exists(): 
-    #         raise ValidationError("Este nombre de usuario ya está en uso.")
-
-    #     return username
 
 
 class FormularioPersona(forms.ModelForm):
@@ -314,6 +274,9 @@ class FormularioPersona(forms.ModelForm):
     def clean_is_active(self):
         is_active = self.cleaned_data.get('is_active')
         
+        if is_active is None:
+            is_active = False
+        
         if self.instance.pk and is_active == False: 
             usuario = Usuario.objects.get(persona=self.instance.pk)
             if UsuarioRolProfesionalAsignado.objects.filter(usuario=usuario).exists():                
@@ -321,6 +284,8 @@ class FormularioPersona(forms.ModelForm):
             
             if UsuarioLugarTrabajoAsignado.objects.filter(usuario=usuario).exists():                
                 raise ValidationError("No es posible deshabilitar este usuario porque posee asignaciones de lugar de trabajo activas.Retire dichas asignaciones antes de intentar deshabilitarlo.")
+        
+        return is_active
 
 class FormularioUsuario(forms.ModelForm):
     numero_matricula = forms.CharField(
@@ -418,9 +383,16 @@ class FormularioRegistroDePersonal(forms.Form):
         if password:
             # Solo seteamos una nueva contraseña si fue ingresada (en texto plano)
             persona.set_password(password)
+            usuario.debe_cambiar_contraseña = True
         else:
             # No modificar la contraseña: mantener la actual
             persona.password = persona.__class__.objects.get(pk=persona.pk).password # busco la contraseña actual en la base de datos (.objects.get()), y la vuelvo a asignar, sin tocarla. Para que no haya un re-hasheo de la contraseña. Sino hago esto se setearea como None debido a la funcion clean_password(self).
+
+        tipoUsuario = self.usuario_form.cleaned_data.get('tipoUsuario')
+        if tipoUsuario and tipoUsuario.id == 1:
+            persona.is_superuser = True
+        else:
+            persona.is_superuser = False
 
         if commit:
             persona.save()

@@ -25,7 +25,7 @@
                 <td class="td-fecha-consulta" data-label="Fecha de la consulta:">{{consulta.fecha|date:"d-m-Y"}}</td>
                 <td data-label="Paciente">{{consulta.turno.paciente.persona.get_full_name}} - DNI: {{consulta.turno.paciente.persona.dni}}</td>
                 <td data-label="Acciones" class="td-acciones">
-                    <a href="{% url 'detallesConsulta' consulta.id %}" class="btn-accion">Mas detalles</a>
+                    <a href="{% url 'detallesConsulta' consulta.id %}" class="btn-accion">Ver ficha</a>
                 </td>   
             </tr>
             {% endfor %}

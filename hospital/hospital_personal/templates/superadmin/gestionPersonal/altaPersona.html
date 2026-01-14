@@ -12,8 +12,8 @@
 <body>
     <main class="container-detalles-usuario">
         <div class="box-form-detalles-usuario">
-            <a href="{% url 'gestionDelPersonal' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a> 
-            <h2>Alta de personal</h2>
+            <a href="{% url 'gestionDelPersonal' %}" class="back-link" id="back-link-solo"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a> 
+            <h2 class="title-ficha">Alta de personal</h2>
             
             <form action="" method="POST">
                 {% csrf_token %}

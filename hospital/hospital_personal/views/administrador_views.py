@@ -595,7 +595,8 @@ def solicitudesReactivacion(request):
                 "email": solicitud.login_id if solicitud.login_id else "No completo este campo",
                 "telefono": solicitud.telefono if solicitud.telefono else "No completo este campo",
                 "numero_paciente": solicitud.numero_paciente if solicitud.numero_paciente else "No completo este campo",
-                "observaciones": solicitud.observaciones if solicitud.observaciones else "No completo este campo"
+                "observaciones": solicitud.observaciones if solicitud.observaciones else "No completo este campo",
+                "estado": solicitud.estado
             }
             return JsonResponse(data)
         else:

@@ -9,6 +9,7 @@ from hospital_pacientes.models import Paciente
 from hospital_personal.models import Especialidades,EstudiosDiagnosticos,Departamento,Lugar,Turno,AsignacionEnfermero,ResultadoEstudio,UsuarioRolProfesionalAsignado,TurnoEstudio,SolicitudReactivacion,AsignacionesHabitaciones,UsuarioLugarTrabajoAsignado,AsignacionMedico
 from django.utils import timezone
 from django.db.models import Min
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 
@@ -163,7 +164,15 @@ def indexPersonal(request):
         pacientesHospitalizados = AsignacionesHabitaciones.objects.filter(estado="activa").count()
         asignacionTrabajo = request.user.usuario.get_asignacionActual()
         unidad = asignacionTrabajo.get("idLugarAsignacion")
-        lugar = get_object_or_404(Lugar,pk=unidad)   
+        try:
+            lugar = Lugar.objects.get(pk=unidad)
+        except ObjectDoesNotExist:
+            response = render(request, "403.html", {
+                "mensaje": "No puedes acceder al sistema ya que no tienes ninguna asignacion hoy."
+            })
+            response.status_code = 403
+            return response   
+
         if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
             enfermerosDeLaUnidad = UsuarioLugarTrabajoAsignado.objects.filter(lugar=lugar.unidad,usuario__tipoUsuario_id=4,usuario__persona__is_active=True).values('usuario_id').annotate(id_min=Min('id')).count()  
             
@@ -192,13 +201,11 @@ def indexPersonal(request):
         }
     elif tipo_usuario == 8:
         pacienteAsignados = AsignacionMedico.objects.filter(medico=request.user.usuario,asignacion_habitacion__estado="activa").count()
-        asignacionTrabajo = request.user.usuario.get_asignacionActual()
-        unidad = asignacionTrabajo.get("idLugarAsignacion")
-        lugar = get_object_or_404(Lugar,pk=unidad)   
-        if unidad is not None:    # Si el jefe enfermeria accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
-            enfermerosDeLaUnidad = UsuarioLugarTrabajoAsignado.objects.filter(lugar=lugar.unidad,usuario__tipoUsuario_id=4,usuario__persona__is_active=True).values('usuario_id').annotate(id_min=Min('id')).count()  
-        else:
-            enfermerosDeLaUnidad = 0
+        misAsignacionesDeHospitalizacion = AsignacionMedico.objects.filter( medico=request.user.usuario,asignacion_habitacion__estado="activa").values_list('asignacion_habitacion_id', flat=True)
+        misEnfermerosACargo = AsignacionEnfermero.objects.filter(asignacion_habitacion__id__in=misAsignacionesDeHospitalizacion,asignacion_habitacion__estado="activa").values("enfermero_id").annotate(id_min=Min("id"))
+        enfermeros_ids = misEnfermerosACargo.values_list("enfermero_id",flat=True)
+        
+        enfermerosDeLaUnidad = UsuarioLugarTrabajoAsignado.objects.filter(usuario__id__in=enfermeros_ids,usuario__tipoUsuario_id=4,usuario__persona__is_active=True).values('usuario_id').annotate(id_min=Min('id')).count()  
             
         
         context = {

@@ -33,18 +33,10 @@
                             </div>
 
                             <div class="campo-input">
-                                <label for="id_login_id">Contraseña:</label>
-                                <div class="campo-con-toggle">
-                                    {{ form.password }}
-                                    <button type="button" onclick="verPassword(this)" class="toggle-password" data-target="{{ form.password.id_for_label }}"><i class="hgi hgi-stroke hgi-eye"></i></button>
-                                </div>                                
-                                {% if form.password.errors %}
-                                    <div id="error_password" class="error-message">
-                                        {% for error in form.password.errors %}
-                                            <p>{{ error }}</p>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
+                                <label for="id_password">Contraseña:</label>
+                                <a href="{% url 'nuevaContraPaciente' %}">
+                                    <input type="password" name="password" placeholder="Contraseña" maxlength="128" id="id_password" readonly style="cursor:pointer; width:100%">                                        
+                                </a>
                             </div>
     
                             <div class="campo-input">
@@ -152,7 +144,7 @@
                 <input type="hidden" name="id_paciente_persona" value="{{request.user.id}}">
                 <p class="p-cancelar-cita"><strong>¿Está seguro/a de que desea cancelar su cuota hospitalaria?</strong><br>
                     Esta acción también cancelará las cuotas de los menores a su cargo.<br>
-                    Recuerde su número de paciente <strong>"PAC1"</strong> para facilitar la reactivación futura de los servicios.
+                    Recuerde su número de paciente <strong>"{{form.instance.paciente.numero_paciente}}"</strong> para facilitar la reactivación futura de los servicios.
                 </p>
                 <button type="submit"  class="btn-global">Confirmar</button>
             </form>            

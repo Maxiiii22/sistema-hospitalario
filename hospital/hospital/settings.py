@@ -28,8 +28,16 @@ SECRET_KEY = 'django-insecure-*(57ykba6^nsyf-5v-a6rjng470d7zr6skl$jd#1-m)znz6u=t
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    'c4a4be714d77.ngrok-free.app'  # Dominio de ngrok
+]
 
+# Cuando usamos el dominio de ngrok y enviamos un formulario que contiene el "csrf_token" nos va a devolver un error , para eso ponemos lo siguiente :
+CSRF_TRUSTED_ORIGINS = [  
+    "https://c4a4be714d77.ngrok-free.app",
+]
 
 # Application definition
 

@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
+    <link rel="stylesheet" href="{% static 'estilos/autenticacion.css' %}">
+    <title>Nueva contraseña</title>
+</head>
+<body>
+    <main>
+        <div class="box-autenticacion">
+            <a id="back-link-solo" class="back-link" style="align-self: flex-start;" href="{% url 'miCuenta' %}"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>
+            <h2>Nueva contraseña</h2>
+            <form method="POST">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="error-message-main">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="box-campos-autenticacion">
+                    {{ form.oldPassword.label_tag }}
+                    <div class="campo-con-toggle">
+                        {{ form.oldPassword }}
+                        <button type="button" class="toggle-password" data-target="{{ form.oldPassword.id_for_label }}"><i class="hgi hgi-stroke hgi-eye"></i></button>
+                    </div>
+                    {% if form.oldPassword.errors %}
+                        <div class="error-message">
+                            {% for error in form.oldPassword.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %} 
+                </div>
+
+                <div class="box-campos-autenticacion">
+                    {{ form.password.label_tag }}
+                    <div class="campo-con-toggle">
+                        {{ form.password }}
+                        <button type="button" class="toggle-password" data-target="{{ form.password.id_for_label }}"><i class="hgi hgi-stroke hgi-eye"></i></button>
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="error-message">
+                            {% for error in form.password.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %} 
+                </div>
+            
+                <div class="box-campos-autenticacion">
+                    {{ form.confirmar_password.label_tag }}
+                    <div class="campo-con-toggle">
+                        {{ form.confirmar_password }}
+                        <button type="button" class="toggle-password" data-target="{{ form.confirmar_password.id_for_label }}"><i class="hgi hgi-stroke hgi-eye"></i></button>
+                    </div>              
+                    {% if form.confirmar_password.errors %}
+                        <div class="error-message">
+                            {% for error in form.confirmar_password.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %} 
+                </div>
+            
+            
+                <button type="submit" class="btn-global">Confirmar</button>
+            </form>            
+        </div>
+    </main>
+    <script src="{% static 'js/autenticacion.js' %}"></script>
+</body>
+</html>

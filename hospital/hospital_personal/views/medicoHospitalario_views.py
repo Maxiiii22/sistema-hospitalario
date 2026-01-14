@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required 
 from controlUsuario.decorators import medicoHospitalario_required
-from hospital_personal.models import AsignacionesHabitaciones, AsignacionMedico, ObservacionesEnfermero,ObservacionesMedico,UsuarioLugarTrabajoAsignado,AltaMedica,Lugar
+from hospital_personal.models import AsignacionesHabitaciones, AsignacionMedico, ObservacionesEnfermero,ObservacionesMedico,UsuarioLugarTrabajoAsignado,AltaMedica,Lugar,AsignacionEnfermero
 from hospital_personal.forms import FormularioEvaluacionMedica, FormularioNotaEnfermo, FormularioAltaMedica
 from hospital_personal.filters import PacientesAsignadosHabitacionMedicoFilter, ObservacionesDeEnfermerosFilter, EnfermerosDeLaUnidadFilter, ObservacionesDeEnfermeroFilter
 from controlUsuario.models import Usuario
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import JsonResponse
-from django.db.models import Min
+from django.db.models import Subquery, OuterRef, Min
 
 @medicoHospitalario_required
 @login_required
@@ -19,7 +19,6 @@ def listaPacientes(request):
         if request.GET.get("filtrar") == "1":
             return render(request,"medicoHospitalario/pacientes/tablasDinamicas/_tabla_pacientes.html", {"asignacionesMedico": asignacionesMedico,"filtro":filtro,"cantidad_resgistros_base":qs_base.count()})
     
-    asignacionesMedico = AsignacionMedico.objects.filter(medico=request.user.usuario)
     
     return render(request, "medicoHospitalario/pacientes/listaPacientes.html", {"asignacionesMedico":asignacionesMedico,"filtro":filtro,"cantidad_resgistros_base":qs_base.count()}) 
 
@@ -155,25 +154,23 @@ def fichaPaciente(request,id_asignacionHabitacion):
 @medicoHospitalario_required
 @login_required
 def enfermerosDeLaUnidad(request):
-    asignacionTrabajo = request.user.usuario.get_asignacionActual()
-    unidad = asignacionTrabajo.get("idLugarAsignacion")
-    if unidad is not None:    # Si el medico hospitalario accede en un dia/turno que no le corresponde no se le mostraran los enfermeros de su unidad.
-        lugar = get_object_or_404(Lugar,pk=unidad)    
-        enfermerosDeLaUnidad = (
-            UsuarioLugarTrabajoAsignado.objects
-                .filter(
-                    lugar=lugar.unidad,
-                    usuario__tipoUsuario_id=4,
-                    usuario__persona__is_active=True
-                )
-                .values('usuario_id')         # Esto obliga a que los resultados sean diccionarios
-                .annotate(id_min=Min('id'))   # Este es el ID del registro único por usuario
-        )
-        qs_base = UsuarioLugarTrabajoAsignado.objects.filter(
-            id__in=[item['id_min'] for item in enfermerosDeLaUnidad]
-        )
-    else:
-        qs_base =  UsuarioLugarTrabajoAsignado.objects.none()
+    misAsignacionesDeHospitalizacion = AsignacionMedico.objects.filter(medico=request.user.usuario,asignacion_habitacion__estado="activa").values_list('asignacion_habitacion_id', flat=True)
+    misEnfermerosACargo = AsignacionEnfermero.objects.filter(asignacion_habitacion__id__in=misAsignacionesDeHospitalizacion,asignacion_habitacion__estado="activa").values("enfermero_id").annotate(id_min=Min("id"))
+    enfermeros_ids = misEnfermerosACargo.values_list("enfermero_id",flat=True)
+        
+    subquery = UsuarioLugarTrabajoAsignado.objects.filter(
+        usuario=OuterRef('usuario')
+    ).values('usuario').annotate(
+        id_min=Min('id')
+    ).values('id_min')
+
+    qs_base = UsuarioLugarTrabajoAsignado.objects.filter(
+        id__in=Subquery(subquery),
+        usuario__id__in=enfermeros_ids,
+        usuario__tipoUsuario_id=4,
+        usuario__persona__is_active=True
+    )        
+
     
     filtro = EnfermerosDeLaUnidadFilter(request.GET, queryset=qs_base, prefix="form-filter")  # El prefix en Django sirve para diferenciar varios formularios que usan los mismos nombres de campos dentro de la misma página. Es básicamente un “prefijo” que Django antepone a los name e id de los inputs del formulario.
     registroEnfermeros = filtro.qs

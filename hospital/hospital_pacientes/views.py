@@ -8,7 +8,7 @@ from controlUsuario.models import Usuario,Persona
 from controlUsuario.forms import FormularioRegistroPersonalizado
 from .utils import obtener_disponibilidad, obtener_dias_disponibles_servicio
 from .models import Paciente,MenorACargoDePaciente
-from .forms import RegistrarMenorForm
+from .forms import RegistrarMenorForm,FormularioNuevaPasswordPaciente
 from .filters import ConsultasFilter
 from django.urls import reverse
 from django.utils import timezone
@@ -16,6 +16,8 @@ from django.db.models import Min
 from django.contrib import messages
 from django.db import transaction
 from datetime import datetime
+from django.contrib.auth import update_session_auth_hash
+
 
 # Create your views here.
 
@@ -194,6 +196,19 @@ def misTurnos(request):
     
     turnosEstudios_anteriores = TurnoEstudio.objects.filter(orden__consulta__turno__paciente_id=paciente, fecha_turno__lt=hoy).order_by("-fecha_turno") # fecha_turno__lt=hoy: Este filtro asegura que solo se obtendrán los turnos cuya fecha sea antes de hoy y con el orden_by ordenamos del más reciente al más viejo.
     turnosEstudios_futuros = TurnoEstudio.objects.filter(orden__consulta__turno__paciente_id=paciente, fecha_turno__gte=hoy).order_by("fecha_turno") # fecha_turno__gte=hoy: Este filtro asegura que solo se obtendrán los turnos cuya fecha sea hoy o en el futuro y con el orden_by ordenamos del más cercano al más lejos.
+    
+        
+    for turno in turnos_anteriores:
+        if turno.fecha_turno < hoy and turno.estado in ["pendiente"]:
+            turno.estado = "noAsistio"
+            turno.save()
+        
+    for turno in turnosEstudios_anteriores:
+        if turno.fecha_turno < hoy and turno.estado in ["pendiente"]:
+            turno.estado = "noAsistio"
+            turno.save()
+
+    
     return render(request, "turnos/verTurnos.html",{"paciente":paciente,"turnos_anteriores":turnos_anteriores,"turnos_futuros":turnos_futuros, "turnosEstudios_futuros":turnosEstudios_futuros, "turnosEstudios_anteriores":turnosEstudios_anteriores}) 
 
 @paciente_required
@@ -343,7 +358,16 @@ def sacarTurno(request, paciente_id):
             especialidad_id = request.POST.get("especialidad")
             horario_turno = request.POST.get("horario")
             
+            
+            if not especialidad_id or not str(especialidad_id).isdigit():                
+                messages.error(request, "La especialidad seleccionada no es válida.")
+                return render(request, "turnos/sacarTurno.html", {"especialidades": especialidades, "menor":menor,"parentesco":parentesco,"horariosDeConsultas":horariosDeConsultas})
+            elif not horario_turno or not isinstance(horario_turno, str):
+                messages.error(request, "El horario de turno seleccionado no es válido.")
+                return render(request, "turnos/sacarTurno.html", {"especialidades": especialidades, "menor":menor,"parentesco":parentesco,"horariosDeConsultas":horariosDeConsultas})     
+            
             try:
+                
                 especialidad = Especialidades.objects.get(id=especialidad_id, permite_turno=True)
             except Especialidades.DoesNotExist:
                 messages.error(request, "La especialidad seleccionada no es válida.")
@@ -361,7 +385,7 @@ def sacarTurno(request, paciente_id):
             
             
             # Filtrar los profesionales que están asociados con la especialidad seleccionada
-            profesionales = UsuarioRolProfesionalAsignado.objects.filter(rol_profesional__especialidad=especialidad, usuario__persona__is_active=True) 
+            profesionales = UsuarioRolProfesionalAsignado.objects.filter(rol_profesional__especialidad=especialidad, usuario__persona__is_active=True,usuario__tipoUsuario_id=3) 
             subConsulta = (  # Subconsulta que trae un registro de cada usuario.
                 UsuarioLugarTrabajoAsignado.objects.filter(
                     usuario__in=profesionales.values('usuario'),
@@ -693,9 +717,7 @@ def turno_confirmado(request, turno_id):
 
     if turno.paciente != paciente_actual and not paciente_actual.menores_a_cargo.filter(menor=turno.paciente).exists() or turno.estado != "pendiente":  # Verificar que el turno pertenezca al paciente actual o a uno de sus menores a cargo
         return HttpResponseForbidden(render(request, "403.html"))    
-    
-    if turno.estado != "pendiente":
-        return HttpResponseForbidden(render(request, "403.html"))   
+ 
     
     es_menor = turno.paciente != request.user.paciente
     return render(request, "turnos/turnoConfirmado.html", {"datos_turno":turno, "is_menor":es_menor})
@@ -706,11 +728,10 @@ def turno_estudio_confirmado(request, turno_id):
     turnoEstudio = get_object_or_404(TurnoEstudio, id=turno_id)
     paciente_actual = request.user.paciente
 
-    if turnoEstudio.orden.consulta.turno.paciente != paciente_actual and not paciente_actual.menores_a_cargo.filter(menor=turnoEstudio.orden.consulta.turno.paciente).exists():  # Verificar que el turno pertenezca al paciente actual o a uno de sus menores a cargo
+    if turnoEstudio.orden.consulta.turno.paciente != paciente_actual and not paciente_actual.menores_a_cargo.filter(menor=turnoEstudio.orden.consulta.turno.paciente).exists() or turnoEstudio.estado != "pendiente":  # Verificar que el turno pertenezca al paciente actual o a uno de sus menores a cargo
         return HttpResponseForbidden(render(request, "403.html"))    
     
-    if turnoEstudio.estado != "pendiente":
-        return HttpResponseForbidden(render(request, "403.html"))    
+
     
     es_menor = turnoEstudio.orden.consulta.turno.paciente != request.user.paciente
     return render(request, "turnos/turnoConfirmado.html", {"datos_turno":turnoEstudio, "is_menor":es_menor, "turnoEstudio":True})
@@ -1181,3 +1202,21 @@ def gestionMenores(request):
         
     return render(request, "gestionMenores/gestionMenores.html",{"menores_relaciones": menores_relaciones,"form":RegistrarMenorForm()})  
 
+@paciente_required
+@login_required
+def nuevaContraPaciente(request):
+    form = FormularioNuevaPasswordPaciente(instance=request.user)
+
+    if request.method == "POST":
+        form = FormularioNuevaPasswordPaciente(request.POST, instance=request.user)
+        if form.is_valid():        
+            try:
+                with transaction.atomic(): # with transaction.atomic() → todo lo que está dentro se hace en una sola transacción. Si hay un error en cualquiera de las líneas, todo se revierte, no se guardan cambios parciales.
+                    persona = form.save()
+                    update_session_auth_hash(request, persona)                    
+                    messages.success(request, "Se actualizó la contraseña correctamente.")
+                    return redirect("miCuenta")
+            except Exception as e:
+                messages.error(request, f"Ha ocurrido un inconveniente. Por favor, inténtelo nuevamente. Detalles: {str(e)}")
+            
+    return render(request, "nuevaContraseñaPaciente.html", {"form": form})

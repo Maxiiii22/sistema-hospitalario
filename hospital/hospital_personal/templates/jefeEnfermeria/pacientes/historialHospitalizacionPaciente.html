@@ -11,7 +11,7 @@
 
 {% block contenido %}
     <div class="container-global-jefe-enfermeria">
-        <h1>Hospitalizaciones del paciente: {{paciente.persona.get_full_name}} - {{paciente.persona.dni}}</h1>
+        <h1 class="title-turnos">Hospitalizaciones del paciente: {{paciente.persona.get_full_name}} - {{paciente.persona.dni}}</h1>
         <div class="box-tablas-jefe-enfermeria" id="box-tabla-general">
             {% include 'jefeEnfermeria/pacientes/tablasDinamicas/_tabla_hospitalizaciones_paciente.html' %}
         </div>

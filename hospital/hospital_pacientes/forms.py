@@ -4,6 +4,7 @@ from controlUsuario.models import Persona
 from hospital_personal.models import SolicitudReactivacion
 from django.core.validators import RegexValidator  # Para permitir símbolos comunes en el campo de teléfono.
 
+
 solo_letras_validator = RegexValidator(
     regex=r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ]{2,}$',
     message='Este campo debe tener al menos 2 letras y solo contener letras.',
@@ -264,7 +265,52 @@ class SolicitudReactivacionForm(forms.ModelForm):
         
 
 
+class FormularioNuevaPasswordPaciente(forms.ModelForm):
+    oldPassword = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Contraseña actual'}),
+        label='Contraseña actual'
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Nueva contraseña'}),
+        label='Nueva contraseña'
+    )
+    confirmar_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirmar nueva contraseña'}),
+        label='Confirmar nueva contraseña'
+    )   
 
+    class Meta:
+        model = Persona
+        fields = [] 
+    
+    def clean_oldPassword(self):
+        old_password = self.cleaned_data.get('oldPassword')
+
+        if not self.instance.check_password(old_password):
+            raise forms.ValidationError("La contraseña actual es incorrecta.")
+
+        return old_password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirmar_password = cleaned_data.get('confirmar_password')
+
+        if password and confirmar_password and password != confirmar_password:
+            self.add_error('confirmar_password', "Las contraseñas no coinciden.")
+
+        if password and len(password) < 8:
+            self.add_error('password', "La contraseña debe tener al menos 8 caracteres.")
+
+        return cleaned_data
+    
+
+    def save(self, commit=True):
+        instance = self.instance
+        instance.set_password(self.cleaned_data['password'])
+        if commit:
+            instance.save()
+        return instance
 
 
 

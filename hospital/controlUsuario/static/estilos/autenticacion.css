@@ -19,6 +19,21 @@ body{
     background-size: contain;
 }
 
+#back-link-solo{
+    background-color: var(--color-primario);
+    padding: 10px;
+    border-radius: 10px;
+    transition: background-color .3s ease;
+    color: #fff;
+    text-decoration: none;
+    width: fit-content;
+
+}
+
+#back-link-solo:hover{
+    background-color: var(--color-hover);
+}
+
 .error-message {
     color: red;
     font-size: 0.9em;
@@ -69,6 +84,7 @@ main{
 .box-campos-autenticacion{
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .box-autenticacion input,.box-autenticacion select,.box-autenticacion textarea{

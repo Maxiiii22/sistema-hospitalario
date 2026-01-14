@@ -20,7 +20,7 @@ class MedicoTratanteAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated:
             return Usuario.objects.none()
 
-        qs = Usuario.objects.filter(tipoUsuario_id=8) # Medicos hospitalarios  (agregar el ,persona__is_active=True luego)
+        qs = Usuario.objects.filter(tipoUsuario_id=8,persona__is_active=True) 
 
         if self.q:  # Filtra por lo que escribe el usuario
             qs = qs.filter(persona__first_name__icontains=self.q) | qs.filter(persona__last_name__icontains=self.q) | qs.filter(numero_matricula__icontains=self.q) | qs.filter(rolesProfesionalesUsuario__rol_profesional__nombre_rol_profesional__icontains=self.q)
@@ -39,7 +39,7 @@ class EnfermeroAutocomplete(autocomplete.Select2QuerySetView):
         
         id_jornadaLaboral = self.forwarded.get('jornada')  # Parámetro recibido desde "forward"
         if id_jornadaLaboral:
-            qs = Usuario.objects.filter(tipoUsuario_id=4,UsuariosAsignadosAEsteLugar__jornada__id=id_jornadaLaboral) #Enfermeros  (agregar el ,persona__is_active=True luego)
+            qs = Usuario.objects.filter(tipoUsuario_id=4,UsuariosAsignadosAEsteLugar__jornada__id=id_jornadaLaboral,persona__is_active=True) 
 
         if self.q:  # Filtra por lo que escribe el usuario
             qs = qs.filter(persona__first_name__icontains=self.q) | qs.filter(persona__last_name__icontains=self.q) | qs.filter(numero_matricula__icontains=self.q) | qs.filter(rolesProfesionalesUsuario__rol_profesional__nombre_rol_profesional__icontains=self.q)

@@ -19,7 +19,7 @@
             </tr>        
         {% elif allMedicos.count == 0 %}
             <tr>
-                <td colspan="7" class="empty-message">No hay médicos con citas para hoy.</td>
+                <td colspan="7" class="empty-message">No hay médicos con citas para hoy. (Filtre por todos los médicos si quiere buscar alguno)</td>
             </tr>        
         {% else %}
             {% for medico in allMedicos %}
@@ -33,7 +33,7 @@
                 <td data-label="Acciones:">
                     {% if medico.get_asignacionActual.asignacionActual %}
                         <div class="box-btns-td-acciones">
-                            <a href="{% url 'administrador-agenda-medico' medico.id %}" class="btn-masDetalles" >Mas detalles</a>
+                            <a href="{% url 'administrador-agenda-medico' medico.id %}" class="btn-masDetalles" >Ver agenda</a>
                         </div>                        
                     {% endif %}
                 </td>

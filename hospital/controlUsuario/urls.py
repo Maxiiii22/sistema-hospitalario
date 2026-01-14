@@ -5,7 +5,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("especialidades", views.especialidades, name="especialidadesDelHospital"),
     path("servicios-diagnosticos", views.serviciosDiagnostico, name="serviciosDelHospital"),
-    path("", views.index, name="index"),
     path("iniciar-sesion/", views.iniciar_sesion, name="login"),
     path("registrarse/", views.signup, name="signup"),
     path("reactivar-cuenta/", views.reactivarServicios, name="reactivarCuenta"),

@@ -15,7 +15,7 @@ def enlace_info(request):
                 enlace_texto = "Gestionar menores a tu cargo"
                 enlace_url = reverse("gestionMenores")  # Enlace para gestionar menores
             else:
-                enlace_texto = "Registrar a tu hijo o menor a cargo"
+                enlace_texto = "Registrar menor a cargo"
                 enlace_url = reverse("registrarMenor")  # Enlace para registrar un menor
 
     # Devuelve las variables para que estén disponibles en el contexto global

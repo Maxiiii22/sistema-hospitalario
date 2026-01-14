@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="{% static 'estilos/autenticacion.css' %}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> {# jQuery (requerido por Toastr.js y DAL) #}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />  {# Toastr CSS: Estilos para mostrar notificaciones tipo toast  #}     
-    <title>Iniciar sesion</title>
+    <title>Iniciar sesión</title>
 </head>
 <body>
     <main>
         <div class="box-autenticacion">
-            <h2>Iniciar sesion</h2>
+            <h2>Iniciar sesión</h2>
             <form method="POST">
                 {% csrf_token %}
 

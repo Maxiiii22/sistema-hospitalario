@@ -12,10 +12,10 @@ class SolicitudReactivacion(models.Model):
     def vencimiento_default():
         return timezone.now() + timedelta(days=7)  
     
-    dni = models.CharField(max_length=8, null=True, blank=True) # quitar blank y null al finalizar la bd
-    first_name =  models.CharField(max_length=150, null=True, blank=True) # quitar blank y null al finalizar la bd
-    last_name = models.CharField(max_length=150, null=True, blank=True)  # quitar blank y null al finalizar la bd
-    fecha_nacimiento = models.DateField(null=True, blank=True) # quitar blank y null al finalizar la bd
+    dni = models.CharField(max_length=8) 
+    first_name =  models.CharField(max_length=150) 
+    last_name = models.CharField(max_length=150)  
+    fecha_nacimiento = models.DateField() 
     
     login_id = models.CharField(max_length=100, null=True, blank=True) 
     telefono = models.CharField(max_length=20, blank=True, null=True)
@@ -78,7 +78,7 @@ class Jorna_laboral(models.Model):
     ] 
     
     dia = models.CharField(max_length=20, choices=DIAS_CHOICES)
-    turno = models.CharField(max_length=10, choices=TURNOS_CHOICES)  # luego cambiar ell nombre del campo a "franja_laboral"
+    turno = models.CharField(max_length=10, choices=TURNOS_CHOICES) 
     
     def obtener_rango_turno(self):
         if self.turno == 'dia':
@@ -89,9 +89,9 @@ class Jorna_laboral(models.Model):
             hora_fin = time(23, 0)    # 11:00 PM
         elif self.turno == 'noche':
             hora_inicio = time(23, 0) # 11:00 PM
-            hora_fin = time(7, 0)     # 7:00 AM (del día siguiente)
+            hora_fin = time(7, 0)     # 7:00 AM 
         elif self.turno == 'on-call':
-            hora_inicio = time(0, 0)  # Guardia 24h (desde la medianoche)
+            hora_inicio = time(0, 0)  # Guardia 24h 
             hora_fin = time(23, 59)   # Hasta el final del día
         return hora_inicio, hora_fin    
     
@@ -110,10 +110,7 @@ class Jorna_laboral(models.Model):
         """
         Me fijo si el usuario tiene esta jornada ocupada o disponible
         """
-        asignacion = UsuarioLugarTrabajoAsignado.objects.filter(
-            jornada=self,
-            usuario=usuario
-        ).first()
+        asignacion = UsuarioLugarTrabajoAsignado.objects.filter(jornada=self, usuario=usuario).first()
 
         if asignacion:
             if asignacion.lugar.id == lugar.id:
@@ -141,24 +138,22 @@ class Lugar(models.Model):
     
     nombre = models.CharField(max_length=100)
     tipo = models.CharField(max_length=50,choices=TIPO_CHOICES)
-    piso = models.IntegerField() # Cambiar a PositiveIntegerField al terminar la BD
+    piso = models.PositiveIntegerField() 
     sala = models.PositiveIntegerField(unique=True, blank=True, null=True) 
     abreviacion = models.CharField(max_length=20) 
     capacidad = models.PositiveIntegerField(default=1, blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
     es_critico = models.BooleanField(default=False)
     activo = models.BooleanField(default=True) 
-    departamento = models.ForeignKey(Departamento, on_delete=models.SET_NULL, blank=True, null=True)  # Despues sacar el blank y el null cuando le carguemos sus respectivo departgamento a cada lugar.
-    unidad = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True,related_name="habitaciones",limit_choices_to={"tipo":"unidad_atenc"})  
+    departamento = models.ForeignKey(Departamento, on_delete=models.PROTECT)  
+    unidad = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True,related_name="habitaciones",limit_choices_to={"tipo":"unidad_atenc"})  
 
     def estado_por_jornada(self, jornada):
         """
         Calcula dinámicamente el estado del lugar en una jornada específica.
         """
-        asignaciones = UsuarioLugarTrabajoAsignado.objects.filter(
-            lugar=self,
-            jornada=jornada
-        ).count()
+        asignaciones = UsuarioLugarTrabajoAsignado.objects.filter(lugar=self, jornada=jornada).count()
+        
         if asignaciones >= self.capacidad:
             return 'Ocupado',asignaciones
         return 'Disponible',asignaciones
@@ -174,8 +169,8 @@ class Lugar(models.Model):
         return super().clean_fields(exclude)
 
 class UsuarioRolProfesionalAsignado(models.Model):
-    usuario = models.ForeignKey('controlUsuario.Usuario', on_delete=models.CASCADE,related_name="rolesProfesionalesUsuario")
-    rol_profesional = models.ForeignKey('controlUsuario.RolesProfesionales', on_delete=models.CASCADE)
+    usuario = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT,related_name="rolesProfesionalesUsuario")
+    rol_profesional = models.ForeignKey('controlUsuario.RolesProfesionales', on_delete=models.PROTECT)
     
     class Meta:
         constraints = [
@@ -191,15 +186,17 @@ class UsuarioRolProfesionalAsignado(models.Model):
         
 
         if self.usuario.tipoUsuario_id in (1, 2):
-            qs = UsuarioRolProfesionalAsignado.objects.filter(
-                usuario=self.usuario
-            )
+            qs = UsuarioRolProfesionalAsignado.objects.filter(usuario=self.usuario)
 
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
 
             if qs.exists():
-                raise ValidationError("Administración no puede tener más de un rol.")        
+                raise ValidationError("Administración no puede tener más de un rol.")     
+        
+        qs = UsuarioLugarTrabajoAsignado.objects.filter(usuario=self.usuario,rolProfesionalAsignado=self.pk)  
+        if qs.exists():
+            raise ValidationError("No puedes modificar el rol profesional asignado ya que hay asignaciones de trabajo activas")     
         
         
     def __str__(self):
@@ -214,26 +211,23 @@ class UsuarioRolProfesionalAsignado(models.Model):
             
 
 class UsuarioLugarTrabajoAsignado(models.Model):
-    lugar = models.ForeignKey(Lugar, on_delete=models.CASCADE)
-    usuario = models.ForeignKey('controlUsuario.Usuario', on_delete=models.CASCADE, related_name="UsuariosAsignadosAEsteLugar")
-    jornada = models.ForeignKey(Jorna_laboral, on_delete=models.CASCADE)
-    rolProfesionalAsignado = models.ForeignKey(UsuarioRolProfesionalAsignado, on_delete=models.SET_NULL, null=True,related_name="RolesProfesionalesAsignados")
     ESTADO_CHOICES = [
         ('asignado', 'Asignado'),
-        ('desasignado', 'Desasignado'),
-
+        ('desasignado', 'Desasignado')
     ]
+    lugar = models.ForeignKey(Lugar, on_delete=models.PROTECT)
+    usuario = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT, related_name="UsuariosAsignadosAEsteLugar")
+    jornada = models.ForeignKey(Jorna_laboral, on_delete=models.PROTECT)
+    rolProfesionalAsignado = models.ForeignKey(UsuarioRolProfesionalAsignado, on_delete=models.PROTECT,related_name="RolesProfesionalesAsignados") 
     estado = models.CharField(max_length=50,choices=ESTADO_CHOICES, default="asignado")
-        
+    
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['usuario', 'jornada'], name='unique_usuario_jornada') # Con UniqueConstraint, nos aseguramos de que un mismo usuario no pueda estar asignado a la misma jornada más de una vez, aunque sea en diferentes departamentos.
         ]
         
     def __str__(self):
-        return (
-            f"El usuario (ID:{self.usuario.id} - {self.usuario.persona.get_full_name()} - {self.usuario.tipoUsuario}) trabaja los días {self.jornada.get_dia_display()} en el lugar '{self.lugar.nombre} ({self.lugar.abreviacion})' en el horario: {self.jornada.get_turno_display()} como {self.rolProfesionalAsignado.rol_profesional.nombre_rol_profesional} (En {getattr(self.rolProfesionalAsignado.rol_profesional.especialidad, 'nombre_especialidad', getattr(self.rolProfesionalAsignado.rol_profesional.servicio_diagnostico, 'nombre_servicio', 'Sin asignar'))})"
-        )   
+        return (f"El usuario (ID:{self.usuario.id} - {self.usuario.persona.get_full_name()} - {self.usuario.tipoUsuario}) trabaja los días {self.jornada.get_dia_display()} en el lugar '{self.lugar.nombre} ({self.lugar.abreviacion})' en el horario: {self.jornada.get_turno_display()} como {self.rolProfesionalAsignado.rol_profesional.nombre_rol_profesional} (En {getattr(self.rolProfesionalAsignado.rol_profesional.especialidad, 'nombre_especialidad', getattr(self.rolProfesionalAsignado.rol_profesional.servicio_diagnostico, 'nombre_servicio', 'Sin asignar'))})")   
         
     def clean(self):
         if not self.usuario_id:
@@ -244,9 +238,7 @@ class UsuarioLugarTrabajoAsignado(models.Model):
         
 
         if self.usuario.tipoUsuario_id in (1, 2):
-            qs = UsuarioLugarTrabajoAsignado.objects.filter(
-                usuario=self.usuario,jornada=self.jornada
-            )
+            qs = UsuarioLugarTrabajoAsignado.objects.filter(usuario=self.usuario,jornada=self.jornada)
 
             if self.pk:
                 qs = qs.exclude(pk=self.pk)
@@ -258,7 +250,6 @@ class UsuarioLugarTrabajoAsignado(models.Model):
             if not self.lugar.activo:
                 raise ValidationError({'lugar': 'No se puede asignar un usuario a un lugar que no está activo'})
             
-            # Excluir la instancia actual si ya existe (evita error al hacer update)
             asignaciones_en_lugar = UsuarioLugarTrabajoAsignado.objects.filter(lugar=self.lugar,jornada=self.jornada)
             if self.pk:
                 asignaciones_en_lugar = asignaciones_en_lugar.exclude(pk=self.pk)
@@ -274,21 +265,21 @@ class UsuarioLugarTrabajoAsignado(models.Model):
 
 
 class ServicioDiagnostico(models.Model):
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
+    departamento = models.ForeignKey(Departamento, on_delete=models.PROTECT)
     lugar = models.ManyToManyField(Lugar, related_name="servicios_diagnostico")
     nombre_servicio = models.CharField(max_length=255)
     descripcion = models.TextField()
-    capacidad_diaria = models.PositiveIntegerField(null=True, blank=True) # Al finalizar la BD quitar el blank y el null
+    capacidad_diaria = models.PositiveIntegerField()
     
     def __str__(self):
         return f"ID servicio de diagnostico {self.id} - Nombre: {self.nombre_servicio} - Departamento: {self.departamento.nombre_departamento}"
 
 class Especialidades(models.Model):
-    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE,  related_name="especialidades")
+    departamento = models.ForeignKey(Departamento, on_delete=models.PROTECT,  related_name="especialidades")
     nombre_especialidad = models.CharField(max_length=255)
     descripcion = models.TextField()
     permite_turno = models.BooleanField()
-    capacidad_diaria = models.PositiveIntegerField(null=True, blank=True) # Al finalizar la BD quitar el blank y el null
+    capacidad_diaria = models.PositiveIntegerField()
 
     def __str__(self):
         return f"ID especialidad {self.id} - Nombre: {self.nombre_especialidad} - Departamento: {self.departamento.nombre_departamento}"
@@ -300,17 +291,17 @@ class EstudiosDiagnosticos(models.Model):
         ("fisio", "Fisiológico"),
         ("eval", "Evaluación clínica")
     ]
-    tipo_resultado = models.CharField(max_length=100, choices=TIPO_CHOICES)   # Sacarle el null y el blank al finalizar la BD
+    tipo_resultado = models.CharField(max_length=100, choices=TIPO_CHOICES) 
     especialidad = models.ManyToManyField(Especialidades,related_name="EspecialidadesDelEstudio")
-    servicio_diagnostico = models.ForeignKey(ServicioDiagnostico, on_delete=models.CASCADE,related_name="estudiosDelServicio")
+    servicio_diagnostico = models.ForeignKey(ServicioDiagnostico, on_delete=models.PROTECT,related_name="estudiosDelServicio")
     nombre_estudio = models.CharField(max_length=200)  
 
     def __str__(self):
         return f"{self.id} - El estudio '{self.nombre_estudio}' se realiza en {self.servicio_diagnostico.nombre_servicio} - Tipo Resultado: ({self.get_tipo_resultado_display()})"
 
 class PlantillaEstudio(models.Model):
-    estudio = models.OneToOneField(EstudiosDiagnosticos, on_delete=models.CASCADE,related_name="plantilla")
-    estructura = models.JSONField()  # 👈 Esto funciona APARTIR DE MySQL 5.7+
+    estudio = models.OneToOneField(EstudiosDiagnosticos, on_delete=models.PROTECT,related_name="plantilla")
+    estructura = models.JSONField()  # Esto funciona APARTIR DE MySQL 5.7+
     
     def __str__(self):
         return f"El estudio '{self.estudio.nombre_estudio}' tiene la estructura {self.estructura}"
@@ -331,12 +322,12 @@ class Turno(models.Model):
         ('on-call', 'Guardia'),
     ] 
     
-    especialidad = models.ForeignKey(Especialidades, on_delete=models.CASCADE)
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name="turnos")
-    profesional = models.ForeignKey('controlUsuario.Usuario', on_delete=models.CASCADE,related_name="turnosDelMedico")
+    especialidad = models.ForeignKey(Especialidades, on_delete=models.PROTECT)
+    paciente = models.ForeignKey(Paciente, on_delete=models.PROTECT, related_name="turnos")
+    profesional = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT,related_name="turnosDelMedico")
     fecha_creacion = models.DateTimeField(auto_now_add=True) 
     fecha_turno = models.DateField() 
-    horario_turno = models.CharField(max_length=10, choices=TURNOS_CHOICES, default="dia")  # Luego quitar el default al terminar a BD
+    horario_turno = models.CharField(max_length=10, choices=TURNOS_CHOICES)  
     estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default="pendiente")
     motivo = models.TextField(blank=True, null=False)
     asistio = models.BooleanField(default=False)
@@ -352,9 +343,9 @@ class Turno(models.Model):
             hora_fin = time(23, 0)    # 11:00 PM
         elif self.horario_turno == 'noche':
             hora_inicio = time(23, 0) # 11:00 PM
-            hora_fin = time(7, 0)     # 7:00 AM (del día siguiente)
+            hora_fin = time(7, 0)     # 7:00 AM 
         elif self.horario_turno == 'on-call':
-            hora_inicio = time(0, 0)  # Guardia 24h (desde la medianoche)
+            hora_inicio = time(0, 0)  # Guardia 24h 
             hora_fin = time(23, 59)   # Hasta el final del día
         return hora_inicio, hora_fin
     
@@ -362,7 +353,7 @@ class Turno(models.Model):
         return f"ID turno: {self.id}, Estado: {self.get_estado_display()}"
 
 class Consultas(models.Model):
-    turno = models.ForeignKey(Turno, on_delete=models.CASCADE,related_name='consulta')
+    turno = models.ForeignKey(Turno, on_delete=models.PROTECT,related_name='consulta')
     diagnostico = models.TextField(blank=False, null=False) 
     tratamiento = models.TextField(blank=True, null=True)
     observaciones = models.TextField(blank=False, null=False)
@@ -377,14 +368,14 @@ class OrdenEstudio(models.Model):
         ('programado', 'Programado'),
         ('vencida', 'Orden vencida')
     ]
-    tipo_estudio = models.ForeignKey(EstudiosDiagnosticos, on_delete=models.CASCADE, related_name='tipo_estudios')
+    tipo_estudio = models.ForeignKey(EstudiosDiagnosticos, on_delete=models.PROTECT, related_name='tipo_estudios')
     consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, related_name='estudios')
     motivo_estudio = models.TextField(blank=True, null=True)
     indicaciones = models.TextField(blank=True, null=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True,blank=True, null=True) 
-    fecha_vencimiento = models.DateTimeField(blank=True, null=True)   # Leugo quitar blank y null 
+    fecha_vencimiento = models.DateTimeField() 
     estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default="pendiente")
-    solicitado_por = models.ForeignKey('controlUsuario.Usuario', on_delete=models.CASCADE)
+    solicitado_por = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT)
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name="ordenesPaciente")
     
     def marcar_vencida_si_corresponde(self):
@@ -418,12 +409,12 @@ class OrdenEstudio(models.Model):
         super().save(*args, **kwargs)
 
 class Medicaciones(models.Model):
-    consulta = models.ForeignKey(Consultas, on_delete=models.CASCADE, related_name='medicaciones')
+    consulta = models.ForeignKey(Consultas, on_delete=models.PROTECT, related_name='medicaciones')
     medicamento = models.CharField(max_length=100, blank=True, null=True)
     dosis = models.CharField(max_length=100, blank=True, null=True)
     frecuencia = models.CharField(max_length=100, blank=True, null=True)
     tiempo_uso = models.CharField(max_length=255, blank=True, null=True)
-    recetada_por = models.ForeignKey('controlUsuario.Usuario', on_delete=models.CASCADE )
+    recetada_por = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT )
     
     def __str__(self):
         return f"Medicamento: {self.medicamento}"
@@ -440,8 +431,8 @@ class TurnoEstudio(models.Model):
     TURNOS_CHOICES = [
         ('dia', 'Diurno(7:00 a 15:00)'),
     ]     
-    servicio_diagnostico = models.ForeignKey(ServicioDiagnostico, on_delete=models.CASCADE)  
-    orden = models.OneToOneField(OrdenEstudio, on_delete=models.CASCADE, related_name="turnoEstudio")
+    servicio_diagnostico = models.ForeignKey(ServicioDiagnostico, on_delete=models.PROTECT)  
+    orden = models.OneToOneField(OrdenEstudio, on_delete=models.PROTECT, related_name="turnoEstudio")
     fecha_creacion = models.DateTimeField(auto_now_add=True) 
     fecha_turno = models.DateField() 
     horario_turno = models.CharField(max_length=10, choices=TURNOS_CHOICES, default="dia")
@@ -473,11 +464,11 @@ class ResultadoImagen(models.Model):
         return f"Imagen {self.id}"
 
 class ResultadoEstudio(models.Model):
-    turno_estudio = models.OneToOneField(TurnoEstudio, on_delete=models.CASCADE, related_name="resultado")
+    turno_estudio = models.OneToOneField(TurnoEstudio, on_delete=models.PROTECT, related_name="resultado")
     informe = models.TextField()
-    datos_especificos = models.JSONField(null=True, blank=True)  # 👈 Esto funciona APARTIR DE MySQL 5.7+
+    datos_especificos = models.JSONField(null=True, blank=True)  # Esto funciona APARTIR DE MySQL 5.7+
     archivo_pdf = models.FileField(upload_to='resultados/', null=True, blank=True)
-    cargado_por = models.ForeignKey('controlUsuario.Usuario',on_delete=models.CASCADE)
+    cargado_por = models.ForeignKey('controlUsuario.Usuario',on_delete=models.PROTECT)
     imagenes = models.ManyToManyField(ResultadoImagen, blank=True, related_name="resultados") # varias imágenes por estudio (solo para img)
 
     def __str__(self):
@@ -556,7 +547,7 @@ class AltaMedica(models.Model):
 class AltaAdministrativa(models.Model):
     asignacion_habitacion = models.ForeignKey(AsignacionesHabitaciones, on_delete=models.PROTECT,related_name="altaAdministrativa")
     fecha_cierre = models.DateTimeField(auto_now_add=True)
-    responsable = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT)  # jefe de enfermeria
+    responsable = models.ForeignKey('controlUsuario.Usuario', on_delete=models.PROTECT)  
 
     def __str__(self):
         return f"Cierre administrativo de {self.asignacion_habitacion.paciente.get_full_name()} - {self.fecha_cierre}"

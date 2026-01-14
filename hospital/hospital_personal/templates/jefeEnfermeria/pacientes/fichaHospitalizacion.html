@@ -68,6 +68,10 @@
                             <div class="asignacion-item">
                                 <span><strong>Fecha de Ingreso: </strong>{{hospitalizacion.fecha_ingreso|date:"d-m-Y"}}</span>
                             </div>
+                            <div class="asignacion-item">
+                                <span><strong>Historial de Notas de Enfermería:</strong></span>
+                                <a href="{% url 'notasEnfermeria-jefe-enfermeria' hospitalizacion.id %} "class="btn-masDetalles" id=""><i class="hgi hgi-stroke hgi-file-view"></i> Ver Notas de Enfermería</a>
+                            </div>                            
                             <div class="asignacion-item box-evaluacion-clinica">
                                 <div class="asignacion-evaluacion-clinica">
                                     <span><strong>Alta Médica:</strong></span>
@@ -95,10 +99,7 @@
                                     </div>
                                 </div>                                     
                             </div>
-                            <div class="asignacion-item">
-                                <span><strong>Historial de Notas de Enfermería:</strong></span>
-                                <a href="{% url 'notasEnfermeria-jefe-enfermeria' hospitalizacion.id %} "class="btn-masDetalles" id=""><i class="hgi hgi-stroke hgi-file-view"></i> Ver Notas de Enfermería</a>
-                            </div>
+
                             <div class="asignacion-item box-evaluacion-clinica">
                                 <div class="asignacion-evaluacion-clinica">
                                     <span><strong>Evaluación Médica:</strong></span>                                    

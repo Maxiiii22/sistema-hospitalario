@@ -2,13 +2,9 @@ from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractUser # AbstractUser es una clase base que proporciona todos los campos y comportamientos predeterminados de un usuario en Django,
-                                                    # pero permite que los extiendas si lo necesitas, tambien incluye todo lo necesario para la autenticación, gestión de usuarios, permisos y demás, 
-                                                    # y solo tienes que agregarle los campos adicionales que necesites. Basicamente es una clase que hereda de AbstractBaseUser y agrega todos los campos y
-                                                    # métodos predeterminados del modelo User , para asi permitirnos personalizar el modelo User.
-                                                    # La clase User ya tiene sus campos predefinidos y no se pueden agregar otros , por eso usamos AbstractUser.
-# Campos de AbstractUser : username - first_name - last_name - email - password y demas . 
-from hospital_personal.models import Especialidades,ServicioDiagnostico,Departamento,Jorna_laboral
+from django.contrib.auth.models import AbstractUser 
+from hospital_personal.models import Especialidades,ServicioDiagnostico,Departamento
+
 
 # Create your models here.
 
@@ -46,9 +42,9 @@ class TiposUsuarios(models.Model):
     
 class RolesProfesionales(models.Model):  
     nombre_rol_profesional = models.CharField(max_length=255)
-    tipoUsuario = models.ForeignKey(TiposUsuarios,on_delete=models.CASCADE)
-    especialidad = models.ForeignKey(Especialidades,on_delete=models.SET_NULL, blank=True, null=True)
-    servicio_diagnostico = models.ForeignKey(ServicioDiagnostico,on_delete=models.SET_NULL, blank=True, null=True)
+    tipoUsuario = models.ForeignKey(TiposUsuarios,on_delete=models.PROTECT)
+    especialidad = models.ForeignKey(Especialidades,on_delete=models.PROTECT, blank=True, null=True)
+    servicio_diagnostico = models.ForeignKey(ServicioDiagnostico,on_delete=models.PROTECT, blank=True, null=True)
     departamento = models.ForeignKey(Departamento,on_delete=models.PROTECT, blank=True, null=True)
     
     def __str__(self):
@@ -73,17 +69,7 @@ class RolesProfesionales(models.Model):
         super().save(*args, **kwargs)
 
 
-class Persona(AbstractUser):
-    # Gracias a AbstractUser ya se heredan estos campos :
-    # first_name
-    # last_name
-    # password
-    # last_login
-    # is_active  (En nuestra tabla Persona este campo es : estado_persona)
-    # date_joined  (En nuestra tabla Persona este campo es : fecha_alta)
-    # is_staff
-    # is_superuser
-    
+class Persona(AbstractUser): 
     SEXO_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Femenino')
@@ -114,10 +100,11 @@ class Persona(AbstractUser):
 
 
 class Usuario(models.Model):
-    persona = models.OneToOneField(Persona, on_delete=models.CASCADE)
+    persona = models.OneToOneField(Persona, on_delete=models.PROTECT)
     numero_matricula = models.CharField(max_length=50, blank=True, null=True)
     debe_cambiar_contraseña = models.BooleanField(default=True)
     tipoUsuario = models.ForeignKey(TiposUsuarios, on_delete=models.PROTECT)
+    
     
     # Queremos que los valores NO vacíos sean únicos, pero permitir múltiples registros vacíos o nulos.
     # No usamos solamente `unique=True` en numero_matricula porque:
@@ -125,7 +112,7 @@ class Usuario(models.Model):
     #   - Algunas bases de datos (como SQLite o MySQL) no permiten múltiples NULL con unique=True.
     # Por eso, validamos manualmente en `clean()` cuando el valor no está vacío.        
     def clean(self):
-        super().clean()  # buena práctica: llamar al clean del padre
+        super().clean()  
         if self.numero_matricula:
             qs = Usuario.objects.filter(numero_matricula=self.numero_matricula)
             if self.pk:
@@ -133,7 +120,6 @@ class Usuario(models.Model):
             if qs.exists():
                 raise ValidationError({'numero_matricula': "Este número de matrícula ya está en uso."})
     
-
     def tipoUsuario_display(self):
         """
         Devuelve el nombre del rol adaptado al sexo del usuario.

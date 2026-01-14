@@ -13,8 +13,9 @@
 <body>
     <main class="container-detalles-usuario">
         <div class="box-form-detalles-usuario">
-            <a href="{% url 'administrador-gestionDelPersonal' %}" class="back-link"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
-            <h2>Detalles del usuario {{usuario.persona.get_full_name}} - N° Legajo: {{usuario.persona.login_id}}</h2>  
+            <a href="{% url 'administrador-gestionDelPersonal' %}" class="back-link" id="back-link-solo"><i class="hgi hgi-stroke hgi-arrow-left-02"></i> Volver atrás</a>    
+
+            <h2 class="title-ficha">Detalles del usuario {{usuario.persona.get_full_name}} - N° Legajo: {{usuario.persona.login_id}}</h2>  
             <form action="" method="POST" class="secciones">
                 {% csrf_token %}
                 <input type="hidden" name="tipo_form" value="form_editarPersonal">

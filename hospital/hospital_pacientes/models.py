@@ -1,20 +1,33 @@
 from django.db import models
+import secrets
+import string
 
 class Paciente(models.Model):
-    persona = models.OneToOneField('controlUsuario.Persona', on_delete=models.CASCADE)
+    persona = models.OneToOneField('controlUsuario.Persona', on_delete=models.PROTECT)
     direccion = models.CharField(max_length=255)
-    numero_paciente = models.CharField(max_length=10, unique=True, blank=True, null=True)  # Quitar el blank=True y el null=True al finalizar la BD
+    numero_paciente = models.CharField(max_length=10, unique=True)  
 
+    @staticmethod
+    def generar_numero_paciente():
+        caracteres = string.ascii_uppercase + string.digits
+        aleatorio = ''.join(secrets.choice(caracteres) for _ in range(10)) 
+        return aleatorio
+    
     def save(self, *args, **kwargs):
-        # Generar número de paciente si no existe
         if not self.numero_paciente:
-            self.numero_paciente = f"PAC{self.id or ''}"
-        super().save(*args, **kwargs)    
+            while True:
+                codigo = self.generar_numero_paciente()
+                if not Paciente.objects.filter(numero_paciente=codigo).exists():
+                    self.numero_paciente = codigo
+                    break
+                
+        super().save(*args, **kwargs)  
+
     
     @property
     def tutor(self):
         try:
-            return self.responsable.adulto  # relación inversa desde OneToOneField en MenorACargoDePaciente
+            return self.responsable.adulto  
         except:
             return None    
     

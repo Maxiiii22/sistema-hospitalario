@@ -107,7 +107,7 @@
                     <label for="id_observaciones">Observaciones:</label>
                     <textarea name="observaciones" cols="40" rows="10" id="id_observaciones" readonly ></textarea>
                 </div>
-                <form method="POST">
+                <form method="POST" id="form-solicitud">
                     <div class="box-btns-solicitudes">
                         {% csrf_token %}
                         <input type="hidden" name="id_solicitud" id="id_solicitud">                    
