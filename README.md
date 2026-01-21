@@ -55,7 +55,7 @@ Segundo rol con mayor nivel de permisos dentro del sistema. Responsable de la ge
   - Evaluar solicitudes de pacientes que desean recuperar su cuenta previamente activa.
   - Aprobar o rechazar solicitudes de reactivación.
 
-![Vista previa](imagenes%20previas/hos  pital-4.jpg)
+![Vista previa](imagenes%20previas/hospital-4.jpg)
 
 ### Médico de consultorio
 Rol encargado de la atención médica de los pacientes que solicitan turnos para consultas médicas.
