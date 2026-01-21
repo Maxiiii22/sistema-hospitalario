@@ -157,11 +157,14 @@ Sigue estos pasos para levantar el proyecto en tu entorno local:
  pip install -r requirements.txt
 ```
 
-3. **Configurar la base de datos**
+2. **Configurar la base de datos**
 Crear una base de datos MySQL local (si aún no existe):
+```sql
 CREATE DATABASE hospitalBD;
+```
 
 Actualizar los datos de conexión en settings.py:
+```python
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -172,20 +175,21 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+```
 
-4. **Ejecutar migraciones**
+3. **Ejecutar migraciones**
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-6. **Cargar datos iniciales**
+4. **Cargar datos iniciales**
 Asegúrate de crear la base y ejecutar migraciones antes de importar los datos iniciales.
 ```bash 
 mysql -u <usuario> -p hospitalBD < Documentacion/sistema_hospitalario.sql
 ```
 
-8. **Iniciar el servidor**
+5. **Iniciar el servidor**
 ```bash
 python manage.py runserver
 ```
