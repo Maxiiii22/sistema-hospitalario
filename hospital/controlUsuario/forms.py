@@ -34,17 +34,17 @@ class FormularioLoginPersonalizado(AuthenticationForm):   # Personalizamos el Au
             if user is None:
                 raise ValidationError("Usuario y/o contraseña incorrectos.")
     
-            ##### Permitir que el usuario pueda iniciar sesion solo en su horario laboral #######
             if hasattr(user, 'usuario'):
                 asignacion = user.usuario.get_asignacionActual()
                 if asignacion["asignacion"] is None:
                     raise ValidationError("No se ha registrado ninguna asignación para tu usuario. Por favor, contacta con administración para resolverlo.")
                 
-                # if not asignacion["dentro_del_turno"]:
-                #     raise ValidationError("No puede iniciar sesión fuera de su horario laboral.")
+            ##### Permitir que el usuario pueda iniciar sesion solo en su horario laboral #######                
+                if not asignacion["dentro_del_turno"]:
+                    raise ValidationError("No puede iniciar sesión fuera de su horario laboral.")
             #######################################################################################
             
-            self.user_cache = user # Si todo está bien, guardamos el usuario en el cache
+            self.user_cache = user
 
 
         return self.cleaned_data

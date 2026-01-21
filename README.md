@@ -138,8 +138,79 @@ Rol asociado a los médicos responsables de la evaluación, diagnóstico, tratam
 
 ---
 
+## Tecnologías Utilizadas
 
-## Notas
-- Incluye archivo SQL con datos iniciales en `Documentacion/`.  
-- Ejecutar migraciones antes de iniciar el servidor para configurar la base de datos local.
+| Tecnología       | Descripción                                      |
+|------------------|--------------------------------------------------|
+| Django           | Framework backend principal                      |
+| SQLite           | Base de datos        |
+| HTML/CSS         | Maquetación responsive y diseño visual adaptable. |
+| JavaScript       | Funcionalidades personalizadas del lado del cliente. |
+
+---
+
+## Instalación y configuración
+Sigue estos pasos para levantar el proyecto en tu entorno local:
+
+1. **Instalar dependencias**
+```bash
+ pip install -r requirements.txt
+```
+
+3. **Configurar la base de datos**
+Crear una base de datos MySQL local (si aún no existe):
+CREATE DATABASE hospitalBD;
+
+Actualizar los datos de conexión en settings.py:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hospitalBD',
+        'USER': '<usuario>',
+        'PASSWORD': '<contraseña>',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
+4. **Ejecutar migraciones**
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+6. **Cargar datos iniciales**
+Asegúrate de crear la base y ejecutar migraciones antes de importar los datos iniciales.
+```bash 
+mysql -u <usuario> -p hospitalBD < Documentacion/sistema_hospitalario.sql
+```
+
+8. **Iniciar el servidor**
+```bash
+python manage.py runserver
+```
+
+---
+
+## Usuarios de prueba
+
+El sistema incluye usuarios de prueba para cada rol con el fin de facilitar la evaluación de las funcionalidades.
+
+| Tipo | Legajo/Email | Contraseña |
+|----|--------|-----------|
+| Superadministrador | 1000 | Superadmin |
+| Administrador | 1213 | Hospital123 |
+| Médico de consultorio | 1005 | Hospital123 |
+| Médico hospitalario | 1210 | Hospital123 |
+| Enfermero | 1206 | Hospital123 |
+| Jefe de enfermería | 1212 | Hospital123 |
+| Operador de resultados | 1013 | Hospital123 |
+| Paciente | maxi22@gmail.com | Hospital123 |
+
+## Nota sobre el inicio de sesión
+El sistema valida si un usuario puede iniciar sesión según su horario de trabajo asignado.
+Si un usuario no puede ingresar, es probable que esté fuera de su horario permitido.
+Para pruebas o desarrollo local, se puede desactivar temporalmente esta restricción comentando la línea correspondiente en `controlUsuario/forms.py` (Linea 42 Aprox).
+
+
 

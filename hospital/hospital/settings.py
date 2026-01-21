@@ -102,14 +102,14 @@ WSGI_APPLICATION = 'hospital.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {  # Modificamos los valores por defecto de SQLite por las configuraciones para MySQL :
+DATABASES = { 
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Motor de base de datos MySQL
         'NAME': 'hospitalBD',  # El nombre de tu base de datos MySQL
         'USER': 'root',  # El usuario de tu base de datos MySQL
         'PASSWORD': 'atenas123',  # La contraseña del usuario de la base de datos
-        'HOST': 'localhost',  # O la dirección de tu servidor MySQL, si es remoto
-        'PORT': '3307',  # El puerto predeterminado de MySQL 8.0 
+        'HOST': 'localhost',  
+        'PORT': '3307', 
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",  # Es una configuración que hace que MySQL sea más estricto con los datos que acepta. Por ejemplo, si intentás guardar un valor inválido en una columna (como un texto en un campo numérico, o un valor nulo donde no se permite), MySQL lanzará un error en vez de ignorar el problema o corregirlo automáticamente.
         },
